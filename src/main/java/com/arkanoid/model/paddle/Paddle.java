@@ -3,8 +3,8 @@ import com.arkanoid.main;
 import javafx.geometry.Rectangle2D;
 
 public class Paddle {
-    private static final double PADDLE_WIDTH = 120;
-    private static final double PADDLE_HEIGHT = 20;
+    private static final double PADDLE_WIDTH = 90;
+    private static final double PADDLE_HEIGHT = 30;
     private static final double PADDLE_SPEED = 3;
 
     private double speed;

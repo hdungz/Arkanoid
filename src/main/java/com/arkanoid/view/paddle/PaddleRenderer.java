@@ -1,33 +1,46 @@
 package com.arkanoid.view.paddle;
 
+import com.arkanoid.AssetsManager;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.paddle.Paddle;
+import com.arkanoid.view.SpriteAnimator;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class PaddleRenderer {
     private final GameModel gameModel;
-    private final Rectangle paddleShape;
+    private final ImageView paddleSprite;
+    private final SpriteAnimator animator;
+    private final Image[] images;
 
     public PaddleRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
         Paddle paddle = gameModel.getPaddle();
-        paddleShape = new Rectangle(paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
 
-        paddleShape.setFill(Color.CORNFLOWERBLUE);
-        paddleShape.setStroke(Color.BLACK);
-        paddleShape.setArcWidth(15);
-        paddleShape.setArcHeight(15);
+        images = AssetsManager.getFrames("VIPPaddle");
+        animator = new SpriteAnimator(images, 2);
+        paddleSprite = new ImageView(animator.getCurrentFrame());
+
+        paddleSprite.setFitWidth(paddle.getWidth());
+        paddleSprite.setFitHeight(paddle.getHeight());
+        paddleSprite.setX(paddle.getX());
+        paddleSprite.setY(paddle.getY());
     }
 
     public void render() {
+        animator.update();
+        paddleSprite.setImage(animator.getCurrentFrame());
+        updatePosition();
+    }
+
+    public void updatePosition() {
         Paddle paddle = gameModel.getPaddle();
-        paddleShape.setX(paddle.getX());
-        paddleShape.setY(paddle.getY());
+        paddleSprite.setX(paddle.getX());
+        paddleSprite.setY(paddle.getY());
     }
 
     public Node getNode() {
-        return paddleShape;
+        return paddleSprite;
     }
 }

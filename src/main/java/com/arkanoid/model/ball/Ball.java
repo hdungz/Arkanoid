@@ -4,7 +4,7 @@ import com.arkanoid.model.paddle.Paddle;
 import javafx.geometry.Rectangle2D;
 
 public class Ball {
-     private static final double BALL_RADIUS = 8;
+     private static final double BALL_RADIUS = 10;
      private static final double INITIAL_SPEED = 2.5;
 
      private double x, y;

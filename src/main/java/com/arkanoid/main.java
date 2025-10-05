@@ -3,6 +3,7 @@ package com.arkanoid;
 import com.arkanoid.controller.GameController;
 import com.arkanoid.view.GameView;
 import com.arkanoid.model.GameModel;
+import com.arkanoid.AssetsManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -14,6 +15,7 @@ public class main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        AssetsManager.loadAssets();
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView(gameModel);
         GameController gameController = new GameController(gameModel);
@@ -27,8 +29,8 @@ public class main extends Application {
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                System.out.println(gameModel.getBall().getX() + " " + gameModel.getBall().getY() + " " + gameModel.getBall().getVelocityX() + " " + gameModel.getBall().getVelocityY()
-                + " " + gameModel.getBall().getSpeed());
+//                System.out.println(gameModel.getBall().getX() + " " + gameModel.getBall().getY() + " " + gameModel.getBall().getVelocityX() + " " + gameModel.getBall().getVelocityY()
+//                + " " + gameModel.getBall().getSpeed());
                 gameModel.update();
                 gameView.render();
             }

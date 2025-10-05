@@ -1,70 +1,81 @@
 package com.arkanoid.view.brick;
 
+import com.arkanoid.AssetsManager;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.brick.Brick;
+import com.arkanoid.view.SpriteAnimator;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BrickRenderer {
     private final GameModel gameModel;
-    private final List<Rectangle> brickShapes;
+    private final Map<Brick, ImageView> spriteMap;
+    private final Map<Brick, SpriteAnimator> animatorMap;
+
 
     public BrickRenderer(GameModel model) {
         this.gameModel = model;
-        this.brickShapes = new ArrayList<>();
-        // Khởi tạo các đối tượng hình chữ nhật tương ứng với mỗi viên gạch trong model
+        this.spriteMap = new HashMap<>();
+        this.animatorMap = new HashMap<>();
         for (Brick brick : model.getBricks()) {
-            Rectangle rect = new Rectangle(brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
-            rect.setArcWidth(5);
-            rect.setArcHeight(5);
-            rect.setStroke(Color.BLACK);
-            brickShapes.add(rect);
+            Image[] frames = getFramesForBrick(brick);
+
+            SpriteAnimator animator = new SpriteAnimator(frames, 5);
+
+            ImageView sprite = new ImageView(animator.getCurrentFrame());
+            sprite.setX(brick.getX());
+            sprite.setY(brick.getY());
+            sprite.setFitWidth(brick.getWidth());
+            sprite.setFitHeight(brick.getHeight());
+
+            spriteMap.put(brick, sprite);
+            animatorMap.put(brick, animator);
         }
     }
 
-    /**
-     * Cập nhật trạng thái hiển thị và màu sắc của tất cả các viên gạch.
-     */
     public void render() {
-        List<Brick> bricks = gameModel.getBricks();
-        for (int i = 0; i < bricks.size(); i++) {
-            Brick brick = bricks.get(i);
-            Rectangle rect = brickShapes.get(i);
+        for (Brick brick : gameModel.getBricks()) {
+            ImageView sprite = spriteMap.get(brick);
+            SpriteAnimator animator = animatorMap.get(brick);
+
+            if (sprite == null || animator == null) continue;
 
             if (brick.isVisible()) {
-                rect.setVisible(true);
-                // Quyết định màu sắc dựa trên loại và máu của gạch
-                rect.setFill(getColorForBrick(brick));
+                sprite.setVisible(true);
+                animator.update();
+                sprite.setImage(animator.getCurrentFrame());
+
+                // Hiệu ứng dựa trên máu: gạch sẽ mờ dần khi mất máu
+                // Sau nếu sửa hiệu ứng thì sẽ sửa ở đây
+                sprite.setOpacity((double) brick.getHealth() / 3);
+
             } else {
-                rect.setVisible(false);
+                sprite.setVisible(false);
             }
         }
     }
 
-    private Paint getColorForBrick(Brick brick) {
+    private Image[] getFramesForBrick(Brick brick) {
         switch (brick.getType()) {
             case NORMAL:
-                // Với gạch nhiều máu, màu sắc sẽ thay đổi tùy theo số máu còn lại
-                switch (brick.getHealth()) {
-                    case 1: return Color.LIGHTSKYBLUE; // Máu yếu nhất
-                    case 2: return Color.DEEPSKYBLUE;
-                    case 3: return Color.ROYALBLUE;    // Máu đầy
-                    default: return Color.GRAY;
-                }
-//            case NORMAL:
-//                return Color.ORANGERED;
-            // Bạn có thể thêm các case cho các loại gạch khác (EXPLODING, COIN_DROPPER...) ở đây
+                return AssetsManager.getFrames("Brick1_4");
+//            case DURABLE:
+//                return AssetsManager.getFrames("brick_durable");
+
+            // case EXPLODING:
+            //     return AssetManager.getFrames("brick_exploding");
             default:
-                return Color.WHITE; // Màu mặc định nếu có lỗi
+                return AssetsManager.getFrames("Brick1_4");
         }
     }
 
     public List<Node> getNodes() {
-        return new ArrayList<>(brickShapes);
+        return new ArrayList<>(spriteMap.values());
     }
 }
