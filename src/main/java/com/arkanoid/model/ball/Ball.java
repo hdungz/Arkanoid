@@ -5,7 +5,7 @@ import javafx.geometry.Rectangle2D;
 
 public class Ball {
      private static final double BALL_RADIUS = 8;
-     private static final double INITIAL_SPEED = 4.0;
+     private static final double INITIAL_SPEED = 2.5;
 
      private double x, y;
      private double velocityX, velocityY;
@@ -41,7 +41,7 @@ public class Ball {
 
     public void checkWallCollision(double leftWall, double rightWall, double topWall) {
         if (x - radius < leftWall) {
-            x = radius;
+            x = leftWall + radius;  // Fixed: was just 'radius'
             velocityX = -velocityX;
         }
         if (x + radius > rightWall) {
@@ -49,19 +49,20 @@ public class Ball {
             velocityX = -velocityX;
         }
         if (y - radius < topWall) {
-            y = radius;
+            y = topWall + radius;  // Fixed: was just 'radius'
             velocityY = -velocityY;
         }
     }
 
     public void handlePaddleCollision(Paddle paddle) {
+        System.out.println("Paddle collision");
         velocityY = -Math.abs(velocityY);
         double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
-        velocityX = hitSpot * 5;
+        velocityX = hitSpot;  // Changed from hitSpot * 5 to just hitSpot
     }
 
-
     public void handleBrickCollision(boolean isVerticalCollision) {
+        System.out.println("Brick collision");
         if (isVerticalCollision) {
             velocityY = -velocityY;
         } else {
@@ -69,9 +70,11 @@ public class Ball {
         }
     }
 
+
     public void launch() {
         isLaunched = true;
-        velocityY = -speed;
+        velocityX = 0;  // Added: start with no horizontal velocity
+        velocityY = -1;  // Changed from -speed to -1 (direction only)
     }
     public double getX() {
         return x;

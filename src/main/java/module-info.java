@@ -7,6 +7,7 @@ module com.arkanoid {
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
     requires jdk.compiler;
+    requires java.desktop;
 
     opens com.arkanoid to javafx.fxml;
     exports com.arkanoid;

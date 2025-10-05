@@ -18,10 +18,12 @@ public class GameController {
         KeyCode keyCode = keyEvent.getCode();
 
         if(keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
-            paddle.setMovingLeft(false);
+            paddle.setMovingLeft(true);
+            System.out.println("moving left");
         }
         else if(keyCode == KeyCode.RIGHT || keyCode == KeyCode.D) {
-            paddle.setMovingRight(false);
+            paddle.setMovingRight(true);
+            System.out.println("moving right");
         }
         else if(keyCode == KeyCode.SPACE) {
             gameModel.launchBall();

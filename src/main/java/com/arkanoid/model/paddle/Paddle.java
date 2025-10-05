@@ -5,7 +5,7 @@ import javafx.geometry.Rectangle2D;
 public class Paddle {
     private static final double PADDLE_WIDTH = 120;
     private static final double PADDLE_HEIGHT = 20;
-    private static final double PADDLE_SPEED = 8.0;
+    private static final double PADDLE_SPEED = 3;
 
     private double speed;
     private double width, height;

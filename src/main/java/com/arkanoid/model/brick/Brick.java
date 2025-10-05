@@ -61,4 +61,8 @@ public class Brick {
     public BrickType getType() {
         return type;
     }
+
+    public int getHealth() {
+        return health;
+    }
 }
