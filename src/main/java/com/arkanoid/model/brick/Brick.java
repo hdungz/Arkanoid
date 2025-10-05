@@ -1,5 +1,7 @@
 package com.arkanoid.model.brick;
 
+import javafx.geometry.Rectangle2D;
+
 public class Brick {
     private double x;
     private double y;
@@ -19,7 +21,6 @@ public class Brick {
         this.health = health;
     }
 
-
     public boolean takeDamage() {
         this.health--;
         if (health <= 0) {
@@ -38,6 +39,9 @@ public class Brick {
         this.visible = visible;
     }
 
+    public Rectangle2D getBoundary() {
+        return new Rectangle2D(x, y, width, height);
+    }
     public double getX() {
         return x;
     }

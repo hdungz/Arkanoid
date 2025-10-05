@@ -6,6 +6,7 @@ module com.arkanoid {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
+    requires jdk.compiler;
 
     opens com.arkanoid to javafx.fxml;
     exports com.arkanoid;

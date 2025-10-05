@@ -1,5 +1,6 @@
 package com.arkanoid.model.paddle;
 import com.arkanoid.main;
+import javafx.geometry.Rectangle2D;
 
 public class Paddle {
     private static final double PADDLE_WIDTH = 120;
@@ -9,6 +10,9 @@ public class Paddle {
     private double speed;
     private double width, height;
     private double x, y;
+
+    public boolean isMovingLeft = false;
+    public boolean isMovingRight = false;
 
     public Paddle() {
         this.speed = PADDLE_SPEED;
@@ -21,14 +25,28 @@ public class Paddle {
         y = main.WINDOW_HEIGHT - height - 30;
     }
 
+    public void move() {
+        if(isMovingLeft) {
+            movingLeft();
+        }
+        if(isMovingRight) {
+            movingRight();
+        }
+    }
+
     public void movingLeft() {
         if(x - speed > 0) x -= speed;
         else x = 0;
+
     }
 
     public void movingRight() {
         if(x + speed <= main.WINDOW_WIDTH - width) x += speed;
         else x = main.WINDOW_WIDTH - width;
+    }
+
+    public Rectangle2D getBoundary() {
+        return new Rectangle2D(x, y, width, height);
     }
 
     public double getX() {
@@ -70,4 +88,21 @@ public class Paddle {
     public void setHeight(double height) {
         this.height = height;
     }
+
+    public boolean isMovingRight() {
+        return isMovingRight;
+    }
+
+    public void setMovingRight(boolean movingRight) {
+        isMovingRight = movingRight;
+    }
+
+    public boolean isMovingLeft() {
+        return isMovingLeft;
+    }
+
+    public void setMovingLeft(boolean movingLeft) {
+        isMovingLeft = movingLeft;
+    }
+
 }

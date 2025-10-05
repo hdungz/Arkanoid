@@ -1,6 +1,7 @@
 package com.arkanoid.model.ball;
 
 import com.arkanoid.model.paddle.Paddle;
+import javafx.geometry.Rectangle2D;
 
 public class Ball {
      private static final double BALL_RADIUS = 8;
@@ -10,7 +11,9 @@ public class Ball {
      private double velocityX, velocityY;
      private double radius;
      private double speed;
-     private Boolean isLaunched;
+     private boolean isLaunched;
+     private double prevY;
+     private double prevX;
 
      public Ball() {
          this.radius = BALL_RADIUS;
@@ -25,5 +28,128 @@ public class Ball {
          velocityX = 0;
      }
 
+     public void move() {
+         prevX = x;
+         prevY = y;
+         x += velocityX * speed;
+         y += velocityY * speed;
+     }
 
+     public Rectangle2D getBoundary() {
+         return new Rectangle2D(x - radius, y - radius, 2 * radius, 2 * radius);
+     }
+
+    public void checkWallCollision(double leftWall, double rightWall, double topWall) {
+        if (x - radius < leftWall) {
+            x = radius;
+            velocityX = -velocityX;
+        }
+        if (x + radius > rightWall) {
+            x = rightWall - radius;
+            velocityX = -velocityX;
+        }
+        if (y - radius < topWall) {
+            y = radius;
+            velocityY = -velocityY;
+        }
+    }
+
+    public void handlePaddleCollision(Paddle paddle) {
+        velocityY = -Math.abs(velocityY);
+        double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
+        velocityX = hitSpot * 5;
+    }
+
+
+    public void handleBrickCollision(boolean isVerticalCollision) {
+        if (isVerticalCollision) {
+            velocityY = -velocityY;
+        } else {
+            velocityX = -velocityX;
+        }
+    }
+
+    public void launch() {
+        isLaunched = true;
+        velocityY = -speed;
+    }
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getVelocityX() {
+        return velocityX;
+    }
+
+    public void setVelocityX(double velocityX) {
+        this.velocityX = velocityX;
+    }
+
+    public double getVelocityY() {
+        return velocityY;
+    }
+
+    public void setVelocityY(double velocityY) {
+        this.velocityY = velocityY;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public Boolean getLaunched() {
+        return isLaunched;
+    }
+
+    public void setLaunched(Boolean launched) {
+        isLaunched = launched;
+    }
+
+    public boolean isLaunched() {
+        return isLaunched;
+    }
+
+    public void setLaunched(boolean launched) {
+        isLaunched = launched;
+    }
+
+    public double getPrevY() {
+        return prevY;
+    }
+
+    public void setPrevY(double prevY) {
+        this.prevY = prevY;
+    }
+
+    public double getPrevX() {
+        return prevX;
+    }
+
+    public void setPrevX(double prevX) {
+        this.prevX = prevX;
+    }
 }
