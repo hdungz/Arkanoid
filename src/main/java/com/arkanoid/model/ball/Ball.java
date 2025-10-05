@@ -39,9 +39,9 @@ public class Ball {
          return new Rectangle2D(x - radius, y - radius, 2 * radius, 2 * radius);
      }
 
-    public void checkWallCollision(double leftWall, double rightWall, double topWall) {
+     public void checkWallCollision(double leftWall, double rightWall, double topWall) {
         if (x - radius < leftWall) {
-            x = leftWall + radius;  // Fixed: was just 'radius'
+            x = leftWall + radius;
             velocityX = -velocityX;
         }
         if (x + radius > rightWall) {
@@ -49,7 +49,7 @@ public class Ball {
             velocityX = -velocityX;
         }
         if (y - radius < topWall) {
-            y = topWall + radius;  // Fixed: was just 'radius'
+            y = topWall + radius;
             velocityY = -velocityY;
         }
     }
@@ -58,7 +58,7 @@ public class Ball {
         System.out.println("Paddle collision");
         velocityY = -Math.abs(velocityY);
         double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
-        velocityX = hitSpot;  // Changed from hitSpot * 5 to just hitSpot
+        velocityX = hitSpot;
     }
 
     public void handleBrickCollision(boolean isVerticalCollision) {
@@ -73,8 +73,8 @@ public class Ball {
 
     public void launch() {
         isLaunched = true;
-        velocityX = 0;  // Added: start with no horizontal velocity
-        velocityY = -1;  // Changed from -speed to -1 (direction only)
+        velocityX = 0;
+        velocityY = -1;
     }
     public double getX() {
         return x;

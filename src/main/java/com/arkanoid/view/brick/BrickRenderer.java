@@ -20,9 +20,9 @@ public class BrickRenderer {
         // Khởi tạo các đối tượng hình chữ nhật tương ứng với mỗi viên gạch trong model
         for (Brick brick : model.getBricks()) {
             Rectangle rect = new Rectangle(brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
-            rect.setArcWidth(5);  // Bo tròn góc cho đẹp
+            rect.setArcWidth(5);
             rect.setArcHeight(5);
-            rect.setStroke(Color.BLACK); // Thêm viền đen
+            rect.setStroke(Color.BLACK);
             brickShapes.add(rect);
         }
     }

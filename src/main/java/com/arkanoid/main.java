@@ -33,7 +33,7 @@ public class main extends Application {
                 gameView.render();
             }
         };
-        gameLoop.start(); // Bắt đầu vòng lặp
+        gameLoop.start();
     }
 
     public static void main(String[] args) {

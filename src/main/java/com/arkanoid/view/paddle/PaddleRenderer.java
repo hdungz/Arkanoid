@@ -17,7 +17,7 @@ public class PaddleRenderer {
 
         paddleShape.setFill(Color.CORNFLOWERBLUE);
         paddleShape.setStroke(Color.BLACK);
-        paddleShape.setArcWidth(15); // Bo tròn các góc
+        paddleShape.setArcWidth(15);
         paddleShape.setArcHeight(15);
     }
 

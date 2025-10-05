@@ -19,11 +19,11 @@ public class GameController {
 
         if(keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
             paddle.setMovingLeft(true);
-            System.out.println("moving left");
+//            System.out.println("moving left");
         }
         else if(keyCode == KeyCode.RIGHT || keyCode == KeyCode.D) {
             paddle.setMovingRight(true);
-            System.out.println("moving right");
+//            System.out.println("moving right");
         }
         else if(keyCode == KeyCode.SPACE) {
             gameModel.launchBall();

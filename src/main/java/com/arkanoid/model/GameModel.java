@@ -60,13 +60,13 @@ public class GameModel {
     }
 
     void checkCollisions() {
-        //Va chạm với tường
+        // Va chạm với tường
         ball.checkWallCollision(0, main.WINDOW_WIDTH, 0);
-        //Va chạm với paddle
+        // Va chạm với paddle
         if (ball.getBoundary().intersects(paddle.getBoundary())) {
             ball.handlePaddleCollision(paddle);
         }
-        //Bóng rơi ra ngoài
+        // Bóng rơi ra ngoài
         if (ball.getY() > main.WINDOW_HEIGHT) {
             lives--;
             if (lives == 0) {
@@ -76,7 +76,7 @@ public class GameModel {
                 gameState = GameState.Ready;
             }
         }
-        //Va chạm với brick
+        // Va chạm với brick
         ListIterator<Brick> iterator = bricks.listIterator();
         while (iterator.hasNext()) {
 
@@ -84,14 +84,15 @@ public class GameModel {
             if (!brick.isVisible()) continue;
             if (brick.getBoundary().intersects(ball.getBoundary())) {
                 System.out.println("collision with brick");
+                if(brick.getHealth() == 1) score += 10;
                 brick.takeDamage();
                 double ballPrevY = ball.getPrevY();
                 double ballRadius = ball.getRadius();
                 double brickTop = brick.getY();
                 double brickBottom = brick.getY() + brick.getHeight();
                 boolean isVerticalCollision;
-                //Kiểm tra trước khi va chạm bóng có đang hoàn toàn ở trên brick hay ở
-                //dưới brick không, từ đó suy ra được là va chạm ngang hay va chạm dọc
+                // Kiểm tra trước khi va chạm bóng có đang hoàn toàn ở trên brick hay ở
+                // dưới brick không, từ đó suy ra được là va chạm ngang hay va chạm dọc
                 if (ballPrevY < brickTop + ballRadius) {
                     isVerticalCollision = true;
                 } else if (ballPrevY > brickBottom - ballRadius) {
@@ -109,8 +110,7 @@ public class GameModel {
                     ball.setX(ball.getVelocityX() < 0 ? brick.getX() - ballRadius  : brick.getX() + brick.getWidth() + ballRadius);
                     break;
                 }
-
-                 // Chỉ xử lý va chạm với 1 gạch mỗi frame
+                // Chỉ xử lý va chạm với 1 gạch mỗi frame
             }
         }
     }
