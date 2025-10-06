@@ -1,9 +1,9 @@
 package com.arkanoid.view.brick;
 
-import com.arkanoid.AssetsManager;
+import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.brick.Brick;
-import com.arkanoid.view.SpriteAnimator;
+import com.arkanoid.utils.SpriteAnimator;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

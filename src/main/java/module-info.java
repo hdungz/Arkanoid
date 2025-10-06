@@ -11,4 +11,8 @@ module com.arkanoid {
 
     opens com.arkanoid to javafx.fxml;
     exports com.arkanoid;
+    exports com.arkanoid.utils;
+    opens com.arkanoid.utils to javafx.fxml;
+    exports com.arkanoid.model.ball;
+    opens com.arkanoid.model.ball to javafx.fxml;
 }

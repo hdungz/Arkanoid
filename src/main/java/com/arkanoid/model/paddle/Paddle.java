@@ -7,6 +7,7 @@ public class Paddle {
     private static final double PADDLE_HEIGHT = 30;
     private static final double PADDLE_SPEED = 3;
 
+
     private double speed;
     private double width, height;
     private double x, y;

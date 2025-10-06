@@ -1,4 +1,4 @@
-package com.arkanoid;
+package com.arkanoid.utils;
 
 import javafx.scene.image.Image;
 

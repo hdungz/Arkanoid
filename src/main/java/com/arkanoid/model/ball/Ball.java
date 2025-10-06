@@ -6,6 +6,8 @@ import javafx.geometry.Rectangle2D;
 public class Ball {
      private static final double BALL_RADIUS = 10;
      private static final double INITIAL_SPEED = 2.5;
+     private static final double BRICK_DAMAGE = 1;
+     private static final double HITSPOT_MULTIPLIER = 1;
 
      private double x, y;
      private double velocityX, velocityY;
@@ -14,10 +16,15 @@ public class Ball {
      private boolean isLaunched;
      private double prevY;
      private double prevX;
+     private double damage;
+     private double hitSpotMultiplier;
+
 
      public Ball() {
          this.radius = BALL_RADIUS;
          this.speed = INITIAL_SPEED;
+         this.damage = BRICK_DAMAGE;
+         this.hitSpotMultiplier = HITSPOT_MULTIPLIER;
      }
 
      public void resetPosition(Paddle paddle) {
@@ -58,7 +65,7 @@ public class Ball {
         System.out.println("Paddle collision");
         velocityY = -Math.abs(velocityY);
         double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
-        velocityX = hitSpot;
+        velocityX = hitSpot * hitSpotMultiplier;
     }
 
     public void handleBrickCollision(boolean isVerticalCollision) {
@@ -154,5 +161,21 @@ public class Ball {
 
     public void setPrevX(double prevX) {
         this.prevX = prevX;
+    }
+
+    public double getDamage() {
+        return damage;
+    }
+
+    public void setDamage(double damage) {
+        this.damage = damage;
+    }
+
+    public double getHitSpotMultiplier() {
+        return hitSpotMultiplier;
+    }
+
+    public void setHitSpotMultiplier(double hitSpotMultiplier) {
+        this.hitSpotMultiplier = hitSpotMultiplier;
     }
 }

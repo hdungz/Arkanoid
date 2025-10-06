@@ -3,7 +3,7 @@ package com.arkanoid;
 import com.arkanoid.controller.GameController;
 import com.arkanoid.view.GameView;
 import com.arkanoid.model.GameModel;
-import com.arkanoid.AssetsManager;
+import com.arkanoid.utils.AssetsManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
