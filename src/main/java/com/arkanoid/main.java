@@ -9,9 +9,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import static com.arkanoid.CONSTANT.WINDOW_HEIGHT;
+import static com.arkanoid.CONSTANT.WINDOW_WIDTH;
+
 public class main extends Application {
-    public static final int WINDOW_HEIGHT = 800;
-    public static final int WINDOW_WIDTH = 600;
+
 
     @Override
     public void start(Stage stage) throws Exception {

@@ -1,13 +1,11 @@
 package com.arkanoid.model.ball;
-
+import com.arkanoid.model.GameModel;
 import com.arkanoid.model.paddle.Paddle;
 import javafx.geometry.Rectangle2D;
+import static com.arkanoid.CONSTANT.*;
 
 public class Ball {
-     private static final double BALL_RADIUS = 10;
-     private static final double INITIAL_SPEED = 2.5;
-     private static final double BRICK_DAMAGE = 1;
-     private static final double HITSPOT_MULTIPLIER = 1;
+
 
      private double x, y;
      private double velocityX, velocityY;
@@ -46,22 +44,25 @@ public class Ball {
          return new Rectangle2D(x - radius, y - radius, 2 * radius, 2 * radius);
      }
 
-     public void checkWallCollision(double leftWall, double rightWall, double topWall) {
+     public void checkWallCollision(double leftWall, double rightWall, double topWall, GameModel gameModel) {
         if (x - radius < leftWall) {
             x = leftWall + radius;
             velocityX = -velocityX;
             reflectionAngleAdjustment();
+            gameModel.setLastWallCollision(GameModel.WallCollisionSide.LEFT);
         }
         if (x + radius > rightWall) {
             x = rightWall - radius;
             velocityX = -velocityX;
             reflectionAngleAdjustment();
-
+            gameModel.setLastWallCollision(GameModel.WallCollisionSide.RIGHT);
         }
         if (y - radius < topWall) {
             y = topWall + radius;
             velocityY = -velocityY;
             reflectionAngleAdjustment();
+            gameModel.setLastWallCollision(GameModel.WallCollisionSide.TOP);
+
         }
     }
 
@@ -101,7 +102,7 @@ public class Ball {
     }
 
     public void handleBrickCollision(boolean isVerticalCollision) {
-        System.out.println("Brick collision");
+//        System.out.println("Brick collision");
         if (isVerticalCollision) {
             velocityY = -velocityY;
         } else {

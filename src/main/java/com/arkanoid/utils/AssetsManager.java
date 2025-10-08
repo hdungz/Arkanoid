@@ -15,6 +15,10 @@ public class AssetsManager {
         loadAnimationFrames("RedBall", "/com/arkanoid/Ball/red/keyframes", 6);
         loadAnimationFrames("VIPPaddle", "/com/arkanoid/Paddle/VIPPaddle", 2);
         loadImages("Brick1_4","/com/arkanoid/Brick/Brick1_4.png");
+        loadImages("TestingBrick", "/com/arkanoid/Brick/Sprite-0002.png");
+        loadImages("LeftBorder", "/com/arkanoid/Border/LeftBorder.png");
+        loadImages("RightBorder", "/com/arkanoid/Border/RightBorder.png");
+        loadImages("TopBorder", "/com/arkanoid/Border/TopBorder.png");
     }
 
     private static void loadAnimationFrames(String key, String basePath, int frameCount) {

@@ -8,6 +8,7 @@ module com.arkanoid {
     requires com.almasb.fxgl.all;
     requires jdk.compiler;
     requires java.desktop;
+    requires javafx.graphics;
 
     opens com.arkanoid to javafx.fxml;
     exports com.arkanoid;

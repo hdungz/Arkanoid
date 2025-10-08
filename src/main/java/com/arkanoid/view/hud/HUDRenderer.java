@@ -1,7 +1,6 @@
 package com.arkanoid.view.hud;
 
 import com.arkanoid.model.GameModel;
-import com.arkanoid.main;
 import com.arkanoid.model.GameState;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -12,6 +11,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.arkanoid.CONSTANT.*;
 
 public class HUDRenderer {
     GameModel gameModel;
@@ -26,7 +27,7 @@ public class HUDRenderer {
         scoreText.setFont((Font.font("Verdana", FontWeight.BOLD, 20)));
         scoreText.setFill(Color.WHITE);
 
-        livesText = new Text(main.WINDOW_WIDTH - 120, 30, "Lives: 3");
+        livesText = new Text(WINDOW_WIDTH - 120, 30, "Lives: 3");
         livesText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
         livesText.setFill(Color.WHITE);
         livesText.setTextAlignment(TextAlignment.RIGHT);
@@ -35,8 +36,8 @@ public class HUDRenderer {
         messageText.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
         messageText.setFill(Color.YELLOW);
         messageText.setTextAlignment(TextAlignment.CENTER);
-        messageText.setWrappingWidth(main.WINDOW_WIDTH);
-        messageText.setY(main.WINDOW_HEIGHT / 2.0);
+        messageText.setWrappingWidth(WINDOW_WIDTH);
+        messageText.setY(WINDOW_HEIGHT / 2.0);
     }
 
     public void render() {

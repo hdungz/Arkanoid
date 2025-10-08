@@ -1,11 +1,11 @@
 package com.arkanoid.model.paddle;
-import com.arkanoid.main;
+import com.arkanoid.CONSTANT;
 import javafx.geometry.Rectangle2D;
 
+import static com.arkanoid.CONSTANT.*;
+
 public class Paddle {
-    private static final double PADDLE_WIDTH = 90;
-    private static final double PADDLE_HEIGHT = 30;
-    private static final double PADDLE_SPEED = 3;
+
 
 
     private double speed;
@@ -22,8 +22,8 @@ public class Paddle {
     }
 
     public void resetPosition() {
-        x = (main.WINDOW_WIDTH - width) / 2;
-        y = main.WINDOW_HEIGHT - height - 30;
+        x = (WINDOW_WIDTH - width) / 2;
+        y = WINDOW_HEIGHT - height - 30;
     }
 
     public void move() {
@@ -36,14 +36,13 @@ public class Paddle {
     }
 
     public void movingLeft() {
-        if(x - speed > 0) x -= speed;
-        else x = 0;
-
+        if(x - speed > GAME_AREA_X ) x -= speed;
+        else x = (GAME_AREA_X);
     }
 
     public void movingRight() {
-        if(x + speed <= main.WINDOW_WIDTH - width) x += speed;
-        else x = main.WINDOW_WIDTH - width;
+        if(x + speed + this.width <= GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH) x += speed;
+        else x = GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH - this.width;
     }
 
     public Rectangle2D getBoundary() {

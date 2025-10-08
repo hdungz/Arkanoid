@@ -1,14 +1,19 @@
 package com.arkanoid.model;
+import com.arkanoid.CONSTANT;
 import com.arkanoid.model.ball.Ball;
 import com.arkanoid.model.brick.Brick;
 import com.arkanoid.model.brick.BrickType;
 import com.arkanoid.model.paddle.Paddle;
-import com.arkanoid.main;
-
 import java.util.ArrayList;
 import java.util.ListIterator;
+import static com.arkanoid.CONSTANT.*;
 
 public class GameModel {
+    public enum WallCollisionSide {
+        NONE, TOP, LEFT, RIGHT
+    }
+
+    private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
     Paddle paddle;
     Ball ball;
@@ -33,13 +38,13 @@ public class GameModel {
         bricks.clear();
         int rows = 5;
         int cols = 10;
-        double brickWidth = (main.WINDOW_WIDTH - (cols + 1) * 5.0) / cols;
+        double brickWidth = (CONSTANT.GAME_AREA_WIDTH - (cols + 1) * 5.0) / cols;
         double brickHeight = 20;
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                double x = j * (brickWidth + 5) + 5;
-                double y = i * (brickHeight + 5) + 50;
+                double x = CONSTANT.GAME_AREA_X + j * (brickWidth + 5) + 5;
+                double y = CONSTANT.BORDER_WIDTH + i * (brickHeight + 5) + 5;
                 bricks.add(new Brick(x, y, brickWidth, brickHeight, BrickType.NORMAL, 3));
             }
         }
@@ -61,13 +66,14 @@ public class GameModel {
 
     void checkCollisions() {
         // Va chạm với tường
-        ball.checkWallCollision(0, main.WINDOW_WIDTH, 0);
+        this.lastWallCollision = WallCollisionSide.NONE;
+        ball.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X, CONSTANT.BORDER_WIDTH, this);
         // Va chạm với paddle
         if (ball.getBoundary().intersects(paddle.getBoundary())) {
             ball.handlePaddleCollision(paddle);
         }
         // Bóng rơi ra ngoài
-        if (ball.getY() > main.WINDOW_HEIGHT) {
+        if (ball.getY() > WINDOW_HEIGHT) {
             lives--;
             if (lives == 0) {
                 gameState = GameState.GameOver;
@@ -169,5 +175,13 @@ public class GameModel {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public WallCollisionSide getLastWallCollision() {
+        return lastWallCollision;
+    }
+
+    public void setLastWallCollision(WallCollisionSide lastWallCollision) {
+        this.lastWallCollision = lastWallCollision;
     }
 }
