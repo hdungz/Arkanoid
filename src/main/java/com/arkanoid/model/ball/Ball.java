@@ -50,22 +50,54 @@ public class Ball {
         if (x - radius < leftWall) {
             x = leftWall + radius;
             velocityX = -velocityX;
+            reflectionAngleAdjustment();
         }
         if (x + radius > rightWall) {
             x = rightWall - radius;
             velocityX = -velocityX;
+            reflectionAngleAdjustment();
+
         }
         if (y - radius < topWall) {
             y = topWall + radius;
             velocityY = -velocityY;
+            reflectionAngleAdjustment();
         }
     }
 
+    private void reflectionAngleAdjustment() {
+        double minAngle = 15.0;
+        double minAngleRad = Math.toRadians(minAngle);
+
+        double angle = Math.atan2(Math.abs(velocityY), Math.abs(velocityX));
+
+        double speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+
+        if (angle < minAngleRad) {
+            angle = minAngleRad;
+            velocityX = Math.signum(velocityX) * speed * Math.cos(angle);
+            velocityY = Math.signum(velocityY) * speed * Math.sin(angle);
+        }
+        else if (angle > Math.PI / 2 - minAngleRad) {
+            angle = Math.PI / 2 - minAngleRad;
+            velocityX = Math.signum(velocityX) * speed * Math.cos(angle);
+            velocityY = Math.signum(velocityY) * speed * Math.sin(angle);
+        }
+    }
+
+
     public void handlePaddleCollision(Paddle paddle) {
-        System.out.println("Paddle collision");
+//        System.out.println("Paddle collision");
         velocityY = -Math.abs(velocityY);
         double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
         velocityX = hitSpot * hitSpotMultiplier;
+
+        double currentSpeed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+//        System.out.println(currentSpeed);
+        double targetSpeed = 1;
+        velocityX = velocityX * targetSpeed / currentSpeed;
+        velocityY = velocityY * targetSpeed / currentSpeed;
+
     }
 
     public void handleBrickCollision(boolean isVerticalCollision) {
