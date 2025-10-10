@@ -6,7 +6,7 @@ public final class CONSTANT {
     public static final int WINDOW_WIDTH = 1280;
 
     //---Ball---
-    public static final double BALL_RADIUS = 15;
+    public static final double BALL_RADIUS = 12;
     public static final double INITIAL_SPEED = 3;
     public static final double BRICK_DAMAGE = 1;
     public static final double HITSPOT_MULTIPLIER = 1;

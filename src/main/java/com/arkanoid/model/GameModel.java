@@ -99,9 +99,9 @@ public class GameModel {
                 boolean isVerticalCollision;
                 // Kiểm tra trước khi va chạm bóng có đang hoàn toàn ở trên brick hay ở
                 // dưới brick không, từ đó suy ra được là va chạm ngang hay va chạm dọc
-                if (ballPrevY < brickTop + ballRadius) {
+                if (ballPrevY < brickTop - ballRadius) {
                     isVerticalCollision = true;
-                } else if (ballPrevY > brickBottom - ballRadius) {
+                } else if (ballPrevY > brickBottom + ballRadius) {
                     isVerticalCollision = true;
                 } else {
                     isVerticalCollision = false;
@@ -110,7 +110,7 @@ public class GameModel {
                 // Đẩy bóng ra khỏi gạch để tránh bị kẹt
                 if (isVerticalCollision) {
                     ball.setY(ball.getVelocityY() < 0 ? brickTop - ballRadius : brickBottom + ballRadius );
-//                    System.out.println("vertical collision " + brickTop + " " + brickBottom + " " + ballRadius + " " + ball.getVelocityY());
+                    System.out.println("vertical collision " + brickTop + " " + brickBottom + " " + ballRadius + " " + ball.getVelocityY());
                     break;
                 } else {
                     ball.setX(ball.getVelocityX() < 0 ? brick.getX() - ballRadius  : brick.getX() + brick.getWidth() + ballRadius);
