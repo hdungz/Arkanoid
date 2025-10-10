@@ -45,22 +45,22 @@ public class GameModel {
             for (int j = 0; j < cols; j++) {
                 double x = CONSTANT.GAME_AREA_X + j * (brickWidth + 5) + 5;
                 double y = CONSTANT.BORDER_WIDTH + i * (brickHeight + 5) + 5;
-                bricks.add(new Brick(x, y, brickWidth, brickHeight, BrickType.NORMAL, 3));
+                bricks.add(new Brick(x, y, brickWidth, brickHeight, BrickType.NORMAL, 1));
             }
         }
 
     }
 
-    public void update() {
+    public void update(double deltaTime) {
         if(gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
-                paddle.move();
+                paddle.move(deltaTime);
                 ball.resetPosition(paddle);
             }
             return;
         }
-        paddle.move();
-        ball.move();
+        paddle.move(deltaTime);
+        ball.move(deltaTime);
         checkCollisions();
     }
 

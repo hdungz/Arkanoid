@@ -26,22 +26,22 @@ public class Paddle {
         y = WINDOW_HEIGHT - height - 30;
     }
 
-    public void move() {
+    public void move(double deltaTime ) {
         if(isMovingLeft) {
-            movingLeft();
+            movingLeft(deltaTime);
         }
         if(isMovingRight) {
-            movingRight();
+            movingRight(deltaTime);
         }
     }
 
-    public void movingLeft() {
-        if(x - speed > GAME_AREA_X ) x -= speed;
+    public void movingLeft(double deltaTime) {
+        if(x - speed > GAME_AREA_X ) x -= speed * deltaTime * 144;
         else x = (GAME_AREA_X);
     }
 
-    public void movingRight() {
-        if(x + speed + this.width <= GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH) x += speed;
+    public void movingRight(double deltaTime) {
+        if(x + speed + this.width <= GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH) x += speed * deltaTime * 144 ;
         else x = GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH - this.width;
     }
 

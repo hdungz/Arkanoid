@@ -20,7 +20,7 @@ public class Ball {
 
      public Ball() {
          this.radius = BALL_RADIUS;
-         this.speed = INITIAL_SPEED;
+         this.speed = INITIAL_SPEED ;
          this.damage = BRICK_DAMAGE;
          this.hitSpotMultiplier = HITSPOT_MULTIPLIER;
      }
@@ -33,11 +33,11 @@ public class Ball {
          velocityX = 0;
      }
 
-     public void move() {
+     public void move(double deltaTime) {
          prevX = x;
          prevY = y;
-         x += velocityX * speed;
-         y += velocityY * speed;
+         x += velocityX * speed * deltaTime * 144;
+         y += velocityY * speed * deltaTime * 144;
      }
 
      public Rectangle2D getBoundary() {

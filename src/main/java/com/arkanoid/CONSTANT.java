@@ -6,8 +6,8 @@ public final class CONSTANT {
     public static final int WINDOW_WIDTH = 1280;
 
     //---Ball---
-    public static final double BALL_RADIUS = 10;
-    public static final double INITIAL_SPEED = 2.5;
+    public static final double BALL_RADIUS = 15;
+    public static final double INITIAL_SPEED = 3;
     public static final double BRICK_DAMAGE = 1;
     public static final double HITSPOT_MULTIPLIER = 1;
 
@@ -23,6 +23,8 @@ public final class CONSTANT {
     public static final int GAME_AREA_X = (WINDOW_WIDTH - GAME_AREA_WIDTH) / 2;
     public static final int GAME_AREA_END_X = GAME_AREA_X + GAME_AREA_WIDTH;
     public static final int BORDER_WIDTH = 10;
+
+    public static final int TARGET_FPS = 144;
     CONSTANT() {
 
     }

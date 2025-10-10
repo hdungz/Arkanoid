@@ -19,7 +19,7 @@ public class BallRenderer {
     public BallRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
         ball = gameModel.getBall();
-        images = AssetsManager.getFrames("EnBallRed");
+        images = AssetsManager.getFrames("Basketball");
         animator = new SpriteAnimator(images, images.length);
         ballSprite = new ImageView(animator.getCurrentFrame());
         double diameter = ball.getRadius() * 2;

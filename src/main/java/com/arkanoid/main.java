@@ -28,12 +28,35 @@ public class main extends Application {
         stage.setTitle("Arkanoid");
         stage.setResizable(false);
         stage.show();
+
+
         AnimationTimer gameLoop = new AnimationTimer() {
+            private long lastUpdate = 0;
+            private long lastFpsUpdate = 0;
+            private int frameCount = 0;
+            double deltaTime = 1.0;
             @Override
             public void handle(long now) {
-//                System.out.println(gameModel.getBall().getX() + " " + gameModel.getBall().getY() + " " + gameModel.getBall().getVelocityX() + " " + gameModel.getBall().getVelocityY()
-//                + " " + gameModel.getBall().getSpeed());
-                gameModel.update();
+                if (lastUpdate == 0) {
+                    lastUpdate = now;
+                    lastFpsUpdate = now;
+                    return;
+                }
+//
+                deltaTime = (now - lastUpdate) / 1_000_000_000.0;
+//                System.out.println(deltaTime);
+                lastUpdate = now;
+//                deltaTime = 1;
+                double timeSinceLastFpsUpdate = (now - lastFpsUpdate) / 1_000_000_000.0;
+                frameCount++;
+                if (timeSinceLastFpsUpdate >= 1.0) {
+                    double fps = frameCount / timeSinceLastFpsUpdate;
+                    System.out.println("FPS: " + String.format("%.2f", fps));
+                    frameCount = 0;
+                    lastFpsUpdate = now;
+                }
+//
+                gameModel.update(deltaTime);
                 gameView.render();
             }
         };
