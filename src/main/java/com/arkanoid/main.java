@@ -1,6 +1,8 @@
 package com.arkanoid;
 
 import com.arkanoid.controller.GameController;
+import com.arkanoid.utils.SceneManager;
+import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.GameView;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.utils.AssetsManager;
@@ -21,10 +23,14 @@ public class main extends Application {
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView(gameModel);
         GameController gameController = new GameController(gameModel);
-        Scene scene = new Scene(gameView, WINDOW_WIDTH, WINDOW_HEIGHT);
-        scene.setOnKeyPressed(gameController::handleKeyPressed);
-        scene.setOnKeyReleased(gameController::handleKeyReleased);
-        stage.setScene(scene);
+        Scene gameScene = new Scene(gameView, WINDOW_WIDTH, WINDOW_HEIGHT);
+        gameController.setScene(gameScene);
+
+        SceneManager sceneManager = SceneManager.getInstance();
+        sceneManager.init(stage);
+        sceneManager.addScene(SceneType.GamePlay, gameScene, gameController);
+        sceneManager.switchTo(SceneType.GamePlay);
+
         stage.setTitle("Arkanoid");
         stage.setResizable(false);
         stage.show();

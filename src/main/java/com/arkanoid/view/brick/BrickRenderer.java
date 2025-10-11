@@ -53,7 +53,8 @@ public class BrickRenderer {
 
                 // Hiệu ứng dựa trên máu: gạch sẽ mờ dần khi mất máu
                 // Sau nếu sửa hiệu ứng thì sẽ sửa ở đây
-                sprite.setOpacity((double) brick.getHealth() / 3);
+                // Thêm animator việc phá gạch ở đây
+//                sprite.setOpacity((double) brick.getHealth() / 3);
 
             } else {
                 sprite.setVisible(false);

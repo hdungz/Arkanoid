@@ -20,6 +20,11 @@ public class AssetsManager {
         loadImages("RightBorder", "/com/arkanoid/Border/RightBorder.png");
         loadImages("TopBorder", "/com/arkanoid/Border/TopBorder.png");
         loadImages("Basketball", "/com/arkanoid/Ball/basket-ball.png");
+        loadImages("PlayGround", "/com/arkanoid/Background/PlayGround.png");
+        loadImages("BackGround1", "/com/arkanoid/Background/BackGround1.png");
+
+        loadImages("BackGround3", "/com/arkanoid/Background/BackGround3.png");
+
     }
 
     private static void loadAnimationFrames(String key, String basePath, int frameCount) {

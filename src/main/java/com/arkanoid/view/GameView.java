@@ -1,6 +1,8 @@
 package com.arkanoid.view;
 
 import com.arkanoid.model.GameModel;
+import com.arkanoid.view.background.BackgroundRenderer;
+import com.arkanoid.view.background.PlayGroundRenderer;
 import com.arkanoid.view.ball.BallRenderer;
 import com.arkanoid.view.border.BorderRenderer;
 import com.arkanoid.view.brick.BrickRenderer;
@@ -15,6 +17,8 @@ public class GameView extends Pane{
     private final BrickRenderer brickRenderer;
     private final HUDRenderer hudRenderer;
     private final BorderRenderer borderRenderer;
+    private final PlayGroundRenderer playGroundRenderer;
+    private final BackgroundRenderer backgroundRenderer;
     public GameView(GameModel gameModel) {
         this.setStyle("-fx-background-color: black;");
         this.gameModel = gameModel;
@@ -23,7 +27,11 @@ public class GameView extends Pane{
         brickRenderer = new BrickRenderer(gameModel);
         hudRenderer = new HUDRenderer(gameModel);
         borderRenderer = new BorderRenderer(gameModel);
+        playGroundRenderer = new PlayGroundRenderer();
+        backgroundRenderer = new BackgroundRenderer();
 
+        getChildren().add(backgroundRenderer.getNode());
+        getChildren().add(playGroundRenderer.getNode());
         getChildren().add(ballRenderer.getNode());
         getChildren().add(paddleRenderer.getNode());
         getChildren().addAll(brickRenderer.getNodes());
