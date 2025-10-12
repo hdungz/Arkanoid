@@ -10,6 +10,7 @@ module com.arkanoid {
     requires java.desktop;
     requires javafx.graphics;
 //    requires com.arkanoid;
+//    requires com.arkanoid;
 
     opens com.arkanoid to javafx.fxml;
     exports com.arkanoid;

@@ -13,7 +13,7 @@ public class BackgroundRenderer {
     private final ImageView backgroundSprite;
 
     public BackgroundRenderer() {
-        Image[] frames = AssetsManager.getFrames("BackGround1");
+        Image[] frames = AssetsManager.getFrames("BackGround2");
 
         this.backgroundSprite = new ImageView(frames[0]);
 
