@@ -4,5 +4,7 @@ public enum SceneType {
     Menu,
     GamePlay,
     Option,
-    Game_Over
+    Game_Over,
+    Shop,
+    HighScore
 }

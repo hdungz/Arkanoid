@@ -48,4 +48,8 @@ public class SceneManager {
             }
         }
     }
+
+    public SceneType isCurrentScene() {
+        return currentSceneType;
+    }
 }

@@ -22,8 +22,8 @@ public class AssetsManager {
         loadImages("Basketball", "/com/arkanoid/Ball/basket-ball.png");
         loadImages("PlayGround", "/com/arkanoid/Background/PlayGround.png");
         loadImages("BackGround1", "/com/arkanoid/Background/BackGround1.png");
-
         loadImages("BackGround3", "/com/arkanoid/Background/BackGround3.png");
+        loadImages("BackGround2", "/com/arkanoid/Background/BackGround2.png");
 
     }
 
