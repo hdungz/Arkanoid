@@ -2,16 +2,40 @@ package com.arkanoid.controller;
 
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.paddle.Paddle;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class GameController {
+import java.security.KeyStore;
+
+public class GameController implements BaseController {
     private final GameModel gameModel;
     private final Paddle paddle;
+    private Scene scene;
 
     public GameController(GameModel gameModel) {
         this.gameModel = gameModel;
         this.paddle = gameModel.getPaddle();
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
+    public void onEnterScene() {
+        if (scene != null) {
+            scene.setOnKeyPressed(this::handleKeyPressed);
+            scene.setOnKeyReleased(this::handleKeyReleased);
+        }
+        System.out.println("Entering Gameplay Scene");
+    }
+
+    public void onExitScene() {
+        if (scene != null) {
+            scene.setOnKeyPressed(null);
+            scene.setOnKeyReleased(null);
+        }
+        System.out.println("Exiting Gameplay Scene");
     }
 
     public void handleKeyPressed(KeyEvent keyEvent) {
@@ -19,11 +43,9 @@ public class GameController {
 
         if(keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
             paddle.setMovingLeft(true);
-//            System.out.println("moving left");
         }
         else if(keyCode == KeyCode.RIGHT || keyCode == KeyCode.D) {
             paddle.setMovingRight(true);
-//            System.out.println("moving right");
         }
         else if(keyCode == KeyCode.SPACE) {
             gameModel.launchBall();
@@ -39,6 +61,4 @@ public class GameController {
             paddle.setMovingRight(false);
         }
     }
-
-
 }
