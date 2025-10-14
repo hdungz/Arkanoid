@@ -88,18 +88,70 @@ public class Ball {
 
 
     public void handlePaddleCollision(Paddle paddle) {
-//        System.out.println("Paddle collision");
+        double paddleLeft = paddle.getX();
+        double paddleRight = paddle.getX() + paddle.getWidth();
+        double paddleTop = paddle.getY();
+        double paddleBottom = paddle.getY() + paddle.getHeight();
+
+        double ballCenterX = x;
+        double ballCenterY = y;
+        double ballPrevY = prevY;
+        double ballPrevX = prevX;
+
+        boolean wasAbovePaddle = (ballPrevY + radius) <= paddleTop;
+
+        boolean wasLeftOfPaddle = (ballPrevX + radius) <= paddleLeft;
+        boolean wasRightOfPaddle = (ballPrevX - radius) >= paddleRight;
+
+        if (wasAbovePaddle) {
+            handleTopCollision(paddle);
+        } else if (wasLeftOfPaddle || wasRightOfPaddle) {
+            handleSideCollision(paddle, wasLeftOfPaddle);
+        } else {
+            double distanceToTop = Math.abs(ballCenterY - paddleTop);
+            double distanceToLeft = Math.abs(ballCenterX - paddleLeft);
+            double distanceToRight = Math.abs(ballCenterX - paddleRight);
+
+            if (distanceToTop < Math.min(distanceToLeft, distanceToRight)) {
+                handleTopCollision(paddle);
+            } else {
+                handleSideCollision(paddle, distanceToLeft < distanceToRight);
+            }
+        }
+    }
+
+    private void handleTopCollision(Paddle paddle) {
         velocityY = -Math.abs(velocityY);
+
+        // Calculate hit spot for angle control
         double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
         velocityX = hitSpot * hitSpotMultiplier;
 
         double currentSpeed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-//        System.out.println(currentSpeed);
         double targetSpeed = 1;
         velocityX = velocityX * targetSpeed / currentSpeed;
         velocityY = velocityY * targetSpeed / currentSpeed;
 
+        y = paddle.getY() - radius;
     }
+
+    private void handleSideCollision(Paddle paddle, boolean hitLeftSide) {
+        velocityY = Math.abs(velocityY); // Positive = falling down
+
+        if (hitLeftSide) {
+            velocityX = -Math.abs(velocityX); // Push left
+            x = paddle.getX() - radius;
+        } else {
+            velocityX = Math.abs(velocityX); // Push right
+            x = paddle.getX() + paddle.getWidth() + radius;
+        }
+
+        double currentSpeed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+        double targetSpeed = 1;
+        velocityX = velocityX * targetSpeed / currentSpeed;
+        velocityY = velocityY * targetSpeed / currentSpeed;
+    }
+
 
     public void handleBrickCollision(boolean isVerticalCollision) {
 //        System.out.println("Brick collision");
