@@ -84,7 +84,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>com.arkanoid/com.arkanoid.HelloApplication</mainClass>
+              <mainClass>com.arkanoid/com.arkanoid.main</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
