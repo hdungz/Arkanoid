@@ -15,6 +15,8 @@ public class GameView extends Pane{
     private final BrickRenderer brickRenderer;
     private final HUDRenderer hudRenderer;
     private final BorderRenderer borderRenderer;
+    // Renderer vẽ hiệu ứng nổ
+    private final com.arkanoid.view.effects.EffectRenderer effectRenderer;
     public GameView(GameModel gameModel) {
         this.setStyle("-fx-background-color: black;");
         this.gameModel = gameModel;
@@ -23,17 +25,20 @@ public class GameView extends Pane{
         brickRenderer = new BrickRenderer(gameModel);
         hudRenderer = new HUDRenderer(gameModel);
         borderRenderer = new BorderRenderer(gameModel);
+        effectRenderer = new com.arkanoid.view.effects.EffectRenderer(gameModel);
 
         getChildren().add(ballRenderer.getNode());
         getChildren().add(paddleRenderer.getNode());
         getChildren().addAll(brickRenderer.getNodes());
         getChildren().addAll(hudRenderer.getNodes());
         getChildren().addAll(borderRenderer.getNode());
+        getChildren().add(effectRenderer.getCanvas());
     }
     public void render() {
         ballRenderer.render();
         paddleRenderer.render();
         brickRenderer.render();
+        effectRenderer.render();
         hudRenderer.render();
         borderRenderer.render();
     }

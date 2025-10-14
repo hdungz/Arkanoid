@@ -8,11 +8,11 @@ public class Brick {
     private double width;
     private double height;
 
-    private boolean visible = true;
+    protected boolean visible = true;
     private int health;
     private final BrickType type;
 
-    public Brick(double x, double y, double width, double height, BrickType type, int health) {
+    public Brick(double x, double y, double width, double height, BrickType type,int health) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -45,11 +45,12 @@ public class Brick {
     public double getX() {
         return x;
     }
+    public void setX(double x) {this.x = x;}
 
     public double getY() {
         return y;
     }
-
+    public void setY(double y) {this.y = y;}
     public double getWidth() {
         return width;
     }
@@ -65,4 +66,5 @@ public class Brick {
     public int getHealth() {
         return health;
     }
+    public void setHealth(int health) {this.health = health;}
 }

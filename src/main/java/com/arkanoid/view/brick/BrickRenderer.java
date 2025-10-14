@@ -1,5 +1,6 @@
 package com.arkanoid.view.brick;
 
+import com.arkanoid.model.brick.BrickType;
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.brick.Brick;
@@ -48,13 +49,27 @@ public class BrickRenderer {
 
             if (brick.isVisible()) {
                 sprite.setVisible(true);
+                sprite.setX(brick.getX());
+                sprite.setY(brick.getY());
                 animator.update();
                 sprite.setImage(animator.getCurrentFrame());
 
                 // Hiệu ứng dựa trên máu: gạch sẽ mờ dần khi mất máu
                 // Sau nếu sửa hiệu ứng thì sẽ sửa ở đây
-                sprite.setOpacity((double) brick.getHealth() / 3);
-
+                if(brick.getType()==BrickType.SUPERDURABLE ||brick.getType()==BrickType.EXPLODING){
+                    sprite.setOpacity((double) brick.getHealth() / 3);
+                }
+                if (brick.getHealth() == 1 && brick.getType() == BrickType.NORMAL) {
+                    sprite.setImage(AssetsManager.getFrames("CrackedNormalBrickRed")[0]);
+                } else if (brick.getHealth() == 1 && brick.getType() == BrickType.DURABLE) {
+                    sprite.setImage(AssetsManager.getFrames("CrackedDurableBrick")[0]);
+                }else if (brick.getHealth() == 1 && brick.getType() == BrickType.SUPERDURABLE) {
+                    sprite.setImage(AssetsManager.getFrames("CrackedSuperDurableBrick")[0]);
+                }else if (brick.getHealth() == 1 && brick.getType() == BrickType.EXPLODING){
+                    sprite.setImage(AssetsManager.getFrames("CrackedBoomBrick")[0]);
+                }else if (brick.getHealth() == 1 && brick.getType() == BrickType.DROPPER) {
+                    sprite.setImage(AssetsManager.getFrames("CrackedSponseBrick")[0]);
+                }
             } else {
                 sprite.setVisible(false);
             }
@@ -63,15 +78,20 @@ public class BrickRenderer {
 
     private Image[] getFramesForBrick(Brick brick) {
         switch (brick.getType()) {
+            case SUPERDURABLE:
+                return AssetsManager.getFrames("SuperDurableBrick");
             case NORMAL:
-                return AssetsManager.getFrames("Brick1_4");
-//            case DURABLE:
-//                return AssetsManager.getFrames("brick_durable");
-
-            // case EXPLODING:
-            //     return AssetManager.getFrames("brick_exploding");
+                return AssetsManager.getFrames("NormalBrickRed");
+            case DURABLE:
+                 return AssetsManager.getFrames("DurableBrick");
+            case EXPLODING:
+                 return AssetsManager.getFrames("BoomBrick");
+            case MOVING:
+                return AssetsManager.getFrames("MovingBrick");
+            case DROPPER:
+                return AssetsManager.getFrames("SponseBrick");
             default:
-                return AssetsManager.getFrames("Brick1_4");
+                return AssetsManager.getFrames("NormalBrickRed");
         }
     }
 
