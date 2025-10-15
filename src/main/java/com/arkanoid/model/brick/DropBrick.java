@@ -3,7 +3,7 @@ import com.arkanoid.model.GameModel;
 public class DropBrick extends Brick {
 
     public DropBrick(double x, double y, double width, double height, BrickType type) {
-        // Brick thả coin có 2 máu
+
         super(x, y, width, height, type, 2);
     }
     @Override
