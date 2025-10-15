@@ -14,7 +14,6 @@ public class GameModel {
     private static GameModel instance;
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
-    // Hiệu ứng tạm thời như nổ
     private final ArrayList<com.arkanoid.effects.ExplosionEffect> effects = new ArrayList<>();
     Paddle paddle;
     Ball ball;
@@ -50,10 +49,11 @@ public class GameModel {
                 //bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
                 if (i == 0) {
                     bricks.add(new DropBrick(x, y, brickWidth, brickHeight, BrickType.DROPPER));
-                } else if (i == 1) {
-                    bricks.add(new MoveBrick(x, y, brickWidth, brickHeight, BrickType.MOVING));
+                } else if (i == 1 || i == 2) {
+                    bricks.add(new SuperDurableBrick(x, y, brickWidth, brickHeight, BrickType.SUPERDURABLE));
                 } else {
                     bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
+
                 }
             }
             }
@@ -71,7 +71,6 @@ public class GameModel {
         ball.move(deltaTime);
         updateBricks(deltaTime);
         checkCollisions();
-        // Cập nhật effects
         updateEffects();
     }
 
@@ -135,21 +134,18 @@ public class GameModel {
     }
     private void updateBricks(double deltaTime) {
         for (Brick brick : bricks) {
-            // Chỉ cập nhật các gạch di chuyển
             if (brick instanceof MoveBrick) {
                 ((MoveBrick) brick).update(deltaTime);
             }
         }
     }
     private void updateEffects() {
-        // Duyệt và cập nhật, loại bỏ effect đã kết thúc
         effects.removeIf(effect -> {
             effect.update();
             return effect.isFinished();
         });
     }
 
-    // Được gọi khi có vụ nổ tại toạ độ (centerX, centerY)
     public void onExplosion(double centerX, double centerY) {
         effects.add(new com.arkanoid.effects.ExplosionEffect(centerX, centerY,50));
     }
@@ -165,9 +161,8 @@ public class GameModel {
         }
     }
     public void spawnCoin(double x, double y) {
-        // 🚧 TODO: Implement Coin/PowerUp model và logic spawn tại đây
-        System.out.println("💰 DropCoinBrick: Coin/PowerUp spawned at (" + x + ", " + y + ")");
-        // Example: effects.add(new Coin(x, y));
+//        System.out.println("💰 DropCoinBrick: Coin/PowerUp spawned at (" + x + ", " + y + ")");
+//         Example: effects.add(new Coin(x, y));
     }
 
     //Getters and Setters
@@ -231,7 +226,6 @@ public class GameModel {
         this.lastWallCollision = lastWallCollision;
     }
     public void onExplosion(double centerX, double centerY, double size) {
-        // SỬA: Thêm tham số 'size' vào constructor
         effects.add(new com.arkanoid.effects.ExplosionEffect(centerX, centerY, size));
     }
 }

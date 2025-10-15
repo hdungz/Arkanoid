@@ -11,7 +11,6 @@ public class DropBrick extends Brick {
         setHealth(getHealth() - 1);
         if (getHealth() <= 0) {
             setVisible(false);
-            // ⚠️ THẢ COIN KHI BỊ PHÁ
             dropCoin();
             return true;
         }
@@ -22,7 +21,6 @@ public class DropBrick extends Brick {
         double centerX = getX() + getWidth() / 2;
         double centerY = getY() + getHeight() / 2;
 
-        // Gọi phương thức spawnCoin mới trong GameModel
         GameModel.getInstance().spawnCoin(centerX, centerY);
     }
 }
