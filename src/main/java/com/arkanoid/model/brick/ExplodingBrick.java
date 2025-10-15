@@ -1,13 +1,15 @@
 package com.arkanoid.model.brick;
 
 import com.arkanoid.model.GameModel;
-
+import javafx.scene.media.AudioClip;
 import java.util.ArrayList;
 
 public class ExplodingBrick extends Brick {
     protected final GameModel gameModel;
     private double explosionRadius = 50.0;
     private boolean exploding = false;
+    private boolean firstHit = true; // ✅ Chỉ kêu va chạm lần đầu
+
     public ExplodingBrick(double x, double y, double width, double height, BrickType type) {
         super(x, y, width, height, type, 2);
         this.gameModel = GameModel.getInstance();
@@ -15,9 +17,14 @@ public class ExplodingBrick extends Brick {
 
     @Override
     public boolean takeDamage() {
+        // ✅ Phát tiếng va chạm lần đầu tiên
+        if (firstHit) {
+            playHitSound();
+            firstHit = false;
+        }
+
         setHealth(getHealth() - 1);
         if (getHealth() <= 0) {
-
             setExploding(true);
             setVisible(false);
             explode();
@@ -28,12 +35,10 @@ public class ExplodingBrick extends Brick {
     }
 
     public void explode() {
-
+        playExplosionSound();
 
         createExplosionEffect();
-
         damageNearbyBricks();
-
         notifyExplosion();
     }
 
@@ -41,21 +46,22 @@ public class ExplodingBrick extends Brick {
         double centerX = getX() + getWidth() / 2;
         double centerY = getY() + getHeight() / 2;
 
-        double explosionSize = explosionRadius*4;
+        double explosionSize = explosionRadius * 4;
         GameModel.getInstance().onExplosion(centerX, centerY, explosionSize);
     }
 
     private void damageNearbyBricks() {
         ArrayList<Brick> bricks = GameModel.getInstance().getBricks();
-        System.out.println("🔍 EXPLOSION DEBUG:");
+        System.out.println("EXPLOSION DEBUG:");
         System.out.println("  - Total bricks: " + bricks.size());
         System.out.println("  - Explosion center: (" + (getX() + getWidth()/2) + "," + (getY() + getHeight()/2) + ")");
         System.out.println("  - Explosion radius: " + explosionRadius);
+
         for (Brick brick : bricks) {
             if (brick != this && brick.isVisible() && isInExplosionRange(brick)) {
                 System.out.println(" Nổ trúng gạch: " + brick.getType() +
                         " tại (" + brick.getX() + "," + brick.getY() + ")");
-                if(brick instanceof SuperDurableBrick) continue;
+                if (brick instanceof SuperDurableBrick) continue;
                 else brick.setHealth(brick.getHealth() - 2);
                 if (brick.getHealth() <= 0) {
                     brick.setVisible(false);
@@ -67,14 +73,16 @@ public class ExplodingBrick extends Brick {
         }
     }
 
-    private void notifyExplosion() {
-    }
+    private void notifyExplosion() {}
+
     public boolean getExploding() {
         return exploding;
     }
+
     public void setExploding(boolean exploding) {
         this.exploding = exploding;
     }
+
     public double getExplosionRadius() {
         return explosionRadius;
     }
@@ -95,5 +103,27 @@ public class ExplodingBrick extends Brick {
         );
 
         return distance <= explosionRadius;
+    }
+
+
+    private void playExplosionSound() {
+        try {
+            String soundPath = getClass().getResource("/com/arkanoid/music/explosion-47821.mp3").toExternalForm();
+            AudioClip explosionSound = new AudioClip(soundPath);
+            explosionSound.play();
+        } catch (Exception e) {
+            System.out.println("Không thể phát âm thanh vụ nổ: " + e.getMessage());
+        }
+    }
+
+
+    private void playHitSound() {
+        try {
+            String hitPath = getClass().getResource("/com/arkanoid/music/animated-cartoon-explosion-impact-352744.mp3").toExternalForm();
+            AudioClip hitSound = new AudioClip(hitPath);
+            hitSound.play();
+        } catch (Exception e) {
+            System.out.println("Không thể phát âm thanh va chạm: " + e.getMessage());
+        }
     }
 }
