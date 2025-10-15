@@ -19,7 +19,7 @@ public class MenuController implements BaseController {
             SceneManager.getInstance().switchTo(SceneType.GamePlay);
         });
 
-        menuView.getStoreButton().setOnAction(e -> {
+       /* menuView.getStoreButton().setOnAction(e -> {
             System.out.println("Store button clicked");
         });
 
@@ -30,7 +30,7 @@ public class MenuController implements BaseController {
         menuView.getExitButton().setOnAction(e -> {
             System.out.println("Exit button clicked");
             Platform.exit();
-        });
+        });*/
     }
 
     @Override
