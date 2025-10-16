@@ -1,7 +1,10 @@
 package com.arkanoid.model.paddle;
 import com.arkanoid.CONSTANT;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Rectangle2D;
-
+import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import static com.arkanoid.CONSTANT.*;
 
 public class Paddle {
@@ -11,7 +14,7 @@ public class Paddle {
     private double speed;
     private double width, height;
     private double x, y;
-
+    private boolean glowing = false;
     public boolean isMovingLeft = false;
     public boolean isMovingRight = false;
 
@@ -44,7 +47,22 @@ public class Paddle {
         if(x + speed + this.width <= GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH) x += speed * deltaTime * 144 ;
         else x = GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH - this.width;
     }
+    public void onBallHit() {
+        playHitSound();
 
+    }
+
+    private void playHitSound() {
+        try {
+            String soundPath = getClass().getResource("/com/arkanoid/music/waterdrop-on-metal-406648.mp3").toExternalForm();
+            AudioClip hitSound = new AudioClip(soundPath);
+            hitSound.play();
+        } catch (Exception e) {
+            System.out.println("Không thể phát âm thanh paddle: " + e.getMessage());
+        }
+    }
+
+    // ✨ Hiệu ứng sáng nhẹ
     public Rectangle2D getBoundary() {
         return new Rectangle2D(x, y, width, height);
     }

@@ -78,8 +78,10 @@ public class GameModel {
         // Va chạm với tường
         this.lastWallCollision = WallCollisionSide.NONE;
         ball.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X, CONSTANT.BORDER_WIDTH, this);
+
         // Va chạm với paddle
         if (ball.getBoundary().intersects(paddle.getBoundary())) {
+            paddle.onBallHit();
             ball.handlePaddleCollision(paddle);
         }
         // Bóng rơi ra ngoài
@@ -99,6 +101,7 @@ public class GameModel {
             Brick brick = iterator.next();
             if (!brick.isVisible()) continue;
             if (brick.getBoundary().intersects(ball.getBoundary())) {
+                brick.playHitSound();
                 System.out.println("collision with brick");
                 if(brick.getHealth() == 1) score += 10;
                 if(brick.getHealth() == 2) score += 20;
