@@ -15,7 +15,6 @@ public class EffectRenderer {
 
     public EffectRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
-        // ⚠️ Đặt kích thước Canvas bằng kích thước Game Area
         this.canvas = new Canvas(CONSTANT.WINDOW_WIDTH, CONSTANT.WINDOW_HEIGHT);
         this.gc = canvas.getGraphicsContext2D();
     }
@@ -25,11 +24,8 @@ public class EffectRenderer {
     }
 
     public void render() {
-        // 1. XÓA BẢNG VẼ CŨ (Quan trọng để các frame nổ không bị chồng lên nhau)
-        // Dùng CLEAR để chỉ xóa khu vực vẽ của hiệu ứng (mặc định là trong suốt)
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // 2. DUYỆT VÀ VẼ TẤT CẢ CÁC EFFECT ĐANG HOẠT ĐỘNG
         for (ExplosionEffect effect : gameModel.getEffects()) {
             effect.render(gc);
         }

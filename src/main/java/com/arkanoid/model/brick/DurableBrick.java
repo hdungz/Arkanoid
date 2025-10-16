@@ -10,7 +10,7 @@ public class DurableBrick extends Brick {
     public boolean takeDamage() {
         long now = System.nanoTime();
         if (now - LastHit < HIT_COOLDOWN) {
-            return false; // bỏ qua nếu vừa mới bị đánh
+            return false;
         }
         LastHit = now;
         setHealth(getHealth()-1);

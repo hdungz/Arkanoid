@@ -3,8 +3,11 @@ import com.arkanoid.CONSTANT;
 import com.arkanoid.model.ball.Ball;
 import com.arkanoid.model.brick.*;
 import com.arkanoid.model.paddle.Paddle;
+
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.io.*;
 import static com.arkanoid.CONSTANT.*;
 
 public class GameModel {
@@ -14,7 +17,6 @@ public class GameModel {
     private static GameModel instance;
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
-    // Hiệu ứng tạm thời như nổ
     private final ArrayList<com.arkanoid.effects.ExplosionEffect> effects = new ArrayList<>();
     Paddle paddle;
     Ball ball;
@@ -33,31 +35,63 @@ public class GameModel {
         paddle.resetPosition();
         ball.resetPosition(paddle);
         gameState = GameState.Ready;
-        loadLevel(1);
+        loadLevel(20);
     }
 
     private void loadLevel(int level) {
         bricks.clear();
-        int rows = 5;
-        int cols = 10;
-        double brickWidth = (CONSTANT.GAME_AREA_WIDTH - (cols + 1) * 5.0) / cols;
-        double brickHeight = 20;
+        String path = String.format("/com/arkanoid/Levels/level%d.txt", level);
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                double x = CONSTANT.GAME_AREA_X + j * (brickWidth + 5) + 5;
-                double y = CONSTANT.BORDER_WIDTH + i * (brickHeight + 5) + 5;
-                //bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
-                if (i == 0) {
-                    bricks.add(new DropBrick(x, y, brickWidth, brickHeight, BrickType.DROPPER));
-                } else if (i == 1) {
-                    bricks.add(new MoveBrick(x, y, brickWidth, brickHeight, BrickType.MOVING));
-                } else {
-                    bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)));
+            if (br == null) {
+                System.out.println("Không tìm thấy file trong resources");
+                return;
+            }
+            String line1=br.readLine();
+            String line2=br.readLine();
+            if (line1 == null||line2==null) {
+                System.out.println("File rỗng hoặc sai định dạng");
+                return;
+            }
+                int rows = (Integer.parseInt(line1));
+                int cols = (Integer.parseInt(line1));
+                double brickWidth = (CONSTANT.GAME_AREA_WIDTH - (cols + 1) * 5.0) / cols;
+                double brickHeight = 20;
+
+                for (int i = 0; i < rows; i++) {
+                    String line = br.readLine();
+                    if (line == null) break;
+                    for (int j = 0; j < cols; j++) {
+                        double x = CONSTANT.GAME_AREA_X + j * (brickWidth + 5) + 5;
+                        double y = CONSTANT.BORDER_WIDTH + i * (brickHeight + 5) + 5;
+                        //bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
+                        if (line.charAt(j) == '1') {
+                            bricks.add(new DropBrick(x, y, brickWidth, brickHeight, BrickType.DROPPER));
+                        } else if (line.charAt(j) == '2') {
+                            bricks.add(new SuperDurableBrick(x, y, brickWidth, brickHeight, BrickType.SUPERDURABLE));
+                        } else if (line.charAt(j) == '3') {
+                            bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
+                        }else if (line.charAt(j) == '4'){
+                            bricks.add(new DurableBrick(x, y, brickWidth, brickHeight, BrickType.DURABLE));
+                        } else if (line.charAt(j) == '5') {
+                            bricks.add(new MoveBrick(x, y, brickWidth, brickHeight, BrickType.MOVING));
+                        }else if  (line.charAt(j) == '6') {
+                            bricks.add(new Brick(x,y,brickWidth,brickHeight,BrickType.NORMAL,1));
+
+                        }else{
+                            continue;
+                        }
+                    }
                 }
-            }
-            }
+                br.close();
         }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void update(double deltaTime) {
         if(gameState != GameState.Running) {
@@ -71,7 +105,6 @@ public class GameModel {
         ball.move(deltaTime);
         updateBricks(deltaTime);
         checkCollisions();
-        // Cập nhật effects
         updateEffects();
     }
 
@@ -135,21 +168,18 @@ public class GameModel {
     }
     private void updateBricks(double deltaTime) {
         for (Brick brick : bricks) {
-            // Chỉ cập nhật các gạch di chuyển
             if (brick instanceof MoveBrick) {
                 ((MoveBrick) brick).update(deltaTime);
             }
         }
     }
     private void updateEffects() {
-        // Duyệt và cập nhật, loại bỏ effect đã kết thúc
         effects.removeIf(effect -> {
             effect.update();
             return effect.isFinished();
         });
     }
 
-    // Được gọi khi có vụ nổ tại toạ độ (centerX, centerY)
     public void onExplosion(double centerX, double centerY) {
         effects.add(new com.arkanoid.effects.ExplosionEffect(centerX, centerY,50));
     }
@@ -165,12 +195,7 @@ public class GameModel {
         }
     }
     public void spawnCoin(double x, double y) {
-        // 🚧 TODO: Implement Coin/PowerUp model và logic spawn tại đây
-        System.out.println("💰 DropCoinBrick: Coin/PowerUp spawned at (" + x + ", " + y + ")");
-        // Example: effects.add(new Coin(x, y));
     }
-
-    //Getters and Setters
     public ArrayList<Brick> getBricks() {
         return bricks;
     }
@@ -231,7 +256,6 @@ public class GameModel {
         this.lastWallCollision = lastWallCollision;
     }
     public void onExplosion(double centerX, double centerY, double size) {
-        // SỬA: Thêm tham số 'size' vào constructor
         effects.add(new com.arkanoid.effects.ExplosionEffect(centerX, centerY, size));
     }
 }

@@ -54,14 +54,11 @@ public class BrickRenderer {
                 animator.update();
                 sprite.setImage(animator.getCurrentFrame());
 
-                // Hiệu ứng dựa trên máu: gạch sẽ mờ dần khi mất máu
                 // Sau nếu sửa hiệu ứng thì sẽ sửa ở đây
                 if(brick.getType()==BrickType.SUPERDURABLE ||brick.getType()==BrickType.EXPLODING){
-                    sprite.setOpacity((double) brick.getHealth() / 3);
+//                    sprite.setOpacity((double) brick.getHealth() / 3);
                 }
-                if (brick.getHealth() == 1 && brick.getType() == BrickType.NORMAL) {
-                    sprite.setImage(AssetsManager.getFrames("CrackedNormalBrickRed")[0]);
-                } else if (brick.getHealth() == 1 && brick.getType() == BrickType.DURABLE) {
+                if (brick.getHealth() == 1 && brick.getType() == BrickType.DURABLE) {
                     sprite.setImage(AssetsManager.getFrames("CrackedDurableBrick")[0]);
                 }else if (brick.getHealth() == 1 && brick.getType() == BrickType.SUPERDURABLE) {
                     sprite.setImage(AssetsManager.getFrames("CrackedSuperDurableBrick")[0]);
