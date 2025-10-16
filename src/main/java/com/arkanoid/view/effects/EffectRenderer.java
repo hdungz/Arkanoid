@@ -2,7 +2,7 @@
 package com.arkanoid.view.effects;
 
 import com.arkanoid.model.GameModel;
-import com.arkanoid.effects.ExplosionEffect;
+import com.arkanoid.view.Effect.ExplosionEffect;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
