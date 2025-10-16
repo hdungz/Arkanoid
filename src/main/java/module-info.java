@@ -10,6 +10,7 @@ module com.arkanoid {
     requires jdk.compiler;
     requires java.desktop;
     requires javafx.graphics;
+    requires javafx.base;
 //    requires com.arkanoid;
 //    requires com.arkanoid;
 

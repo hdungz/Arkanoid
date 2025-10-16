@@ -8,7 +8,6 @@ public class ExplodingBrick extends Brick {
     protected final GameModel gameModel;
     private double explosionRadius = 50.0;
     private boolean exploding = false;
-    private boolean firstHit = true; // ✅ Chỉ kêu va chạm lần đầu
 
     public ExplodingBrick(double x, double y, double width, double height, BrickType type) {
         super(x, y, width, height, type, 2);
@@ -17,12 +16,6 @@ public class ExplodingBrick extends Brick {
 
     @Override
     public boolean takeDamage() {
-        // ✅ Phát tiếng va chạm lần đầu tiên
-        if (firstHit) {
-            playHitSound();
-            firstHit = false;
-        }
-
         setHealth(getHealth() - 1);
         if (getHealth() <= 0) {
             setExploding(true);
@@ -36,7 +29,6 @@ public class ExplodingBrick extends Brick {
 
     public void explode() {
         playExplosionSound();
-
         createExplosionEffect();
         damageNearbyBricks();
         notifyExplosion();
@@ -117,13 +109,5 @@ public class ExplodingBrick extends Brick {
     }
 
 
-    private void playHitSound() {
-        try {
-            String hitPath = getClass().getResource("/com/arkanoid/music/animated-cartoon-explosion-impact-352744.mp3").toExternalForm();
-            AudioClip hitSound = new AudioClip(hitPath);
-            hitSound.play();
-        } catch (Exception e) {
-            System.out.println("Không thể phát âm thanh va chạm: " + e.getMessage());
-        }
-    }
+
 }

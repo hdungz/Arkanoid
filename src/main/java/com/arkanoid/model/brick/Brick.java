@@ -1,6 +1,7 @@
 package com.arkanoid.model.brick;
 
 import javafx.geometry.Rectangle2D;
+import javafx.scene.media.AudioClip;
 
 public class Brick {
     private double x;
@@ -28,6 +29,15 @@ public class Brick {
             return true;
         } else {
             return false;
+        }
+    }
+    public void playHitSound() {
+        try {
+            String hitPath = getClass().getResource("/com/arkanoid/music/bubble-pop-06-351337.mp3").toExternalForm();
+            AudioClip hitSound = new AudioClip(hitPath);
+            hitSound.play();
+        } catch (Exception e) {
+            System.out.println("Không thể phát âm thanh va chạm: " + e.getMessage());
         }
     }
 
