@@ -21,7 +21,7 @@ public class PlayGroundRenderer {
         this.playGroundSprite.setY(BALL_RADIUS);
         this.playGroundSprite.setFitWidth(GAME_AREA_WIDTH);
         this.playGroundSprite.setFitHeight(WINDOW_HEIGHT);
-        this.playGroundSprite.setOpacity(0.8);
+        this.playGroundSprite.setOpacity(0.95);
     }
 
     public Node getNode() {

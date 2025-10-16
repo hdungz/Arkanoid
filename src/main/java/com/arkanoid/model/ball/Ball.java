@@ -75,7 +75,9 @@ public class Ball {
         double angle = Math.atan2(Math.abs(velocityY), Math.abs(velocityX));
 
         double speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-
+        //Chuyển từ tọa độ cực sang decac
+        //r * cos
+        //r * sin
         if (angle < minAngleRad) {
             angle = minAngleRad;
             velocityX = Math.signum(velocityX) * speed * Math.cos(angle);
@@ -125,7 +127,6 @@ public class Ball {
     private void handleTopCollision(Paddle paddle) {
         velocityY = -Math.abs(velocityY);
 
-        // Calculate hit spot for angle control
         double hitSpot = (x - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
         velocityX = hitSpot * hitSpotMultiplier;
 
@@ -138,13 +139,12 @@ public class Ball {
     }
 
     private void handleSideCollision(Paddle paddle, boolean hitLeftSide) {
-        velocityY = Math.abs(velocityY); // Positive = falling down
-
+        velocityY = Math.abs(velocityY);
         if (hitLeftSide) {
-            velocityX = -Math.abs(velocityX); // Push left
+            velocityX = -Math.abs(velocityX);
             x = paddle.getX() - radius;
         } else {
-            velocityX = Math.abs(velocityX); // Push right
+            velocityX = Math.abs(velocityX);
             x = paddle.getX() + paddle.getWidth() + radius;
         }
 
