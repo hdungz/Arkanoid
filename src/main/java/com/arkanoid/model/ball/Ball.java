@@ -16,7 +16,7 @@ public class Ball {
      private double prevX;
      private double damage;
      private double hitSpotMultiplier;
-
+     private Paddle paddle=new Paddle();
 
      public Ball() {
          this.radius = BALL_RADIUS;
@@ -50,19 +50,21 @@ public class Ball {
             velocityX = -velocityX;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(GameModel.WallCollisionSide.LEFT);
+            paddle.onBallHit();
         }
         if (x + radius > rightWall) {
             x = rightWall - radius;
             velocityX = -velocityX;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(GameModel.WallCollisionSide.RIGHT);
+            paddle.onBallHit();
         }
         if (y - radius < topWall) {
             y = topWall + radius;
             velocityY = -velocityY;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(GameModel.WallCollisionSide.TOP);
-
+            paddle.onBallHit();
         }
     }
 
