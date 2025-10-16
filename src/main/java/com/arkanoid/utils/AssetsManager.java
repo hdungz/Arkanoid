@@ -1,15 +1,18 @@
 package com.arkanoid.utils;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class AssetsManager {
-    private static final Map<String, Image[]> assets = new HashMap<>();
+    private static final Map<String, Object> assets = new HashMap<>();
 
     public static void loadAssets() {
         loadImages("NormalBrickRed","/com/arkanoid/Brick/07-Breakout-Tiles.png");
@@ -34,11 +37,16 @@ public class AssetsManager {
         loadImages("RightBorder", "/com/arkanoid/Border/RightBorder.png");
         loadImages("TopBorder", "/com/arkanoid/Border/TopBorder.png");
         loadImages("Basketball", "/com/arkanoid/Ball/basket-ball.png");
-        loadImages("BackGround2","/com/arkanoid/Background/BackGround2.png");
+        loadImages("BackGround1","/com/arkanoid/Background/BackGround2.png");
         loadImages("PlayGround","/com/arkanoid/Background/PlayGround.png");
-        // Fixed path: Effect.explosion instead of Effect/explosion
         loadAnimationFrames("Explosion","/com/arkanoid/Effect/explosion",63);
-;
+        loadImages("BackGround2", "/com/arkanoid/Background/gradient-cyber-futuristic-background_23-2149117429.jpg");
+        loadImages("BackGround3", "/com/arkanoid/Background/GIF_4FPS/space1_4-frames.gif");
+        loadVideo("Vid1", "/com/arkanoid/Background/Video/Vid1.mp4");
+        loadVideo("Vid2", "/com/arkanoid/Background/Video/Vid2.mp4");
+        loadVideo("Vid3", "/com/arkanoid/Background/Video/Vid3.mp4");
+
+        loadImages("GIF1", "/com/arkanoid/Background/GIF_4FPS/Glow Dark Matter GIF by ESAHubble Space Telescope.gif");
     }
 
     private static void loadAnimationFrames(String key, String basePath, int frameCount) {
@@ -70,7 +78,6 @@ public class AssetsManager {
             InputStream stream = AssetsManager.class.getResourceAsStream(path);
             if (stream == null) {
                 System.err.println("Cảnh báo: Không thể tìm thấy tài nguyên: " + path);
-                // Put empty array instead of crashing
                 assets.put(key, new Image[0]);
                 return;
             }
@@ -80,12 +87,35 @@ public class AssetsManager {
         } catch (Exception e) {
             System.err.println("Lỗi khi tải sprite: " + path);
             e.printStackTrace();
-            // Put empty array instead of crashing
             assets.put(key, new Image[0]);
         }
     }
 
-    public static Image[] getFrames(String key) {
-        return assets.getOrDefault(key, new Image[0]);
+    public static void loadVideo(String key, String path) {
+        try {
+            URL url = AssetsManager.class.getResource(path);
+            if (url == null) {
+                throw new IllegalArgumentException("Không thể tìm thấy tài nguyên video: " + path);
+            }
+            Media media = new Media(url.toExternalForm());
+            assets.put(key, media);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tải video: " + path);
+            e.printStackTrace();
+        }
     }
+
+    public static Image[] getFrames(String key) {
+        return (Image[]) assets.getOrDefault(key, new Image[0]);
+    }
+
+    public static MediaPlayer getMediaPlayer(String key) {
+        Object asset = assets.get(key);
+        if (asset instanceof Media) {
+            return new MediaPlayer((Media) asset);
+        }
+        return null;
+    }
+
+
 }

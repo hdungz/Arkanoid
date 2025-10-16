@@ -75,16 +75,15 @@ public class BallRenderer {
             group.getChildren().remove(old);
         }
 
-        // Giảm độ mờ của vệt sáng dần theo thời gian
         for (int i = 0; i < trailList.size(); i++) {
             Circle c = trailList.get(i);
-            c.setOpacity(Math.max(0, 0.4 - (i * 0.008)));// độ trong suốt vệt sang
-            c.setRadius(ball.getRadius() * (0.8 - i * 0.01));//kích thước vệt sáng
+            c.setOpacity(Math.max(0, 0.4 - (i * 0.008)));
+            c.setRadius(ball.getRadius() * (0.8 - i * 0.01));
             double ratio = (double) i / trailList.size();
             Color color = Color.rgb(
-                    (int) (255 - 100 * ratio), // Giảm đỏ nhẹ khi xa bóng
-                    (int) (150 - 100 * ratio), // Giảm xanh → tạo cảm giác cam
-                    0,                          // Đỏ vàng cam tone lửa
+                    (int) (255 - 100 * ratio),
+                    (int) (150 - 100 * ratio),
+                    0,
                     1.0
             );
             c.setFill(color);

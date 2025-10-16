@@ -11,6 +11,7 @@ module com.arkanoid {
     requires java.desktop;
     requires javafx.graphics;
     requires javafx.base;
+    requires javafx.media;
 //    requires com.arkanoid;
 //    requires com.arkanoid;
 
