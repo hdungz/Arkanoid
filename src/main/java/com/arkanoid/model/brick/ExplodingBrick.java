@@ -116,7 +116,7 @@ public class ExplodingBrick extends Brick {
     }
 
 
-    private void playHitSound() {
+    public void playHitSound() {
         try {
             String hitPath = getClass().getResource("/com/arkanoid/music/animated-cartoon-explosion-impact-352744.mp3").toExternalForm();
             AudioClip hitSound = new AudioClip(hitPath);

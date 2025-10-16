@@ -43,8 +43,8 @@ public class AssetsManager {
         loadImages("BackGround2", "/com/arkanoid/Background/gradient-cyber-futuristic-background_23-2149117429.jpg");
         loadImages("BackGround3", "/com/arkanoid/Background/GIF_4FPS/space1_4-frames.gif");
         loadVideo("Vid1", "/com/arkanoid/Background/Video/Vid1.mp4");
-        loadVideo("Vid2", "/com/arkanoid/Background/Video/Vid2.mp4");
-        loadVideo("Vid3", "/com/arkanoid/Background/Video/Vid3.mp4");
+//        loadVideo("Vid2", "/com/arkanoid/Background/Video/Vid2.mp4");
+//        loadVideo("Vid3", "/com/arkanoid/Background/Video/Vid3.mp4");
 
         loadImages("GIF1", "/com/arkanoid/Background/GIF_4FPS/Glow Dark Matter GIF by ESAHubble Space Telescope.gif");
     }
