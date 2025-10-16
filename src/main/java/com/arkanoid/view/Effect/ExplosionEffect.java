@@ -1,4 +1,4 @@
-package com.arkanoid.effects;
+package com.arkanoid.view.Effect;
 
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.utils.SpriteAnimator;
