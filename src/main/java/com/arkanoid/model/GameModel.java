@@ -11,15 +11,18 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import static com.arkanoid.CONSTANT.*;
 import com.arkanoid.view.Effect.ExplosionEffect;
+import com.arkanoid.view.GameView;
 import javafx.scene.canvas.GraphicsContext;
 
 public class GameModel {
     public enum WallCollisionSide { NONE, TOP, LEFT, RIGHT }
-
+    public int checkpierce = 0;
+    private double pierceTimer = 0;
     private static GameModel instance;
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
     ArrayList<Item> items = new ArrayList<>();
+
 
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
     Paddle paddle;
@@ -85,6 +88,13 @@ public class GameModel {
     }
 
     public void update(double deltaTime) {
+        if (checkpierce == 1) {
+            pierceTimer -= deltaTime;
+            if (pierceTimer <= 0) {
+                checkpierce = 0;
+                pierceTimer = 0;
+            }
+        }
         if (gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
                 paddle.move(deltaTime);
@@ -146,13 +156,17 @@ public class GameModel {
                 else if (ballPrevY > brickBottom + ballRadius) isVerticalCollision = true;
                 else isVerticalCollision = false;
 
-                ball.handleBrickCollision(isVerticalCollision);
-                if (isVerticalCollision) {
-                    ball.setY(ball.getVelocityY() < 0 ? brickTop - ballRadius : brickBottom + ballRadius);
-                    break;
-                } else {
-                    ball.setX(ball.getVelocityX() < 0 ? brick.getX() - ballRadius : brick.getX() + brick.getWidth() + ballRadius);
-                    break;
+
+                if(checkpierce == 0) {
+                    ball.handleBrickCollision(isVerticalCollision);
+
+                    if (isVerticalCollision) {
+                        ball.setY(ball.getVelocityY() < 0 ? brickTop - ballRadius : brickBottom + ballRadius);
+                        break;
+                    } else {
+                        ball.setX(ball.getVelocityX() < 0 ? brick.getX() - ballRadius : brick.getX() + brick.getWidth() + ballRadius);
+                        break;
+                    }
                 }
             }
         }
@@ -168,6 +182,10 @@ public class GameModel {
             }
             if (vatPham.getBoundary().intersects(paddle.getBoundary())) {
                 score += 50;
+                checkpierce = 1;
+                pierceTimer = 2.5;
+                System.out.println(checkpierce);
+
                 vatPham.setHienThi(false);
             }
         }
@@ -207,6 +225,7 @@ public class GameModel {
     public Ball getBall() { return ball; }
     public int getScore() { return score; }
     public int getLives() { return lives; }
+    public int getCheckpierce() { return checkpierce; }
     public GameState getGameState() { return gameState; }
     public WallCollisionSide getLastWallCollision() { return lastWallCollision; }
     public void setLastWallCollision(WallCollisionSide side) { this.lastWallCollision = side; }
@@ -216,6 +235,7 @@ public class GameModel {
     public void onExplosion(double centerX, double centerY, double size) {
         effects.add(new ExplosionEffect(centerX, centerY, size));
     }
+
 
     // Sinh vật phẩm (coin / hộp quà)
     public void spawnCoin(double x, double y) {

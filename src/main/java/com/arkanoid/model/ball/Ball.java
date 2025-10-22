@@ -18,12 +18,27 @@ public class Ball {
     private double damage;
     private double hitSpotMultiplier;
     private Paddle paddle = new Paddle();
-
+    private int PierceBall = GameModel.getInstance().getCheckpierce(); ;
+    // ✅ Constructor mặc định (giữ nguyên)
     public Ball() {
         this.radius = BALL_RADIUS;
         this.speed = INITIAL_SPEED;
         this.damage = BRICK_DAMAGE;
         this.hitSpotMultiplier = HITSPOT_MULTIPLIER;
+    }
+
+    // ✅ Constructor có tham số (THÊM MỚI)
+    public Ball(double x, double y, double radius, double velocityX, double velocityY) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+        this.speed = INITIAL_SPEED;
+        this.damage = BRICK_DAMAGE;
+        this.hitSpotMultiplier = HITSPOT_MULTIPLIER;
+        this.isLaunched = true;
+        System.out.println(PierceBall);
     }
 
     public void resetPosition(Paddle paddle) {
@@ -180,4 +195,6 @@ public class Ball {
     public void setDamage(double damage) { this.damage = damage; }
     public double getHitSpotMultiplier() { return hitSpotMultiplier; }
     public void setHitSpotMultiplier(double hitSpotMultiplier) { this.hitSpotMultiplier = hitSpotMultiplier; }
+
+    public int getPierceBall() {  return PierceBall; }
 }

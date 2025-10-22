@@ -2,9 +2,10 @@ package com.arkanoid.view;
 
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.Item;
+import com.arkanoid.model.ball.Ball;
 import com.arkanoid.view.background.BackgroundRenderer;
 import com.arkanoid.view.background.PlayGroundRenderer;
-import com.arkanoid.view.ball.BallRenderer;
+import com.arkanoid.view.ball.MultiBallRenderer;
 import com.arkanoid.view.border.BorderRenderer;
 import com.arkanoid.view.brick.BrickRenderer;
 import com.arkanoid.view.hud.HUDRenderer;
@@ -16,7 +17,7 @@ import javafx.scene.layout.Pane;
 
 public class GameView extends Pane {
     private final GameModel gameModel;
-    private final BallRenderer ballRenderer;
+    private final MultiBallRenderer multiBallRenderer;
     private final PaddleRenderer paddleRenderer;
     private final BrickRenderer brickRenderer;
     private final HUDRenderer hudRenderer;
@@ -25,7 +26,7 @@ public class GameView extends Pane {
     private final BackgroundRenderer backgroundRenderer;
     private final EffectRenderer effectRenderer;
 
-    // ✅ Canvas riêng để vẽ Item
+
     private final Canvas itemCanvas;
     private final GraphicsContext gcItem;
 
@@ -33,7 +34,8 @@ public class GameView extends Pane {
         this.setStyle("-fx-background-color: black;");
         this.gameModel = gameModel;
 
-        ballRenderer = new BallRenderer(gameModel);
+
+        multiBallRenderer = new MultiBallRenderer(gameModel);
         paddleRenderer = new PaddleRenderer(gameModel);
         brickRenderer = new BrickRenderer(gameModel);
         hudRenderer = new HUDRenderer(gameModel);
@@ -42,14 +44,24 @@ public class GameView extends Pane {
         playGroundRenderer = new PlayGroundRenderer();
         backgroundRenderer = new BackgroundRenderer();
 
-        // ✅ Tạo canvas Item
-        itemCanvas = new Canvas(800, 800); // kích thước canvas game
+
+        itemCanvas = new Canvas(800, 800);
         gcItem = itemCanvas.getGraphicsContext2D();
 
-        // Thêm các node vào Pane
+
+        Ball mainBall = gameModel.getBall();
+        multiBallRenderer.addBall(mainBall);
+        multiBallRenderer.addBall(mainBall);
+
+        /*Ball ball1 = new Ball(400, 400, 10, 3, -3);
+        Ball ball2 = new Ball(420, 400, 10, -3, -3);
+        multiBallRenderer.addBall(ball1);
+        multiBallRenderer.addBall(ball2);*/
+
+
         getChildren().add(backgroundRenderer.getNode());
         getChildren().add(playGroundRenderer.getNode());
-        getChildren().add(ballRenderer.getNode());
+        getChildren().add(multiBallRenderer.getNode());
         getChildren().add(paddleRenderer.getNode());
         getChildren().addAll(brickRenderer.getNodes());
         getChildren().addAll(hudRenderer.getNodes());
@@ -59,14 +71,15 @@ public class GameView extends Pane {
     }
 
     public void render() {
-        ballRenderer.render();
+
+        multiBallRenderer.render();
         paddleRenderer.render();
         brickRenderer.render();
         effectRenderer.render();
         hudRenderer.render();
         borderRenderer.render();
 
-        // ✅ Vẽ tất cả Item trực tiếp trên canvas
+
         gcItem.clearRect(0, 0, itemCanvas.getWidth(), itemCanvas.getHeight());
         for (Item vatPham : gameModel.getItems()) {
             vatPham.ve(gcItem);

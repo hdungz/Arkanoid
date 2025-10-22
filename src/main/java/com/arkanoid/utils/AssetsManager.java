@@ -29,6 +29,7 @@ public class AssetsManager {
         loadImages("CrackedSponseBrick","/com/arkanoid/Brick/06-Breakout-Tiles.png");
         loadImages("EggBlue", "/com/arkanoid/Ball/EggBlue.png");
         loadImages("EnBallRed", "/com/arkanoid/Ball/EnBallRed.png");
+        loadImages("PurpleBall", "/com/arkanoid/Ball/PurpleBall.png");
         loadAnimationFrames("RedBall", "/com/arkanoid/Ball/red/keyframes", 6);
         loadAnimationFrames("VIPPaddle", "/com/arkanoid/Paddle/VIPPaddle", 2);
         loadImages("Brick1_4","/com/arkanoid/Brick/Brick1_4.png");
@@ -43,8 +44,19 @@ public class AssetsManager {
         loadImages("BackGround2", "/com/arkanoid/Background/gradient-cyber-futuristic-background_23-2149117429.jpg");
         loadImages("BackGround3", "/com/arkanoid/Background/GIF_4FPS/space1_4-frames.gif");
         loadVideo("Vid1", "/com/arkanoid/Background/Video/Vid1.mp4");
+
+        loadVideo("Menu", "/com/arkanoid/video/titleScreen.mp4");
 //        loadVideo("Vid2", "/com/arkanoid/Background/Video/Vid2.mp4");
 //        loadVideo("Vid3", "/com/arkanoid/Background/Video/Vid3.mp4");
+
+        loadImages("BtnStartNormal", "/com/arkanoid/buttons/start_normal.png");
+        loadImages("BtnStartHover", "/com/arkanoid/buttons/start_hover.png");
+        loadImages("BtnStoreNormal", "/com/arkanoid/buttons/store_normal.png");
+        loadImages("BtnStoreHover", "/com/arkanoid/buttons/store_hover.png");
+        loadImages("BtnHighNormal", "/com/arkanoid/buttons/highscore_normal.png");
+        loadImages("BtnHighHover", "/com/arkanoid/buttons/highscore_hover.png");
+        loadImages("BtnExitNormal", "/com/arkanoid/buttons/exit_normal.png");
+        loadImages("BtnExitHover", "/com/arkanoid/buttons/exit_hover.png");
 
         loadImages("GIF1", "/com/arkanoid/Background/GIF_4FPS/Glow Dark Matter GIF by ESAHubble Space Telescope.gif");
     }
