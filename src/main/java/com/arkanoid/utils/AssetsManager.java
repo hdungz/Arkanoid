@@ -43,10 +43,11 @@ public class AssetsManager {
         loadAnimationFrames("Explosion","/com/arkanoid/Effect/explosion",63);
         loadImages("BackGround2", "/com/arkanoid/Background/gradient-cyber-futuristic-background_23-2149117429.jpg");
         loadImages("BackGround3", "/com/arkanoid/Background/GIF_4FPS/space1_4-frames.gif");
+        loadImages("menu", "/com/arkanoid/Background/menu.png");
         loadVideo("Vid1", "/com/arkanoid/Background/Video/Vid1.mp4");
         loadAnimationFrames("VIPPaddleExtendable", "/com/arkanoid/Paddle/VIPPaddleExtended", 2);
 
-        loadVideo("Menu", "/com/arkanoid/video/titleScreen.mp4");
+        loadVideo("Menu", "/com/arkanoid/video/menu3.mp4");
         loadVideo("Vid2", "/com/arkanoid/Background/Video/Vid2.mp4");
 //        loadVideo("Vid3", "/com/arkanoid/Background/Video/Vid3.mp4");
 
