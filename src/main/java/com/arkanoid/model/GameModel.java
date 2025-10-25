@@ -3,6 +3,10 @@ package com.arkanoid.model;
 import com.arkanoid.CONSTANT;
 import com.arkanoid.model.ball.Ball;
 import com.arkanoid.model.brick.*;
+import com.arkanoid.model.paddle.ExpandablePaddle;
+import com.arkanoid.model.paddle.Laser;
+import com.arkanoid.model.paddle.LaserPaddle;
+import com.arkanoid.model.paddle.StickyPaddle;
 import com.arkanoid.model.paddle.Paddle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,6 +14,10 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import static com.arkanoid.CONSTANT.*;
+
+import java.util.function.Consumer;
+
+import com.arkanoid.model.paddle.PowerUpPaddleType;
 import com.arkanoid.view.Effect.ExplosionEffect;
 import com.arkanoid.view.GameView;
 import javafx.scene.canvas.GraphicsContext;
@@ -34,7 +42,7 @@ public class GameModel {
     public GameModel() {
         instance = this;
         this.score = 0;
-        paddle = new Paddle();
+        paddle = new Paddle(PowerUpPaddleType.Normal);
         ball = new Ball();
         lives = 3;
         bricks = new ArrayList<>();
@@ -95,6 +103,7 @@ public class GameModel {
                 pierceTimer = 0;
             }
         }
+
         if (gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
                 paddle.move(deltaTime);
@@ -102,25 +111,72 @@ public class GameModel {
             }
             return;
         }
-        paddle.move(deltaTime);
-        ball.move(deltaTime);
+
         updateBricks(deltaTime);
-        checkCollisions();
         updateEffects();
         capNhatItem(deltaTime);
+        paddle.move(deltaTime);
+
+        if (paddle instanceof StickyPaddle) {
+            StickyPaddle sp = (StickyPaddle) paddle;
+            sp.updateArrow(deltaTime);
+
+            if (sp.isBallStuck()) {
+                ball.setX(sp.getStuckBallX());
+                ball.setY(sp.getStuckBallY());
+                ball.setVelocityX(0);
+                ball.setVelocityY(0);
+            } else {
+                ball.move(deltaTime);
+            }
+        } else {
+            ball.move(deltaTime);
+        }
+
+        checkCollisions();
+        checkLaserCollisions();
+
+        if (paddle instanceof LaserPaddle) {
+            ((LaserPaddle) paddle).updateLasers(deltaTime);
+        }
     }
 
     void checkCollisions() {
         this.lastWallCollision = WallCollisionSide.NONE;
+
+        if (paddle instanceof StickyPaddle && ((StickyPaddle) paddle).isBallStuck()) {
+            return;
+        }
+
         ball.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X, CONSTANT.BORDER_WIDTH, this);
 
         if (ball.getBoundary().intersects(paddle.getBoundary())) {
             paddle.onBallHit();
-            ball.handlePaddleCollision(paddle);
+
+            if (paddle instanceof StickyPaddle) {
+                StickyPaddle sp = (StickyPaddle) paddle;
+                if (!sp.isBallStuck()) {
+                    sp.stickBall();
+                }
+            } else {
+                ball.handlePaddleCollision(paddle);
+            }
         }
 
         if (ball.getY() > WINDOW_HEIGHT) {
             lives--;
+            stopCurrentPaddleTimer();
+            if(paddle instanceof StickyPaddle || paddle instanceof ExpandablePaddle || paddle instanceof LaserPaddle) {
+                boolean isMovingRight = paddle.isMovingRight();
+                boolean isMovingLeft = paddle.isMovingLeft();
+                double x = paddle.getX();
+                double y = paddle.getY();
+                this.paddle = new Paddle(PowerUpPaddleType.Normal);
+                paddle.setX(x);
+                paddle.setY(y);
+                paddle.setMovingLeft(isMovingLeft);
+                paddle.setMovingRight(isMovingRight);
+            }
             if (lives == 0) gameState = GameState.GameOver;
             else {
                 ball.resetPosition(paddle);
@@ -131,6 +187,7 @@ public class GameModel {
         ListIterator<Brick> iterator = bricks.listIterator();
         while (iterator.hasNext()) {
             Brick brick = iterator.next();
+
             if (!brick.isVisible()) continue;
             if (brick.getBoundary().intersects(ball.getBoundary())) {
                 brick.playHitSound();
@@ -140,12 +197,10 @@ public class GameModel {
                 brick.takeDamage();
 
                 if (!brick.isVisible()) {
-
                     if (Math.random() < 0.3) { // 30% xác suất
                         items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
                     }
                 }
-
 
                 double ballPrevY = ball.getPrevY();
                 double ballRadius = ball.getRadius();
@@ -155,7 +210,6 @@ public class GameModel {
                 if (ballPrevY < brickTop - ballRadius) isVerticalCollision = true;
                 else if (ballPrevY > brickBottom + ballRadius) isVerticalCollision = true;
                 else isVerticalCollision = false;
-
 
                 if(checkpierce == 0) {
                     ball.handleBrickCollision(isVerticalCollision);
@@ -172,6 +226,42 @@ public class GameModel {
         }
     }
 
+    void checkLaserCollisions() {
+        if (!(paddle instanceof LaserPaddle)) {
+            return;
+        }
+
+        LaserPaddle laserPaddle = (LaserPaddle) paddle;
+
+        for (Laser laser : laserPaddle.getLasers()) {
+            if (!laser.isActive()) continue;
+
+            ListIterator<Brick> brickIterator = bricks.listIterator();
+            while (brickIterator.hasNext()) {
+                Brick brick = brickIterator.next();
+
+                if (!brick.isVisible()) continue;
+
+                if (laser.getBoundary().intersects(brick.getBoundary())) {
+                    laser.setActive(false);
+                    brick.playHitSound();
+                    if (brick.getHealth() == 1) score += 10;
+                    else if (brick.getHealth() == 2) score += 20;
+                    else if (brick.getHealth() == 3) score += 30;
+                    brick.takeDamage();
+
+                    if (!brick.isVisible()) {
+                        if (Math.random() < 0.3) {
+                            items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
     private void capNhatItem(double deltaTime) {
         for (int i = 0; i < items.size(); i++) {
             Item vatPham = items.get(i);
@@ -182,16 +272,25 @@ public class GameModel {
             }
             if (vatPham.getBoundary().intersects(paddle.getBoundary())) {
                 score += 50;
-                checkpierce = 1;
-                pierceTimer = 2.5;
-                System.out.println(checkpierce);
+
+                // Random chọn power-up (33.3% mỗi loại)
+                double rand = Math.random();
+                if (rand < 0.33) {
+                    activateSpecialPaddle(PowerUpPaddleType.ExpandablePaddle);
+                    System.out.println("Power-up: EXPAND!");
+                } else if (rand < 0.66) {
+                    activateSpecialPaddle(PowerUpPaddleType.LaserPaddle);
+                    System.out.println("Power-up: LASER!");
+                } else {
+                    activateSpecialPaddle(PowerUpPaddleType.StickyPaddle);
+                    System.out.println("Power-up: STICKY!");
+                }
 
                 vatPham.setHienThi(false);
             }
         }
     }
 
-    // 🟢 Vẽ tất cả Item (quà)
     public void veItem(GraphicsContext gc) {
         for (Item vatPham : items) {
             vatPham.ve(gc);
@@ -218,6 +317,108 @@ public class GameModel {
             gameState = GameState.Running;
             ball.launch();
         }
+
+        if (paddle instanceof StickyPaddle) {
+            StickyPaddle sp = (StickyPaddle) paddle;
+            if (sp.isBallStuck()) {
+                double[] velocity = sp.getLaunchVelocity();
+                ball.setVelocityX(velocity[0]);
+                ball.setVelocityY(velocity[1]);
+                sp.launchBall();
+                Paddle normalPaddle = new Paddle(PowerUpPaddleType.Normal);
+                normalPaddle.setX(sp.getX());
+                normalPaddle.setY(sp.getY());
+                normalPaddle.setMovingLeft(sp.isMovingLeft());
+                normalPaddle.setMovingRight(sp.isMovingRight());
+                this.paddle = normalPaddle;
+            }
+        }
+    }
+
+    private void stopCurrentPaddleTimer() {
+        if (paddle instanceof ExpandablePaddle) {
+            ((ExpandablePaddle) paddle).stopTimer();
+            ((ExpandablePaddle) paddle).stopBlinking();
+        }
+        else if (paddle instanceof LaserPaddle) {
+            ((LaserPaddle) paddle).stopTimer();
+            ((LaserPaddle) paddle).stopBlinking();
+        }
+        else if (paddle instanceof StickyPaddle) {
+            StickyPaddle sp = (StickyPaddle) paddle;
+
+            if (sp.isBallStuck()) {
+                double[] velocity = sp.getLaunchVelocity();
+                ball.setVelocityX(velocity[0]);
+                ball.setVelocityY(velocity[1]);
+                System.out.println("Auto-launched at " + sp.getArrowAngle() + "°");
+            }
+
+            sp.stopTimer();
+            sp.stopBlinking();
+        }
+    }
+
+    public void activateSpecialPaddle(PowerUpPaddleType type) {
+        stopCurrentPaddleTimer();
+
+        double currentX = paddle.getX();
+        double currentY = paddle.getY();
+        boolean isMovingLeft = paddle.isMovingLeft();
+        boolean isMovingRight = paddle.isMovingRight();
+
+        switch (type) {
+            case ExpandablePaddle:
+                ExpandablePaddle newExpandPaddle = new ExpandablePaddle(
+                        currentX,
+                        currentY,
+                        isMovingLeft,
+                        isMovingRight,
+                        PowerUpPaddleType.ExpandablePaddle,
+                        (normalPaddle) -> {
+                            this.paddle = normalPaddle;
+                            System.out.println("Back to normal paddle.");
+                        }
+                );
+                this.paddle = newExpandPaddle;
+                break;
+
+            case LaserPaddle:
+                LaserPaddle newLaserPaddle = new LaserPaddle(
+                        currentX,
+                        currentY,
+                        isMovingLeft,
+                        isMovingRight,
+                        PowerUpPaddleType.LaserPaddle,
+                        (normalPaddle) -> {
+                            this.paddle = normalPaddle;
+                            System.out.println("Back to normal paddle.");
+                        }
+                );
+                this.paddle = newLaserPaddle;
+                break;
+
+            case StickyPaddle:
+                StickyPaddle newStickyPaddle = new StickyPaddle(
+                        currentX,
+                        currentY,
+                        isMovingLeft,
+                        isMovingRight,
+                        PowerUpPaddleType.StickyPaddle,
+                        (normalPaddle) -> {
+                            this.paddle = normalPaddle;
+                            System.out.println("Back to normal paddle.");
+                        }
+                );
+                this.paddle = newStickyPaddle;
+                break;
+
+            case Normal:
+                this.paddle = new Paddle(PowerUpPaddleType.Normal);
+                this.paddle.setX(currentX);
+                this.paddle.setY(currentY);
+                break;
+        }
     }
 
     public ArrayList<Brick> getBricks() { return bricks; }
@@ -236,8 +437,6 @@ public class GameModel {
         effects.add(new ExplosionEffect(centerX, centerY, size));
     }
 
-
-    // Sinh vật phẩm (coin / hộp quà)
     public void spawnCoin(double x, double y) {
         items.add(new Item(x, y));
     }

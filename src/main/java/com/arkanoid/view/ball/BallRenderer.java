@@ -52,7 +52,7 @@ public class BallRenderer {
         ballSprite.setFitWidth(diameter);
         ballSprite.setFitHeight(diameter);
 
-        Glow glow = new Glow(0.8);
+        Glow glow = new Glow(0.0);
         ballSprite.setEffect(glow);
 
         group = new Group();
@@ -64,7 +64,7 @@ public class BallRenderer {
 
     public void render() {
         animator.update();
-        // cập nhật trạng thái xuyên gạch
+            // cập nhật trạng thái xuyên gạch
         checkPierce = gameModel.getCheckpierce();
         // nếu bóng thay đổi loại thì cập nhật ảnh mới
         if (checkPierce == 0)

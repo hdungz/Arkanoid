@@ -10,12 +10,10 @@ import java.security.KeyStore;
 
 public class GameController implements BaseController {
     private final GameModel gameModel;
-    private final Paddle paddle;
     private Scene scene;
 
     public GameController(GameModel gameModel) {
         this.gameModel = gameModel;
-        this.paddle = gameModel.getPaddle();
     }
 
     public void setScene(Scene scene) {
@@ -40,6 +38,7 @@ public class GameController implements BaseController {
 
     public void handleKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
+        Paddle paddle = gameModel.getPaddle(); // Get current paddle from model
 
         if(keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
             paddle.setMovingLeft(true);
@@ -54,6 +53,8 @@ public class GameController implements BaseController {
 
     public void handleKeyReleased(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
+        Paddle paddle = gameModel.getPaddle();
+        
         if(keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
             paddle.setMovingLeft(false);
         }
