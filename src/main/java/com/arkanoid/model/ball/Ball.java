@@ -17,9 +17,11 @@ public class Ball {
     private double prevX;
     private double damage;
     private double hitSpotMultiplier;
-    private Paddle paddle = new Paddle();
-    private int PierceBall = GameModel.getInstance().getCheckpierce(); ;
-    // ✅ Constructor mặc định (giữ nguyên)
+    private Paddle paddle ;
+    private boolean isVisible = true;
+    private boolean blink = false;
+    private int PierceBall = GameModel.getInstance().getCheckpierce();
+
     public Ball() {
         this.radius = BALL_RADIUS;
         this.speed = INITIAL_SPEED;
@@ -27,7 +29,6 @@ public class Ball {
         this.hitSpotMultiplier = HITSPOT_MULTIPLIER;
     }
 
-    // ✅ Constructor có tham số (THÊM MỚI)
     public Ball(double x, double y, double radius, double velocityX, double velocityY) {
         this.x = x;
         this.y = y;
@@ -66,21 +67,21 @@ public class Ball {
             velocityX = -velocityX;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(WallCollisionSide.LEFT);
-            paddle.onBallHit();
+            Paddle.onBallHit();
         }
         if (x + radius > rightWall) {
             x = rightWall - radius;
             velocityX = -velocityX;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(WallCollisionSide.RIGHT);
-            paddle.onBallHit();
+            Paddle.onBallHit();
         }
         if (y - radius < topWall) {
             y = topWall + radius;
             velocityY = -velocityY;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(WallCollisionSide.TOP);
-            paddle.onBallHit();
+            Paddle.onBallHit();
         }
     }
 
@@ -195,6 +196,9 @@ public class Ball {
     public void setDamage(double damage) { this.damage = damage; }
     public double getHitSpotMultiplier() { return hitSpotMultiplier; }
     public void setHitSpotMultiplier(double hitSpotMultiplier) { this.hitSpotMultiplier = hitSpotMultiplier; }
-
     public int getPierceBall() {  return PierceBall; }
+    public boolean isVisible() { return isVisible; }
+    public void setVisible(boolean visible) { isVisible = visible; }
+    public boolean isBlink() { return blink; }
+    public void setBlink(boolean setBlink) { this.blink = blink; }
 }

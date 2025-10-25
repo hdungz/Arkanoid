@@ -2,10 +2,7 @@ package com.arkanoid.utils;
 
 import javafx.concurrent.Task;
 
-/**
- * Một Task chạy trên luồng nền để tải tất cả các tài sản của game.
- * Báo cáo tiến trình và thông điệp về cho luồng giao diện.
- */
+
 public class AssetLoaderTask extends Task<Void> {
 
     @Override
