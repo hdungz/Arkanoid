@@ -17,7 +17,7 @@ public class GameModel {
     private static GameModel instance;
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
-    private final ArrayList<com.arkanoid.effects.ExplosionEffect> effects = new ArrayList<>();
+    private final ArrayList<com.arkanoid.view.Effect.ExplosionEffect> effects = new ArrayList<>();
     Paddle paddle;
     Ball ball;
     int score;
@@ -184,10 +184,10 @@ public class GameModel {
     }
 
     public void onExplosion(double centerX, double centerY) {
-        effects.add(new com.arkanoid.effects.ExplosionEffect(centerX, centerY,50));
+        effects.add(new com.arkanoid.view.Effect.ExplosionEffect(centerX, centerY,50));
     }
 
-    public java.util.List<com.arkanoid.effects.ExplosionEffect> getEffects() {
+    public java.util.List<com.arkanoid.view.Effect.ExplosionEffect> getEffects() {
         return effects;
     }
 
@@ -259,6 +259,6 @@ public class GameModel {
         this.lastWallCollision = lastWallCollision;
     }
     public void onExplosion(double centerX, double centerY, double size) {
-        effects.add(new com.arkanoid.effects.ExplosionEffect(centerX, centerY, size));
+        effects.add(new com.arkanoid.view.Effect.ExplosionEffect(centerX, centerY, size));
     }
 }

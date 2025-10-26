@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 public class ExplodingBrick extends Brick {
     protected final GameModel gameModel;
-    private double explosionRadius = 50.0;
+    private double explosionRadius = 100.0;
     private boolean exploding = false;
+    private boolean firstHit = true;
 
     public ExplodingBrick(double x, double y, double width, double height, BrickType type) {
         super(x, y, width, height, type, 2);
@@ -16,6 +17,10 @@ public class ExplodingBrick extends Brick {
 
     @Override
     public boolean takeDamage() {
+        if (firstHit) {
+            playHitSound();
+            firstHit = false;
+        }
         setHealth(getHealth() - 1);
         if (getHealth() <= 0) {
             setExploding(true);
