@@ -3,6 +3,7 @@ package com.arkanoid;
 import com.arkanoid.controller.BaseController;
 import com.arkanoid.controller.GameController;
 import com.arkanoid.controller.MenuController;
+import com.arkanoid.controller.LevelSelectionController;
 import com.arkanoid.utils.GameLoop;
 import com.arkanoid.utils.SceneManager;
 import com.arkanoid.utils.SceneType;
@@ -10,6 +11,7 @@ import com.arkanoid.view.GameView;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.view.MenuView;
+import com.arkanoid.view.LevelSelectionView;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -33,7 +35,7 @@ public class main extends Application {
         //Init GamePlay
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView(gameModel);
-        GameController gameController = new GameController(gameModel);
+        GameController gameController = new GameController(gameModel,gameView);
         Scene gameScene = new Scene(gameView, WINDOW_WIDTH, WINDOW_HEIGHT);
         gameController.setScene(gameScene);
         sceneManager.addScene(SceneType.GamePlay, gameScene, gameController);
@@ -43,6 +45,12 @@ public class main extends Application {
         MenuController menuController = new MenuController(menuView);
         Scene menuScene = new Scene(menuView, WINDOW_WIDTH, WINDOW_HEIGHT);
         sceneManager.addScene(SceneType.Menu, menuScene, menuController);
+
+        //Init Level Selection
+        LevelSelectionView levelSelectionView = new LevelSelectionView();
+        LevelSelectionController levelSelectionController = new LevelSelectionController(levelSelectionView);
+        Scene levelSelectionScene = new Scene(levelSelectionView, WINDOW_WIDTH, WINDOW_HEIGHT);
+        sceneManager.addScene(SceneType.LevelSelection, levelSelectionScene, levelSelectionController);
 
         stage.show();
 

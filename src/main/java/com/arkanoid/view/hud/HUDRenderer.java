@@ -2,66 +2,89 @@ package com.arkanoid.view.hud;
 
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.GameState;
+import com.arkanoid.view.hud.components.LivesPanel;
+import com.arkanoid.view.hud.components.MessagePanel;
+import com.arkanoid.view.hud.components.ScorePanel;
+import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.arkanoid.CONSTANT.*;
 
+
 public class HUDRenderer {
-    GameModel gameModel;
-    private final Text scoreText;
-    private final Text livesText;
-    private final Text messageText;
+    private final GameModel gameModel;
+    private final Canvas hudCanvas;
+    private final GraphicsContext gc;
+    private AnimationTimer animationTimer;
+    private double time = 0;
+
+    private final ScorePanel scorePanel;
+    private final LivesPanel livesPanel;
+    private final MessagePanel messagePanel;
+
+    private double messagePulse = 0;
 
     public HUDRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
 
-        scoreText = new Text(10, 30, "Score: 0");
-        scoreText.setFont((Font.font("Verdana", FontWeight.BOLD, 20)));
-        scoreText.setFill(Color.WHITE);
+        hudCanvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+        gc = hudCanvas.getGraphicsContext2D();
 
-        livesText = new Text(WINDOW_WIDTH - 120, 30, "Lives: 3");
-        livesText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        livesText.setFill(Color.WHITE);
-        livesText.setTextAlignment(TextAlignment.RIGHT);
+        scorePanel = new ScorePanel(10, 10, 200, 60);
+        livesPanel = new LivesPanel(WINDOW_WIDTH - 210, 10, 200, 60);
+        messagePanel = new MessagePanel(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        messageText = new Text();
-        messageText.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
-        messageText.setFill(Color.YELLOW);
-        messageText.setTextAlignment(TextAlignment.CENTER);
-        messageText.setWrappingWidth(WINDOW_WIDTH);
-        messageText.setY(WINDOW_HEIGHT / 2.0);
+        startAnimation();
+    }
+
+    private void startAnimation() {
+        animationTimer = new AnimationTimer() {
+            private long lastUpdate = 0;
+            @Override
+            public void handle(long now) {
+                if (lastUpdate == 0) {
+                    lastUpdate = now;
+                    return;
+                }
+                double deltaTime = (now - lastUpdate) / 1_000_000_000.0;
+                lastUpdate = now;
+                time += deltaTime;
+                messagePulse = 0.7 + 0.3 * Math.sin(time * 3);
+            }
+        };
+        animationTimer.start();
     }
 
     public void render() {
-        scoreText.setText("Score: " + gameModel.getScore());
-        livesText.setText("Lives: " + gameModel.getLives());
+        gc.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        scorePanel.render(gc, time, gameModel.getScore());
+
+        livesPanel.render(gc, time, gameModel.getLives());
 
         GameState currentState = gameModel.getGameState();
-
         if (currentState == GameState.GameOver) {
-            messageText.setText("GAME OVER");
-            messageText.setVisible(true);
+            messagePanel.render(gc, "GAME OVER", Color.rgb(255, 50, 50), messagePulse);
         } else if (currentState == GameState.Ready) {
-            messageText.setText("PRESS SPACE TO START");
-            messageText.setVisible(true);
-        } else {
-            messageText.setVisible(false);
+            messagePanel.render(gc, "PRESS SPACE TO START", Color.rgb(255, 255, 100), messagePulse);
         }
     }
 
     public List<Node> getNodes() {
         List<Node> nodes = new ArrayList<>();
-        nodes.add(scoreText);
-        nodes.add(livesText);
-        nodes.add(messageText);
+        nodes.add(hudCanvas);
         return nodes;
+    }
+
+    public void cleanup() {
+        if (animationTimer != null) {
+            animationTimer.stop();
+        }
     }
 }

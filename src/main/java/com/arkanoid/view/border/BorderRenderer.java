@@ -54,7 +54,6 @@ public class BorderRenderer {
         rightBorder.setFitWidth(BORDER_WIDTH);
         rightBorder.setFitHeight(WINDOW_HEIGHT + 5);
 
-        // Đường viền trên
         topBorder.setX(GAME_AREA_OFFSET_X);
         topBorder.setY(0);
         topBorder.setFitWidth(GAME_AREA_WIDTH);

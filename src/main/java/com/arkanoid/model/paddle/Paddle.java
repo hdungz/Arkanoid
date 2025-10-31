@@ -9,19 +9,19 @@ import static com.arkanoid.CONSTANT.*;
 
 public class Paddle {
 
-
-
+    private PowerUpPaddleType paddleType;
     private double speed;
     private double width, height;
     private double x, y;
     private boolean glowing = false;
-    public boolean isMovingLeft = false;
-    public boolean isMovingRight = false;
+    private boolean isMovingLeft = false;
+    private boolean isMovingRight = false;
 
-    public Paddle() {
+    public Paddle(PowerUpPaddleType paddleType) {
         this.speed = PADDLE_SPEED;
         this.width = PADDLE_WIDTH;
         this.height = PADDLE_HEIGHT;
+        this.paddleType = paddleType;
     }
 
     public void resetPosition() {
@@ -47,14 +47,13 @@ public class Paddle {
         if(x + speed + this.width <= GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH) x += speed * deltaTime * 144 ;
         else x = GAME_AREA_X + CONSTANT.GAME_AREA_WIDTH - this.width;
     }
-    public void onBallHit() {
+    public static void onBallHit() {
         playHitSound();
-
     }
 
-    private void playHitSound() {
+    private static void playHitSound() {
         try {
-            String soundPath = getClass().getResource("/com/arkanoid/music/waterdrop-on-metal-406648.mp3").toExternalForm();
+            String soundPath = Paddle.class.getResource("/com/arkanoid/music/waterdrop-on-metal-406648.mp3").toExternalForm();
             AudioClip hitSound = new AudioClip(soundPath);
             hitSound.play();
         } catch (Exception e) {
@@ -62,9 +61,11 @@ public class Paddle {
         }
     }
 
-    // ✨ Hiệu ứng sáng nhẹ
     public Rectangle2D getBoundary() {
         return new Rectangle2D(x, y, width, height);
+    }
+
+    public void stopTimer() {
     }
 
     public double getX() {

@@ -24,20 +24,6 @@ public class BrickRenderer {
         this.gameModel = model;
         this.spriteMap = new HashMap<>();
         this.animatorMap = new HashMap<>();
-        for (Brick brick : model.getBricks()) {
-            Image[] frames = getFramesForBrick(brick);
-
-            SpriteAnimator animator = new SpriteAnimator(frames, 5);
-
-            ImageView sprite = new ImageView(animator.getCurrentFrame());
-            sprite.setX(brick.getX());
-            sprite.setY(brick.getY());
-            sprite.setFitWidth(brick.getWidth());
-            sprite.setFitHeight(brick.getHeight());
-
-            spriteMap.put(brick, sprite);
-            animatorMap.put(brick, animator);
-        }
     }
 
     public void render() {
@@ -92,7 +78,22 @@ public class BrickRenderer {
         }
     }
 
-    public List<Node> getNodes() {
+    public List<Node> createAndGetNodes() {
+        spriteMap.clear();
+        animatorMap.clear();
+        for (Brick brick : gameModel.getBricks()) {
+            Image[] frames = getFramesForBrick(brick);
+            SpriteAnimator animator = new SpriteAnimator(frames, 5);
+
+            ImageView sprite = new ImageView(animator.getCurrentFrame());
+            sprite.setX(brick.getX());
+            sprite.setY(brick.getY());
+            sprite.setFitWidth(brick.getWidth());
+            sprite.setFitHeight(brick.getHeight());
+
+            spriteMap.put(brick, sprite);
+            animatorMap.put(brick, animator);
+        }
         return new ArrayList<>(spriteMap.values());
     }
 }
