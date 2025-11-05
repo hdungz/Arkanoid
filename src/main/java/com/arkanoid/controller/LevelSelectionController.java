@@ -17,50 +17,39 @@ public class LevelSelectionController implements BaseController {
     }
 
     private void initializeButtons() {
-        // Play button - chuyển đến gameplay với level đã chọn
         levelSelectionView.getPlayButton().setOnAction(e -> {
             if (levelSelectionView.getSelectedLevel() != null) {
                 int selectedLevelId = levelSelectionView.getSelectedLevel().getId();
                 System.out.println("Playing level: " + selectedLevelId);
-                
-                // Load level được chọn vào GameModel
+
                 levelManager.selectLevel(selectedLevelId);
                 SceneManager.getInstance().switchTo(SceneType.GamePlay);
             }
         });
 
-        // Back button - quay về menu chính
         levelSelectionView.getBackButton().setOnAction(e -> {
             System.out.println("Back to main menu");
             SceneManager.getInstance().switchTo(SceneType.Menu);
-        });
-
-        // Leaderboard button - hiển thị bảng xếp hạng
-        levelSelectionView.getLeaderboardButton().setOnAction(e -> {
-            System.out.println("Show leaderboard for level: " + 
-                (levelSelectionView.getSelectedLevel() != null ? 
-                 levelSelectionView.getSelectedLevel().getId() : "none"));
-            // TODO: Implement leaderboard functionality
         });
     }
 
     @Override
     public void onEnterScene() {
         System.out.println("Enter level selection");
-        // Có thể thêm logic khởi tạo khi vào màn hình
+        levelSelectionView.refreshView();
     }
 
     @Override
     public void onExitScene() {
         System.out.println("Exit level selection");
-        // Có thể thêm logic cleanup khi rời màn hình
+
     }
 
-    // Method để lấy level ID hiện tại được chọn
+
     public int getSelectedLevelId() {
         if (levelSelectionView.getSelectedLevel() != null) {
             return levelSelectionView.getSelectedLevel().getId();
         }
-        return 1; // Default level
+        return 1;
     }
 }

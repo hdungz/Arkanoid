@@ -29,6 +29,13 @@ public class AssetsManager {
         loadImages("CrackedSponseBrick","/com/arkanoid/Brick/06-Breakout-Tiles.png");
         loadImages("EggBlue", "/com/arkanoid/Ball/EggBlue.png");
         loadImages("EnBallRed", "/com/arkanoid/Ball/EnBallRed.png");
+        loadImages("playbutton1", "/com/arkanoid/ChooseLevel/playbutton1.png");
+        loadImages("playbutton2", "/com/arkanoid/ChooseLevel/playbutton2.png");
+        loadImages("backbutton1", "/com/arkanoid/ChooseLevel/backbutton1.png");
+        loadImages("backbutton2", "/com/arkanoid/ChooseLevel/backbutton2.png");
+        loadImages("backtomenu1", "/com/arkanoid/ChooseLevel/backtomenu1.png");
+        loadImages("backtomenu2", "/com/arkanoid/ChooseLevel/backtomenu2.png");
+        loadImages("backgroundchooselevel", "/com/arkanoid/ChooseLevel/backgroundchooselevel.png");
         loadImages("PurpleBall", "/com/arkanoid/Ball/PurpleBall.png");
         loadAnimationFrames("RedBall", "/com/arkanoid/Ball/red/keyframes", 6);
         loadAnimationFrames("VIPPaddle", "/com/arkanoid/Paddle/VIPPaddle", 2);
