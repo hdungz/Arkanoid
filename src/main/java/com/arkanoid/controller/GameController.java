@@ -28,7 +28,6 @@ public class GameController implements BaseController {
             scene.setOnKeyPressed(this::handleKeyPressed);
             scene.setOnKeyReleased(this::handleKeyReleased);
         }
-        // Load level được chọn từ LevelManager
         gameModel.loadCurrentLevel();
         gameView.synchronizeView();
         System.out.println("Entering Gameplay Scene");
@@ -44,7 +43,7 @@ public class GameController implements BaseController {
 
     public void handleKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
-        Paddle paddle = gameModel.getPaddle(); // Get current paddle from model
+        Paddle paddle = gameModel.getPaddle();
 
         if(keyCode == KeyCode.LEFT || keyCode == KeyCode.A) {
             paddle.setMovingLeft(true);

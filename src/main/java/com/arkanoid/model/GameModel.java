@@ -14,7 +14,6 @@ import com.arkanoid.utils.SceneManager;
 import com.arkanoid.model.paddle.PowerUpPaddleType;
 import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.Effect.ExplosionEffect;
-import com.arkanoid.Coin.CoinStorage;
 import com.arkanoid.utils.CoinManager;
 
 import java.util.ArrayList;

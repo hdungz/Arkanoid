@@ -1,6 +1,5 @@
 package com.arkanoid.Coin;
 
-import java.io.*;
 import java.nio.file.*;
 
 public class CoinStorage {

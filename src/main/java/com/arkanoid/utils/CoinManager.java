@@ -3,7 +3,6 @@ package com.arkanoid.utils;
 import com.arkanoid.Coin.CoinStorage;
 import com.arkanoid.model.coin.Coin;
 import com.arkanoid.model.GameModel;
-import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,7 +12,7 @@ public class CoinManager {
     private List<Coin> coins;
     private GameModel gameModel;
 
-    private double spawnChance = 1;
+    private double spawnChance = 0.20;
 
     private int sessionCoins = 0;
 
