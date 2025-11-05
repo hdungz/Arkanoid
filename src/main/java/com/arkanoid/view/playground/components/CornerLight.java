@@ -27,7 +27,6 @@ public class CornerLight {
     }
 
     public void render(GraphicsContext gc) {
-        // Glow effect
         RadialGradient glow = new RadialGradient(
                 0, 0, 0.5, 0.5, 1, true,
                 CycleMethod.NO_CYCLE,
@@ -38,7 +37,6 @@ public class CornerLight {
         gc.setFill(glow);
         gc.fillOval(x - 30, y - 30, 60, 60);
 
-        // Core light
         gc.setFill(Color.WHITE.deriveColor(0, 1, 1, intensity));
         gc.fillOval(x - 3, y - 3, 6, 6);
     }

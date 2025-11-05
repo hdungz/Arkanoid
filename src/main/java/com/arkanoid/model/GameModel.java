@@ -8,22 +8,20 @@ import com.arkanoid.model.paddle.Laser;
 import com.arkanoid.model.paddle.LaserPaddle;
 import com.arkanoid.model.paddle.StickyPaddle;
 import com.arkanoid.model.paddle.Paddle;
+import com.arkanoid.utils.LevelManager;
+import com.arkanoid.utils.PowerUpManager;
 import com.arkanoid.utils.SceneManager;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.ListIterator;
-import static com.arkanoid.CONSTANT.*;
-
-
-import java.util.function.Consumer;
-
 import com.arkanoid.model.paddle.PowerUpPaddleType;
 import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.Effect.ExplosionEffect;
-import com.arkanoid.view.GameView;
-import javafx.scene.canvas.GraphicsContext;
+import com.arkanoid.Coin.CoinStorage;
+import com.arkanoid.utils.CoinManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import static com.arkanoid.CONSTANT.*;
+
 
 public class GameModel {
     public enum WallCollisionSide { NONE, TOP, LEFT, RIGHT }
@@ -33,6 +31,7 @@ public class GameModel {
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
     ArrayList<Item> items = new ArrayList<>();
+    private PowerUpManager powerUpManager;
     private final LevelManager levelmanager;
     private int currentLevel = 0;
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
@@ -41,12 +40,16 @@ public class GameModel {
     int score;
     int lives;
     GameState gameState;
+    private CoinManager coinManager;
 
     public GameModel() {
         instance = this;
         this.score = 0;
         paddle = new Paddle(PowerUpPaddleType.Normal);
-        this.levelmanager=LevelManager.getInstance();
+        this.levelmanager = LevelManager.getInstance();
+        this.powerUpManager = new PowerUpManager(this);
+        this.coinManager = new CoinManager(this);
+
         ball = new Ball();
         lives = 3;
         bricks = new ArrayList<>();
@@ -55,68 +58,23 @@ public class GameModel {
         gameState = GameState.Ready;
         loadCurrentLevel();
     }
+
     public void loadCurrentLevel() {
-        // Lấy level ID từ Singleton
         this.currentLevel = levelmanager.getCurrentLevel();
 
-        // Reset trạng thái game
         this.score = 0;
         this.lives = 3;
         this.bricks.clear();
         this.items.clear();
         this.effects.clear();
 
-        // Khởi tạo lại paddle và ball
+        coinManager.resetSessionCoins();
         this.paddle = new Paddle(PowerUpPaddleType.Normal);
         paddle.resetPosition();
         ball.resetPosition(paddle);
         gameState = GameState.Ready;
-        levelmanager.loadLevel(this.currentLevel,bricks);
+        levelmanager.loadLevel(this.currentLevel, bricks);
     }
-    /*private void loadLevel(int level) {
-        bricks.clear();
-        String path = String.format("/com/arkanoid/Levels/level%d.txt", level);
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)));
-            if (br == null) {
-                System.out.println("Không tìm thấy file trong resources");
-                return;
-            }
-            String line1 = br.readLine();
-            String line2 = br.readLine();
-            if (line1 == null || line2 == null) {
-                System.out.println("File rỗng hoặc sai định dạng");
-                return;
-            }
-            int rows = Integer.parseInt(line1);
-            int cols = Integer.parseInt(line2);
-            double brickWidth = (CONSTANT.GAME_AREA_WIDTH - (cols + 1) * 5.0) / cols;
-            double brickHeight = 20;
-
-            for (int i = 0; i < rows; i++) {
-                String line = br.readLine();
-                if (line == null) break;
-                for (int j = 0; j < cols; j++) {
-                    double x = CONSTANT.GAME_AREA_X + j * (brickWidth + 5) + 5;
-                    double y = CONSTANT.BORDER_WIDTH + i * (brickHeight + 5) + 5;
-                    char c = line.charAt(j);
-                    if (c == '1') bricks.add(new DropBrick(x, y, brickWidth, brickHeight, BrickType.DROPPER));
-                    else if (c == '2') bricks.add(new SuperDurableBrick(x, y, brickWidth, brickHeight, BrickType.SUPERDURABLE));
-                    else if (c == '3') bricks.add(new ExplodingBrick(x, y, brickWidth, brickHeight, BrickType.EXPLODING));
-                    else if (c == '4') bricks.add(new DurableBrick(x, y, brickWidth, brickHeight, BrickType.DURABLE));
-                    else if (c == '5') bricks.add(new MoveBrick(x, y, brickWidth, brickHeight, BrickType.MOVING));
-                    else if (c == '6') bricks.add(new Brick(x, y, brickWidth, brickHeight, BrickType.NORMAL, 1));
-                }
-            }
-            br.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-     */
 
     public void update(double deltaTime) {
         if (checkpierce == 1) {
@@ -137,7 +95,9 @@ public class GameModel {
 
         updateBricks(deltaTime);
         updateEffects();
-        capNhatItem(deltaTime);
+
+        powerUpManager.update(deltaTime);
+        coinManager.update(deltaTime);
         paddle.move(deltaTime);
 
         if (paddle instanceof StickyPaddle) {
@@ -162,12 +122,10 @@ public class GameModel {
         if (paddle instanceof LaserPaddle) {
             ((LaserPaddle) paddle).updateLasers(deltaTime);
         }
-        if(levelmanager.WinLevels(bricks)) {
-            gameState = GameState.Win;
-            // Gọi hàm hoàn thành level
-            LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
 
-            // Có thể chuyển sang màn "Level Complete"
+        if (levelmanager.WinLevels(bricks)) {
+            gameState = GameState.Win;
+            LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
             SceneManager.getInstance().switchTo(SceneType.LevelSelection);
         }
     }
@@ -197,7 +155,7 @@ public class GameModel {
         if (ball.getY() > WINDOW_HEIGHT) {
             lives--;
             stopCurrentPaddleTimer();
-            if(paddle instanceof StickyPaddle || paddle instanceof ExpandablePaddle || paddle instanceof LaserPaddle) {
+            if (paddle instanceof StickyPaddle || paddle instanceof ExpandablePaddle || paddle instanceof LaserPaddle) {
                 boolean isMovingRight = paddle.isMovingRight();
                 boolean isMovingLeft = paddle.isMovingLeft();
                 double x = paddle.getX();
@@ -220,7 +178,7 @@ public class GameModel {
             Brick brick = iterator.next();
 
             if (!brick.isVisible()) continue;
-            
+
             if (brick.getBoundary().intersects(ball.getBoundary())) {
                 brick.playHitSound();
                 if (brick.getHealth() == 1) score += 10;
@@ -228,7 +186,7 @@ public class GameModel {
                 if (brick.getHealth() == 3) score += 30;
                 brick.takeDamage();
 
-                if (!brick.isVisible()) {
+                if (!brick.isVisible() && !(brick instanceof DropBrick)) {
                     if (Math.random() < 0.3) { // 30% xác suất
                         items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
                     }
@@ -243,7 +201,7 @@ public class GameModel {
                 else if (ballPrevY > brickBottom + ballRadius) isVerticalCollision = true;
                 else isVerticalCollision = false;
 
-                if(checkpierce == 0) {
+                if (checkpierce == 0) {
                     ball.handleBrickCollision(isVerticalCollision);
 
                     if (isVerticalCollision) {
@@ -282,7 +240,7 @@ public class GameModel {
                     else if (brick.getHealth() == 3) score += 30;
                     brick.takeDamage();
 
-                    if (!brick.isVisible()) {
+                    if (!brick.isVisible() && !(brick instanceof DropBrick)) {
                         if (Math.random() < 0.3) {
                             items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
                         }
@@ -291,41 +249,6 @@ public class GameModel {
                     break;
                 }
             }
-        }
-    }
-
-    private void capNhatItem(double deltaTime) {
-        for (int i = 0; i < items.size(); i++) {
-            Item vatPham = items.get(i);
-            vatPham.capNhat(deltaTime);
-            if (!vatPham.isHienThi()) {
-                items.remove(i--);
-                continue;
-            }
-            if (vatPham.getBoundary().intersects(paddle.getBoundary())) {
-                score += 50;
-
-                // Random chọn power-up (33.3% mỗi loại)
-                double rand = Math.random();
-                if (rand < 0.33) {
-                    activateSpecialPaddle(PowerUpPaddleType.ExpandablePaddle);
-                    System.out.println("Power-up: EXPAND!");
-                } else if (rand < 0.66) {
-                    activateSpecialPaddle(PowerUpPaddleType.LaserPaddle);
-                    System.out.println("Power-up: LASER!");
-                } else {
-                    activateSpecialPaddle(PowerUpPaddleType.StickyPaddle);
-                    System.out.println("Power-up: STICKY!");
-                }
-
-                vatPham.setHienThi(false);
-            }
-        }
-    }
-
-    public void veItem(GraphicsContext gc) {
-        for (Item vatPham : items) {
-            vatPham.ve(gc);
         }
     }
 
@@ -342,7 +265,7 @@ public class GameModel {
         });
     }
 
-    public java.util.List<ExplosionEffect> getEffects() { return effects; }
+    public List<ExplosionEffect> getEffects() { return effects; }
 
     public void launchBall() {
         if (gameState == GameState.Ready) {
@@ -453,6 +376,18 @@ public class GameModel {
         }
     }
 
+    public void addScore(int points) {
+        this.score += points;
+    }
+
+    public void setCheckPierce(int value) {
+        this.checkpierce = value;
+    }
+
+    public void setPierceTimer(double timer) {
+        this.pierceTimer = timer;
+    }
+
     public ArrayList<Brick> getBricks() { return bricks; }
     public void setBricks(ArrayList<Brick> bricks) { this.bricks = bricks; }
     public Paddle getPaddle() { return paddle; }
@@ -465,28 +400,17 @@ public class GameModel {
     public void setLastWallCollision(WallCollisionSide side) { this.lastWallCollision = side; }
     public static GameModel getInstance() { if (instance == null) instance = new GameModel(); return instance; }
     public ArrayList<Item> getItems() { return items; }
+    public LevelManager getLevelmanager() { return levelmanager; }
+    public CoinManager getCoinManager() { return coinManager; }
+
+    public PowerUpManager getPowerUpManager() { return powerUpManager; }
 
     public void onExplosion(double centerX, double centerY, double size) {
         effects.add(new ExplosionEffect(centerX, centerY, size));
     }
-    public void setCurrentLevel(int level) { this.currentLevel = level; return; }
-    public int getCurrentLevel() { return currentLevel; }
-    public void spawnCoin(double x, double y) {
-        items.add(new Item(x, y));
-    }
-    /*public void loadLevelFromManager() {
-        // Load level hiện tại được chọn từ LevelManager
-        // Sử dụng reflection để tránh circular dependency
-        try {
-            Class<?> levelManagerClass = Class.forName("com.arkanoid.model.LevelManager");
-            Object levelManager = levelManagerClass.getMethod("getInstance").invoke(null);
-            int selectedLevel = (Integer) levelManagerClass.getMethod("getCurrentLevel").invoke(levelManager);
-            setCurrentLevel(selectedLevel);
-        } catch (Exception e) {
-            System.out.println("Error loading level from manager: " + e.getMessage());
-            setCurrentLevel(1);
-        }
-    }
 
-     */
+    public void setCurrentLevel(int level) { this.currentLevel = level; }
+    public int getCurrentLevel() { return currentLevel; }
+
+
 }

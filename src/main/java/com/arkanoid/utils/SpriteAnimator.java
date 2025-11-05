@@ -12,7 +12,7 @@ public class SpriteAnimator {
     private boolean finished = false;
 
     public SpriteAnimator(Image[] frames, int fps) {
-        this(frames, fps, true); // default loop = true
+        this(frames, fps, true);
     }
     public SpriteAnimator(Image[] frames, int fps, boolean loop) {
         this.frames = frames;

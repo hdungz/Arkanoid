@@ -40,6 +40,7 @@ public class BackgroundRenderer {
     }
 
     private void initializeComponents() {
+        //mo mo
         nebulae.add(new Nebula(200, 150, 180, Color.rgb(20, 80, 150, 0.15), 0.3));
         nebulae.add(new Nebula(900, 400, 200, Color.rgb(80, 20, 120, 0.12), 0.25));
         nebulae.add(new Nebula(500, 550, 150, Color.rgb(30, 100, 180, 0.1), 0.4));

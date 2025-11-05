@@ -1,5 +1,6 @@
 package com.arkanoid.model.brick;
 
+import com.arkanoid.model.GameModel;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.media.AudioClip;
 
@@ -25,6 +26,9 @@ public class Brick {
     public boolean takeDamage() {
         this.health--;
         if (health <= 0) {
+            double centerX = this.getX() + this.getWidth() / 2;
+            double centerY = this.getY();
+            GameModel.getInstance().getCoinManager().spawnCoin(centerX, centerY);
             this.visible = false;
             return true;
         } else {

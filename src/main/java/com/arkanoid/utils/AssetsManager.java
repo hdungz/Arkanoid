@@ -67,6 +67,13 @@ public class AssetsManager {
         loadImages("BtnExitNormal", "/com/arkanoid/buttons/exit_normal.png");
         loadImages("BtnExitHover", "/com/arkanoid/buttons/exit_hover.png");
 
+        loadAnimationFrames("MultiBall", "/com/arkanoid/Power_Up/0", 6);
+        loadAnimationFrames("ExtendedPaddle", "/com/arkanoid/Power_Up/2", 6);
+        loadAnimationFrames("LaserPaddle", "/com/arkanoid/Power_Up/1", 6);
+        loadAnimationFrames("StickyPaddle", "/com/arkanoid/Power_Up/6", 6);
+
+        loadAnimationFrames("Coin", "/com/arkanoid/coin_frames", 15);
+
         loadImages("GIF1", "/com/arkanoid/Background/GIF_4FPS/Glow Dark Matter GIF by ESAHubble Space Telescope.gif");
     }
 
@@ -77,7 +84,11 @@ public class AssetsManager {
         for (int i = 0; i < frameCount; i++) {
             if (basePath.equals("/com/arkanoid/Effect/explosion")){
                 path = String.format("%s/frame_%d.png", basePath, i + 2);
-            }else {
+            }
+            else if(basePath.contains("/com/arkanoid/Power_Up/")) {
+                path = String.format("%s/%d.png", basePath, i);
+            }
+            else {
                 path = String.format("%s/%d.png", basePath, i + 1);
             }
             try {

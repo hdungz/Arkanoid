@@ -1,7 +1,7 @@
 package com.arkanoid.view;
 
-import com.arkanoid.model.LevelManager;
-import com.arkanoid.model.LevelManager.LevelInfo;
+import com.arkanoid.utils.LevelManager;
+import com.arkanoid.utils.LevelManager.LevelInfo;
 import com.arkanoid.utils.AssetsManager;
 import javafx.animation.*;
 import javafx.geometry.Insets;
@@ -41,7 +41,6 @@ public class LevelSelectionView extends StackPane {
     private Pane levelMap;
     private Pane backgroundPane;
 
-    // Các biến cho hiệu ứng
     private Map<Integer, Circle> levelNodes;
     private Timeline selectedNodePulse;
     private Translate mapParallaxTransform;
@@ -112,9 +111,7 @@ public class LevelSelectionView extends StackPane {
         }
     }
 
-    /**
-     * Tạo bản đồ level với các node được TRẢI ĐỀU khắp màn hình.
-     */
+
     private void createLevelMap() {
         levelMap = new Pane();
         levelMap.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -295,11 +292,10 @@ public class LevelSelectionView extends StackPane {
     }
 
     private void createBackButton() {
-        backButton = createImageButton("backtomenu1", "backtomenu2");
+        backButton = createImageButton("backtomenu2", "backtomenu1");
 
         backButton.setOnAction(e -> {
             System.out.println("Return to main menu!");
-            // SceneManager.loadScene("MainMenu.fxml");
         });
 
         getChildren().add(backButton);
@@ -461,10 +457,7 @@ public class LevelSelectionView extends StackPane {
     }
 
 
-    /**
-     * Làm mới (vẽ lại) toàn bộ bản đồ level và chọn level cao nhất.
-     * HÃY GỌI HÀM NÀY MỖI KHI BẠN HIỂN THỊ LẠI VIEW NÀY.
-     */
+
     public void refreshView() {
 
         if (selectedNodePulse != null) {
@@ -482,7 +475,7 @@ public class LevelSelectionView extends StackPane {
 
 
         int highestUnlockedLevel = 1;
-        for (int i = 20; i >= 1; i--) { // Giả sử 20 level
+        for (int i = 20; i >= 1; i--) {
             LevelInfo info = this.levelManager.getLevel(i);
             if (info != null && info.isUnlocked()) {
                 highestUnlockedLevel = i;

@@ -1,10 +1,9 @@
 package com.arkanoid.controller;
 
-import com.arkanoid.model.LevelManager;
+import com.arkanoid.utils.LevelManager;
 import com.arkanoid.utils.SceneManager;
 import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.LevelSelectionView;
-import javafx.application.Platform;
 
 public class LevelSelectionController implements BaseController {
     private final LevelSelectionView levelSelectionView;

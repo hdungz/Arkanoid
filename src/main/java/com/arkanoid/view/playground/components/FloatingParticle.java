@@ -27,11 +27,9 @@ public class FloatingParticle {
     }
 
     public void render(GraphicsContext gc) {
-        // Main particle
         gc.setFill(Color.CYAN.deriveColor(0, 1, 1.2, 1));
         gc.fillOval(x - size/2, y - size/2, size, size);
 
-        // Glow effect
         RadialGradient glow = new RadialGradient(
                 0, 0, 0.5, 0.5, 1, true,
                 CycleMethod.NO_CYCLE,

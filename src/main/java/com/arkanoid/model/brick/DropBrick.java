@@ -11,16 +11,13 @@ public class DropBrick extends Brick {
         setHealth(getHealth() - 1);
         if (getHealth() <= 0) {
             setVisible(false);
-            dropCoin();
+            double centerX = getX() + getWidth() / 2;
+            double centerY = getY() + getHeight() / 2;
+            GameModel.getInstance().getPowerUpManager().spawnPowerUp(centerX, centerY);
             return true;
         }
         return false;
     }
 
-    private void dropCoin() {
-        double centerX = getX() + getWidth() / 2;
-        double centerY = getY() + getHeight() / 2;
 
-        GameModel.getInstance().spawnCoin(centerX, centerY);
-    }
 }

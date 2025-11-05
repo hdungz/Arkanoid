@@ -1,4 +1,4 @@
-package com.arkanoid.model;
+package com.arkanoid.utils;
 
 import com.arkanoid.CONSTANT;
 import com.arkanoid.model.brick.*;
