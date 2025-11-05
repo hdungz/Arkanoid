@@ -8,6 +8,7 @@ import com.arkanoid.model.paddle.Laser;
 import com.arkanoid.model.paddle.LaserPaddle;
 import com.arkanoid.model.paddle.StickyPaddle;
 import com.arkanoid.model.paddle.Paddle;
+import com.arkanoid.utils.SceneManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
@@ -15,9 +16,11 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import static com.arkanoid.CONSTANT.*;
 
+
 import java.util.function.Consumer;
 
 import com.arkanoid.model.paddle.PowerUpPaddleType;
+import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.Effect.ExplosionEffect;
 import com.arkanoid.view.GameView;
 import javafx.scene.canvas.GraphicsContext;
@@ -30,8 +33,8 @@ public class GameModel {
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
     ArrayList<Brick> bricks;
     ArrayList<Item> items = new ArrayList<>();
-
-
+    private final LevelManager levelmanager;
+    private int currentLevel = 0;
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
     Paddle paddle;
     Ball ball;
@@ -43,16 +46,34 @@ public class GameModel {
         instance = this;
         this.score = 0;
         paddle = new Paddle(PowerUpPaddleType.Normal);
+        this.levelmanager=LevelManager.getInstance();
         ball = new Ball();
         lives = 3;
         bricks = new ArrayList<>();
         paddle.resetPosition();
         ball.resetPosition(paddle);
         gameState = GameState.Ready;
-        loadLevel(20);
+        loadCurrentLevel();
     }
+    public void loadCurrentLevel() {
+        // Lấy level ID từ Singleton
+        this.currentLevel = levelmanager.getCurrentLevel();
 
-    private void loadLevel(int level) {
+        // Reset trạng thái game
+        this.score = 0;
+        this.lives = 3;
+        this.bricks.clear();
+        this.items.clear();
+        this.effects.clear();
+
+        // Khởi tạo lại paddle và ball
+        this.paddle = new Paddle(PowerUpPaddleType.Normal);
+        paddle.resetPosition();
+        ball.resetPosition(paddle);
+        gameState = GameState.Ready;
+        levelmanager.loadLevel(this.currentLevel,bricks);
+    }
+    /*private void loadLevel(int level) {
         bricks.clear();
         String path = String.format("/com/arkanoid/Levels/level%d.txt", level);
         try {
@@ -94,6 +115,8 @@ public class GameModel {
             System.out.println(e.getMessage());
         }
     }
+
+     */
 
     public void update(double deltaTime) {
         if (checkpierce == 1) {
@@ -138,6 +161,14 @@ public class GameModel {
 
         if (paddle instanceof LaserPaddle) {
             ((LaserPaddle) paddle).updateLasers(deltaTime);
+        }
+        if(levelmanager.WinLevels(bricks)) {
+            gameState = GameState.Win;
+            // Gọi hàm hoàn thành level
+            LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
+
+            // Có thể chuyển sang màn "Level Complete"
+            SceneManager.getInstance().switchTo(SceneType.LevelSelection);
         }
     }
 
@@ -189,6 +220,7 @@ public class GameModel {
             Brick brick = iterator.next();
 
             if (!brick.isVisible()) continue;
+            
             if (brick.getBoundary().intersects(ball.getBoundary())) {
                 brick.playHitSound();
                 if (brick.getHealth() == 1) score += 10;
@@ -422,6 +454,7 @@ public class GameModel {
     }
 
     public ArrayList<Brick> getBricks() { return bricks; }
+    public void setBricks(ArrayList<Brick> bricks) { this.bricks = bricks; }
     public Paddle getPaddle() { return paddle; }
     public Ball getBall() { return ball; }
     public int getScore() { return score; }
@@ -436,8 +469,24 @@ public class GameModel {
     public void onExplosion(double centerX, double centerY, double size) {
         effects.add(new ExplosionEffect(centerX, centerY, size));
     }
-
+    public void setCurrentLevel(int level) { this.currentLevel = level; return; }
+    public int getCurrentLevel() { return currentLevel; }
     public void spawnCoin(double x, double y) {
         items.add(new Item(x, y));
     }
+    /*public void loadLevelFromManager() {
+        // Load level hiện tại được chọn từ LevelManager
+        // Sử dụng reflection để tránh circular dependency
+        try {
+            Class<?> levelManagerClass = Class.forName("com.arkanoid.model.LevelManager");
+            Object levelManager = levelManagerClass.getMethod("getInstance").invoke(null);
+            int selectedLevel = (Integer) levelManagerClass.getMethod("getCurrentLevel").invoke(levelManager);
+            setCurrentLevel(selectedLevel);
+        } catch (Exception e) {
+            System.out.println("Error loading level from manager: " + e.getMessage());
+            setCurrentLevel(1);
+        }
+    }
+
+     */
 }

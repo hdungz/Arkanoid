@@ -16,7 +16,7 @@ public class MenuController implements BaseController {
     private void initializeButtons() {
         menuView.getPlayButton().setOnAction(e -> {
             System.out.println("Play button clicked");
-            SceneManager.getInstance().switchTo(SceneType.GamePlay);
+            SceneManager.getInstance().switchTo(SceneType.LevelSelection);
         });
 
         menuView.getStoreButton().setOnAction(e -> {

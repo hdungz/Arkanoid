@@ -8,7 +8,7 @@ public class ExplodingBrick extends Brick {
     protected final GameModel gameModel;
     private double explosionRadius = 50.0;
     private boolean exploding = false;
-    private boolean firstHit = true; // ✅ Chỉ kêu va chạm lần đầu
+    private boolean firstHit = true; // Chỉ kêu va chạm lần đầu
 
     public ExplodingBrick(double x, double y, double width, double height, BrickType type) {
         super(x, y, width, height, type, 2);

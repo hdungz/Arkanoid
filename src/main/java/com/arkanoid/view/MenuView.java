@@ -30,7 +30,7 @@ public class MenuView extends StackPane {
 
         Image[] backgroundFrames = AssetsManager.getFrames("menu");
         if (backgroundFrames != null && backgroundFrames.length > 0) {
-            Image backgroundImage = backgroundFrames[0]; // Lấy frame đầu tiên
+            Image backgroundImage = backgroundFrames[0];
             ImageView backgroundView = new ImageView(backgroundImage);
             backgroundView.setFitWidth(WINDOW_WIDTH);
             backgroundView.setFitHeight(WINDOW_HEIGHT);
@@ -38,7 +38,7 @@ public class MenuView extends StackPane {
             getChildren().add(backgroundView);
         }
 
-        // Background video (ưu tiên)
+
         MediaView backgroundVideo = createBackgroundVideo();
         if (backgroundVideo != null) {
             getChildren().add(backgroundVideo);

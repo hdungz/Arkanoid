@@ -19,9 +19,13 @@ import com.arkanoid.view.paddle.StickyPaddleRenderer;
 import com.arkanoid.view.paddle.NormalPaddleRenderer;
 import com.arkanoid.view.effects.EffectRenderer;
 import com.arkanoid.view.playground.PlayGroundRenderer;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameView extends Pane {
     private final GameModel gameModel;
@@ -38,7 +42,7 @@ public class GameView extends Pane {
     private final ExpandablePaddleRenderer expandableRenderer;
     private final LaserPaddleRenderer laserRenderer;
     private final StickyPaddleRenderer stickyRenderer;
-
+    private List<Node> currentBrickNodes = new ArrayList<>();
     private final Canvas itemCanvas;
     private final GraphicsContext gcItem;
 
@@ -70,14 +74,18 @@ public class GameView extends Pane {
         getChildren().add(backgroundRenderer.getNode());
         getChildren().add(playGroundRenderer.getNode());
         getChildren().add(multiBallRenderer.getNode());
-        getChildren().addAll(brickRenderer.getNodes());
         getChildren().addAll(hudRenderer.getNodes());
 //        getChildren().addAll(borderRenderer.getNode());
         getChildren().add(effectRenderer.getCanvas());
         getChildren().add(currentPaddleRenderer.getNode());
         getChildren().add(itemCanvas);
     }
+    public void synchronizeView() {
 
+        getChildren().removeAll(currentBrickNodes);
+        currentBrickNodes = brickRenderer.createAndGetNodes();
+        getChildren().addAll(currentBrickNodes);
+    }
     public void render() {
         multiBallRenderer.render();
         brickRenderer.render();
