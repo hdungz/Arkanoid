@@ -6,10 +6,8 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
-
 public class Nebula {
     private final double x, y, size;
-    private final Color color;
     private final double speed;
     private double currentSize;
 
@@ -17,7 +15,6 @@ public class Nebula {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.color = color;
         this.speed = speed;
         this.currentSize = size;
     }
@@ -27,10 +24,17 @@ public class Nebula {
         currentSize = size * pulse;
     }
 
-    public void render(GraphicsContext gc) {
+    public void render(GraphicsContext gc, Color themeColor) {
+        Color nebulaColor = Color.rgb(
+                (int)(themeColor.getRed() * 255),
+                (int)(themeColor.getGreen() * 255),
+                (int)(themeColor.getBlue() * 255),
+                0.15
+        );
+
         Stop[] stops = new Stop[] {
-                new Stop(0, color.deriveColor(0, 1, 1.2, 1)),
-                new Stop(0.4, color.deriveColor(0, 1, 1, 0.7)),
+                new Stop(0, nebulaColor.deriveColor(0, 1, 1.2, 1)),
+                new Stop(0.4, nebulaColor.deriveColor(0, 1, 1, 0.7)),
                 new Stop(1, Color.TRANSPARENT)
         };
         RadialGradient gradient = new RadialGradient(
@@ -39,5 +43,9 @@ public class Nebula {
         );
         gc.setFill(gradient);
         gc.fillOval(x - currentSize, y - currentSize, currentSize * 2, currentSize * 2);
+    }
+
+    public void render(GraphicsContext gc) {
+        render(gc, Color.CYAN);
     }
 }

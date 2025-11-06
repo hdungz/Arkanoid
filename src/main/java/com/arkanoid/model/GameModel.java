@@ -8,13 +8,9 @@ import com.arkanoid.model.paddle.Laser;
 import com.arkanoid.model.paddle.LaserPaddle;
 import com.arkanoid.model.paddle.StickyPaddle;
 import com.arkanoid.model.paddle.Paddle;
-import com.arkanoid.utils.LevelManager;
-import com.arkanoid.utils.PowerUpManager;
-import com.arkanoid.utils.SceneManager;
+import com.arkanoid.utils.*;
 import com.arkanoid.model.paddle.PowerUpPaddleType;
-import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.Effect.ExplosionEffect;
-import com.arkanoid.utils.CoinManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +56,7 @@ public class GameModel {
 
     public void loadCurrentLevel() {
         this.currentLevel = levelmanager.getCurrentLevel();
-
+        ThemeManager.getInstance().setThemeForLevel(currentLevel);
         this.score = 0;
         this.lives = 3;
         this.bricks.clear();

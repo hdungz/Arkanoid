@@ -1,5 +1,6 @@
 package com.arkanoid.view.background;
 
+import com.arkanoid.utils.ThemeManager;
 import com.arkanoid.view.background.components.*;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
@@ -20,6 +21,7 @@ public class BackgroundRenderer {
     private final List<Nebula> nebulae;
     private final List<CircuitLine> circuits;
     private final Random random;
+    private final ThemeManager themeManager;
     private AnimationTimer animationTimer;
     private double time = 0;
 
@@ -30,6 +32,7 @@ public class BackgroundRenderer {
         canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
         random = new Random();
+        themeManager = ThemeManager.getInstance();
         stars = new ArrayList<>();
         planets = new ArrayList<>();
         nebulae = new ArrayList<>();
@@ -40,13 +43,11 @@ public class BackgroundRenderer {
     }
 
     private void initializeComponents() {
-        //mo mo
-        nebulae.add(new Nebula(200, 150, 180, Color.rgb(20, 80, 150, 0.15), 0.3));
-        nebulae.add(new Nebula(900, 400, 200, Color.rgb(80, 20, 120, 0.12), 0.25));
-        nebulae.add(new Nebula(500, 550, 150, Color.rgb(30, 100, 180, 0.1), 0.4));
-        nebulae.add(new Nebula(1050, 180, 140, Color.rgb(60, 40, 140, 0.13), 0.35));
+        nebulae.add(new Nebula(200, 150, 180, Color.CYAN, 0.3));
+        nebulae.add(new Nebula(900, 400, 200, Color.CYAN, 0.25));
+        nebulae.add(new Nebula(500, 550, 150, Color.CYAN, 0.4));
+        nebulae.add(new Nebula(1050, 180, 140, Color.CYAN, 0.35));
 
-        //left
         circuits.add(new CircuitLine(50, 80, 300, 80, 2));
         circuits.add(new CircuitLine(300, 80, 300, 300, 1.5));
         circuits.add(new CircuitLine(80, 200, 320, 200, 1.8));
@@ -56,7 +57,6 @@ public class BackgroundRenderer {
         circuits.add(new CircuitLine(200, 450, 200, 680, 1.4));
         circuits.add(new CircuitLine(250, 120, 250, 500, 1.7));
 
-        //right
         circuits.add(new CircuitLine(1230, 80, 980, 80, 2.1));
         circuits.add(new CircuitLine(980, 80, 980, 300, 1.7));
         circuits.add(new CircuitLine(1200, 180, 960, 180, 1.6));
@@ -67,19 +67,16 @@ public class BackgroundRenderer {
         circuits.add(new CircuitLine(1000, 580, 1230, 580, 2.3));
         circuits.add(new CircuitLine(1050, 120, 1050, 420, 1.65));
 
-        //mid
         circuits.add(new CircuitLine(450, 100, 650, 100, 1.3));
         circuits.add(new CircuitLine(650, 100, 650, 350, 1.4));
         circuits.add(new CircuitLine(500, 250, 750, 250, 1.6));
         circuits.add(new CircuitLine(550, 400, 550, 650, 1.2));
         circuits.add(new CircuitLine(800, 150, 800, 500, 1.5));
 
-        //planets
-        planets.add(new Planet(150, 100, 50, Color.rgb(150, 120, 180, 0.5)));
-        planets.add(new Planet(1130, 580, 60, Color.rgb(120, 140, 200, 0.4)));
-        planets.add(new Planet(100, 600, 45, Color.rgb(140, 100, 160, 0.45)));
+        planets.add(new Planet(150, 100, 50, Color.CYAN));
+        planets.add(new Planet(1130, 580, 60, Color.CYAN));
+        planets.add(new Planet(100, 600, 45, Color.CYAN));
 
-        //stars
         for (int i = 0; i < 200; i++) {
             stars.add(new Star(
                     random.nextDouble() * WIDTH,
@@ -110,10 +107,13 @@ public class BackgroundRenderer {
     }
 
     private void render() {
+        ThemeManager.LevelTheme theme = themeManager.getCurrentTheme();
+        Color themeColor = themeManager.getPrimaryColor();
+
         Stop[] bgStops = new Stop[] {
-                new Stop(0, Color.rgb(5, 10, 30)),
-                new Stop(0.4, Color.rgb(15, 20, 50)),
-                new Stop(1, Color.rgb(8, 12, 35))
+                new Stop(0, theme.getBackground1()),
+                new Stop(0.4, theme.getBackground2()),
+                new Stop(1, theme.getBackground3())
         };
         RadialGradient bgGradient = new RadialGradient(
                 0, 0, 0.5, 0.3, 0.9, true,
@@ -125,28 +125,28 @@ public class BackgroundRenderer {
         gc.setGlobalBlendMode(BlendMode.ADD);
         for (CircuitLine circuit : circuits) {
             circuit.update(time);
-            circuit.render(gc);
+            circuit.render(gc, themeColor);
         }
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
 
         gc.setGlobalBlendMode(BlendMode.ADD);
         for (Nebula nebula : nebulae) {
             nebula.update(time);
-            nebula.render(gc);
+            nebula.render(gc, themeColor);
         }
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
 
         for (Planet planet : planets) {
-            planet.render(gc);
+            planet.render(gc, themeColor);
         }
 
         for (Star star : stars) {
             star.update(time);
-            star.render(gc);
+            star.render(gc, themeColor);
         }
 
         gc.setGlobalAlpha(0.02);
-        gc.setStroke(Color.CYAN);
+        gc.setStroke(themeColor);
         gc.setLineWidth(1);
         for (int i = 0; i < HEIGHT; i += 3) {
             gc.strokeLine(0, i, WIDTH, i);

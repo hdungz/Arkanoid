@@ -1,6 +1,7 @@
 package com.arkanoid.view.playground;
 
 import com.arkanoid.model.GameModel;
+import com.arkanoid.utils.ThemeManager;
 import com.arkanoid.view.playground.components.CornerLight;
 import com.arkanoid.view.playground.components.FloatingParticle;
 import com.arkanoid.view.playground.components.GridLine;
@@ -17,7 +18,6 @@ import java.util.Random;
 
 import static com.arkanoid.CONSTANT.*;
 
-
 public class PlayGroundRenderer {
     private final Canvas canvas;
     private final GraphicsContext gc;
@@ -26,6 +26,7 @@ public class PlayGroundRenderer {
     private final List<CornerLight> cornerLights;
     private final Random random;
     private final GameModel gameModel;
+    private final ThemeManager themeManager;
     private AnimationTimer animationTimer;
     private double time = 0;
 
@@ -36,6 +37,7 @@ public class PlayGroundRenderer {
 
     public PlayGroundRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
+        this.themeManager = ThemeManager.getInstance();
         canvas = new Canvas(GAME_AREA_WIDTH, WINDOW_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         canvas.setLayoutX(GAME_AREA_X);
@@ -126,38 +128,42 @@ public class PlayGroundRenderer {
     private void render() {
         gc.clearRect(0, 0, GAME_AREA_WIDTH, WINDOW_HEIGHT);
 
+        Color themeColor = themeManager.getPrimaryColor();
+
         drawBackground();
 
         gc.setGlobalAlpha(0.25);
         for (GridLine line : gridLines) {
             line.update(time);
-            line.render(gc);
+            line.render(gc, themeColor);
         }
         gc.setGlobalAlpha(1.0);
 
         gc.setGlobalAlpha(0.5);
         for (FloatingParticle particle : particles) {
             particle.update(time);
-            particle.render(gc);
+            particle.render(gc, themeColor);
         }
         gc.setGlobalAlpha(1.0);
 
         for (CornerLight light : cornerLights) {
             light.update(time);
-            light.render(gc);
+            light.render(gc, themeColor);
         }
 
-        drawBorderGlow();
-        drawCollisionFlash();
-        drawScanLines();
-        drawFrameBorder();
+        drawBorderGlow(themeColor);
+        drawCollisionFlash(themeColor);
+        drawScanLines(themeColor);
+        drawFrameBorder(themeColor);
     }
 
     private void drawBackground() {
+        ThemeManager.LevelTheme theme = themeManager.getCurrentTheme();
+
         Stop[] stops = new Stop[] {
-                new Stop(0, Color.rgb(20, 35, 70, 0.92)),
-                new Stop(0.5, Color.rgb(25, 45, 90, 0.95)),
-                new Stop(1, Color.rgb(18, 38, 75, 0.93))
+                new Stop(0, theme.getBackground1()),
+                new Stop(0.5, theme.getBackground2()),
+                new Stop(1, theme.getBackground3())
         };
         LinearGradient gradient = new LinearGradient(
                 0, 0, 0, WINDOW_HEIGHT,
@@ -167,11 +173,11 @@ public class PlayGroundRenderer {
         gc.fillRect(0, 0, GAME_AREA_WIDTH, WINDOW_HEIGHT);
     }
 
-    private void drawBorderGlow() {
+    private void drawBorderGlow(Color themeColor) {
         double pulse = 0.4 + 0.3 * Math.sin(time * 2);
 
         Stop[] leftStops = new Stop[] {
-                new Stop(0, Color.CYAN.deriveColor(0, 1, 1.2, pulse * 0.6)),
+                new Stop(0, themeColor.deriveColor(0, 1, 1.2, pulse * 0.6)),
                 new Stop(1, Color.TRANSPARENT)
         };
         LinearGradient leftGlow = new LinearGradient(
@@ -183,7 +189,7 @@ public class PlayGroundRenderer {
 
         Stop[] rightStops = new Stop[] {
                 new Stop(0, Color.TRANSPARENT),
-                new Stop(1, Color.CYAN.deriveColor(0, 1, 1.2, pulse * 0.6))
+                new Stop(1, themeColor.deriveColor(0, 1, 1.2, pulse * 0.6))
         };
         LinearGradient rightGlow = new LinearGradient(
                 GAME_AREA_WIDTH - 20, 0, GAME_AREA_WIDTH, 0,
@@ -193,7 +199,7 @@ public class PlayGroundRenderer {
         gc.fillRect(GAME_AREA_WIDTH - 20, 0, 20, WINDOW_HEIGHT);
 
         Stop[] topStops = new Stop[] {
-                new Stop(0, Color.CYAN.deriveColor(0, 1, 1.2, pulse * 0.6)),
+                new Stop(0, themeColor.deriveColor(0, 1, 1.2, pulse * 0.6)),
                 new Stop(1, Color.TRANSPARENT)
         };
         LinearGradient topGlow = new LinearGradient(
@@ -204,13 +210,13 @@ public class PlayGroundRenderer {
         gc.fillRect(0, 0, GAME_AREA_WIDTH, 20);
     }
 
-    private void drawCollisionFlash() {
+    private void drawCollisionFlash(Color themeColor) {
         gc.setGlobalBlendMode(BlendMode.ADD);
 
         if (topFlash > 0) {
             Stop[] stops = new Stop[] {
                     new Stop(0, Color.WHITE.deriveColor(0, 1, 1, topFlash * 0.8)),
-                    new Stop(0.5, Color.CYAN.deriveColor(0, 1, 1.5, topFlash * 0.6)),
+                    new Stop(0.5, themeColor.deriveColor(0, 1, 1.5, topFlash * 0.6)),
                     new Stop(1, Color.TRANSPARENT)
             };
             LinearGradient flash = new LinearGradient(
@@ -224,7 +230,7 @@ public class PlayGroundRenderer {
         if (leftFlash > 0) {
             Stop[] stops = new Stop[] {
                     new Stop(0, Color.WHITE.deriveColor(0, 1, 1, leftFlash * 0.8)),
-                    new Stop(0.5, Color.CYAN.deriveColor(0, 1, 1.5, leftFlash * 0.6)),
+                    new Stop(0.5, themeColor.deriveColor(0, 1, 1.5, leftFlash * 0.6)),
                     new Stop(1, Color.TRANSPARENT)
             };
             LinearGradient flash = new LinearGradient(
@@ -238,7 +244,7 @@ public class PlayGroundRenderer {
         if (rightFlash > 0) {
             Stop[] stops = new Stop[] {
                     new Stop(0, Color.TRANSPARENT),
-                    new Stop(0.5, Color.CYAN.deriveColor(0, 1, 1.5, rightFlash * 0.6)),
+                    new Stop(0.5, themeColor.deriveColor(0, 1, 1.5, rightFlash * 0.6)),
                     new Stop(1, Color.WHITE.deriveColor(0, 1, 1, rightFlash * 0.8))
             };
             LinearGradient flash = new LinearGradient(
@@ -252,10 +258,10 @@ public class PlayGroundRenderer {
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
     }
 
-    private void drawFrameBorder() {
+    private void drawFrameBorder(Color themeColor) {
         double pulse = 0.5 + 0.3 * Math.sin(time * 2);
 
-        gc.setStroke(Color.CYAN.deriveColor(0, 1, 1.3, pulse));
+        gc.setStroke(themeColor.deriveColor(0, 1, 1.3, pulse));
         gc.setLineWidth(3);
         gc.strokeRect(1.5, 1.5, GAME_AREA_WIDTH - 3, WINDOW_HEIGHT - 3);
 
@@ -264,9 +270,9 @@ public class PlayGroundRenderer {
         gc.strokeRect(3, 3, GAME_AREA_WIDTH - 6, WINDOW_HEIGHT - 6);
     }
 
-    private void drawScanLines() {
+    private void drawScanLines(Color themeColor) {
         gc.setGlobalAlpha(0.08);
-        gc.setStroke(Color.CYAN);
+        gc.setStroke(themeColor);
         gc.setLineWidth(1);
         for (int y = 0; y < WINDOW_HEIGHT; y += 3) {
             gc.strokeLine(0, y, GAME_AREA_WIDTH, y);

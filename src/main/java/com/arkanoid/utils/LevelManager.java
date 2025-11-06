@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class LevelManager {
     private static LevelManager instance;
     private List<LevelInfo> levels;
@@ -37,7 +38,7 @@ public class LevelManager {
             level.setName("Level " + i);
             level.setGoal("Goal: Under 00:05");
             level.setTimeLimit("00:30");
-            level.setUnlocked(i == 1); // chỉ mở level 1 ban đầu
+            level.setUnlocked(true); // chỉ mở level 1 ban đầu
             level.setStars(0);
             level.setBestTime("N/A");
 
@@ -69,6 +70,7 @@ public class LevelManager {
             LevelInfo level = levels.get(levelId - 1);
             if (level.isUnlocked()) {
                 currentLevel = levelId;
+
                 System.out.println("Selected level: " + levelId);
             } else {
                 System.out.println("Level " + levelId + " is locked!");

@@ -6,7 +6,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
-
 public class CornerLight {
     private final double x, y;
     private final CornerPosition position;
@@ -26,12 +25,12 @@ public class CornerLight {
         intensity = 0.6 + 0.4 * Math.sin(time * 1.5 + x * 0.01);
     }
 
-    public void render(GraphicsContext gc) {
+    public void render(GraphicsContext gc, Color themeColor) {
         RadialGradient glow = new RadialGradient(
                 0, 0, 0.5, 0.5, 1, true,
                 CycleMethod.NO_CYCLE,
-                new Stop(0, Color.CYAN.deriveColor(0, 1, 1.5, intensity * 0.7)),
-                new Stop(0.5, Color.CYAN.deriveColor(0, 1, 1, intensity * 0.3)),
+                new Stop(0, themeColor.deriveColor(0, 1, 1.5, intensity * 0.7)),
+                new Stop(0.5, themeColor.deriveColor(0, 1, 1, intensity * 0.3)),
                 new Stop(1, Color.TRANSPARENT)
         );
         gc.setFill(glow);
@@ -39,5 +38,9 @@ public class CornerLight {
 
         gc.setFill(Color.WHITE.deriveColor(0, 1, 1, intensity));
         gc.fillOval(x - 3, y - 3, 6, 6);
+    }
+
+    public void render(GraphicsContext gc) {
+        render(gc, Color.CYAN);
     }
 }

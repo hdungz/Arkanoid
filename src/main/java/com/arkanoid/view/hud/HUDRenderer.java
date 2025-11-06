@@ -2,6 +2,7 @@ package com.arkanoid.view.hud;
 
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.GameState;
+import com.arkanoid.utils.ThemeManager;
 import com.arkanoid.view.hud.components.LivesPanel;
 import com.arkanoid.view.hud.components.MessagePanel;
 import com.arkanoid.view.hud.components.ScorePanel;
@@ -16,7 +17,6 @@ import java.util.List;
 
 import static com.arkanoid.CONSTANT.*;
 
-
 public class HUDRenderer {
     private final GameModel gameModel;
     private final Canvas hudCanvas;
@@ -27,11 +27,13 @@ public class HUDRenderer {
     private final ScorePanel scorePanel;
     private final LivesPanel livesPanel;
     private final MessagePanel messagePanel;
+    private final ThemeManager themeManager;
 
     private double messagePulse = 0;
 
     public HUDRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
+        this.themeManager = ThemeManager.getInstance();
 
         hudCanvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
         gc = hudCanvas.getGraphicsContext2D();
@@ -64,15 +66,16 @@ public class HUDRenderer {
     public void render() {
         gc.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        scorePanel.render(gc, time, gameModel.getScore());
+        Color themeColor = themeManager.getPrimaryColor();
 
-        livesPanel.render(gc, time, gameModel.getLives());
+        scorePanel.render(gc, time, gameModel.getScore(), themeColor);
+        livesPanel.render(gc, time, gameModel.getLives(), themeColor);
 
         GameState currentState = gameModel.getGameState();
         if (currentState == GameState.GameOver) {
             messagePanel.render(gc, "GAME OVER", Color.rgb(255, 50, 50), messagePulse);
         } else if (currentState == GameState.Ready) {
-            messagePanel.render(gc, "PRESS SPACE TO START", Color.rgb(255, 255, 100), messagePulse);
+            messagePanel.render(gc, "PRESS SPACE TO START", themeColor, messagePulse);
         }
     }
 

@@ -21,13 +21,17 @@ public class Star {
         currentBrightness = baseAlpha * (0.4 + 0.6 * Math.sin(time * speed + x * 0.1));
     }
 
-    public void render(GraphicsContext gc) {
+    public void render(GraphicsContext gc, Color themeColor) {
         gc.setFill(Color.WHITE.deriveColor(0, 1, 1, currentBrightness));
         gc.fillOval(x - size/2, y - size/2, size, size);
 
         if (currentBrightness > 0.8 && size > 1.5) {
-            gc.setFill(Color.CYAN.deriveColor(0, 1, 1, (currentBrightness - 0.8) * 0.4));
+            gc.setFill(themeColor.deriveColor(0, 1, 1, (currentBrightness - 0.8) * 0.4));
             gc.fillOval(x - size * 1.5, y - size * 1.5, size * 3, size * 3);
         }
+    }
+
+    public void render(GraphicsContext gc) {
+        render(gc, Color.CYAN);
     }
 }

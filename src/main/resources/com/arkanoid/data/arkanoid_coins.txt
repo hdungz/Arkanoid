@@ -1,1 +1,1 @@
-coins=27
+coins=47

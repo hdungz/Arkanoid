@@ -1,7 +1,6 @@
 package com.arkanoid.view;
 
 import com.arkanoid.model.GameModel;
-import com.arkanoid.model.Item;
 import com.arkanoid.model.ball.Ball;
 import com.arkanoid.model.paddle.ExpandablePaddle;
 import com.arkanoid.model.paddle.LaserPaddle;
@@ -11,6 +10,7 @@ import com.arkanoid.view.PowerUp.PowerUpRenderer;
 import com.arkanoid.view.background.BackgroundRenderer;
 import com.arkanoid.view.ball.MultiBallRenderer;
 import com.arkanoid.view.brick.BrickRenderer;
+import com.arkanoid.view.Coin.CoinRenderer;
 import com.arkanoid.view.hud.HUDRenderer;
 import com.arkanoid.view.paddle.BasePaddleRenderer;
 import com.arkanoid.view.paddle.ExpandablePaddleRenderer;
@@ -19,9 +19,8 @@ import com.arkanoid.view.paddle.StickyPaddleRenderer;
 import com.arkanoid.view.paddle.NormalPaddleRenderer;
 import com.arkanoid.view.effects.EffectRenderer;
 import com.arkanoid.view.playground.PlayGroundRenderer;
+import com.arkanoid.view.transition.LevelTransitionRenderer;
 import javafx.scene.Node;
-import com.arkanoid.view.Coin.CoinRenderer;
-
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
@@ -36,14 +35,15 @@ public class GameView extends Pane {
     private final BackgroundRenderer backgroundRenderer;
     private final EffectRenderer effectRenderer;
     private final PowerUpRenderer powerUpRenderer;
+    private final CoinRenderer coinRenderer;
+    private final LevelTransitionRenderer transitionRenderer;
+
     private BasePaddleRenderer currentPaddleRenderer;
     private final NormalPaddleRenderer normalRenderer;
     private final ExpandablePaddleRenderer expandableRenderer;
     private final LaserPaddleRenderer laserRenderer;
     private final StickyPaddleRenderer stickyRenderer;
-    private final CoinRenderer coinRenderer;
     private List<Node> currentBrickNodes = new ArrayList<>();
-
 
     public GameView(GameModel gameModel) {
         this.setStyle("-fx-background-color: black;");
@@ -61,6 +61,8 @@ public class GameView extends Pane {
         stickyRenderer = new StickyPaddleRenderer(gameModel);
         powerUpRenderer = new PowerUpRenderer(gameModel);
         coinRenderer = new CoinRenderer(gameModel);
+        transitionRenderer = new LevelTransitionRenderer();
+
         Ball mainBall = gameModel.getBall();
         multiBallRenderer.addBall(mainBall);
         multiBallRenderer.addBall(mainBall);
@@ -75,15 +77,25 @@ public class GameView extends Pane {
         getChildren().add(currentPaddleRenderer.getNode());
         getChildren().add(powerUpRenderer.getCanvas());
         getChildren().add(coinRenderer.getNode());
+        getChildren().add(transitionRenderer.getNode());
     }
-    public void synchronizeView() {
 
+    public void synchronizeView() {
         getChildren().removeAll(currentBrickNodes);
         currentBrickNodes = brickRenderer.createAndGetNodes();
+
         int playGroundIndex = getChildren().indexOf(playGroundRenderer.getNode());
         getChildren().addAll(playGroundIndex + 1, currentBrickNodes);
-
     }
+
+    public void showLevelStart(int level, Runnable onComplete) {
+        transitionRenderer.showLevelStart(level, onComplete);
+    }
+
+    public void showLevelClear(Runnable onComplete) {
+        transitionRenderer.showLevelClear(onComplete);
+    }
+
     public void render() {
         multiBallRenderer.render();
         brickRenderer.render();
@@ -91,6 +103,7 @@ public class GameView extends Pane {
         hudRenderer.render();
         powerUpRenderer.render();
         coinRenderer.render();
+
         Paddle paddle = gameModel.getPaddle();
         BasePaddleRenderer newRenderer = null;
 
@@ -106,17 +119,20 @@ public class GameView extends Pane {
 
         if (newRenderer != currentPaddleRenderer) {
             getChildren().remove(currentPaddleRenderer.getNode());
-            getChildren().add(newRenderer.getNode());
+
+            int powerUpIndex = getChildren().indexOf(powerUpRenderer.getCanvas());
+            getChildren().add(powerUpIndex, newRenderer.getNode());
+
             currentPaddleRenderer = newRenderer;
         }
 
         currentPaddleRenderer.render();
-
-
     }
 
     public void cleanup() {
         backgroundRenderer.cleanup();
+        powerUpRenderer.cleanup();
         coinRenderer.cleanup();
+        transitionRenderer.cleanup();
     }
 }

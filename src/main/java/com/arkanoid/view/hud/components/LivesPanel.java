@@ -6,7 +6,6 @@ import javafx.scene.paint.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-
 public class LivesPanel {
     private final HUDPanel panel;
     private final Font labelFont;
@@ -16,20 +15,20 @@ public class LivesPanel {
         this.labelFont = Font.font("Consolas", FontWeight.NORMAL, 14);
     }
 
-    public void render(GraphicsContext gc, double time, int lives) {
-        panel.render(gc, time);
+    public void render(GraphicsContext gc, double time, int lives, Color themeColor) {
+        panel.render(gc, time, themeColor);
 
         double panelX = panel.getX();
         double panelY = panel.getY();
 
         gc.setFont(labelFont);
-        gc.setFill(Color.CYAN);
+        gc.setFill(themeColor);
         gc.fillText("LIVES", panelX + 15, panelY + 20);
 
-        drawLivesIcons(gc, panelX, panelY, lives);
+        drawLivesIcons(gc, panelX, panelY, lives, themeColor);
     }
 
-    private void drawLivesIcons(GraphicsContext gc, double panelX, double panelY, int lives) {
+    private void drawLivesIcons(GraphicsContext gc, double panelX, double panelY, int lives, Color themeColor) {
         double iconSize = 18;
         double iconSpacing = 25;
         double startX = panelX + 15;
@@ -39,26 +38,26 @@ public class LivesPanel {
             double x = startX + i * iconSpacing;
 
             if (i < lives) {
-                drawActiveLife(gc, x, iconY, iconSize);
+                drawActiveLife(gc, x, iconY, iconSize, themeColor);
             } else {
                 drawLostLife(gc, x, iconY, iconSize);
             }
         }
     }
 
-    private void drawActiveLife(GraphicsContext gc, double x, double y, double size) {
+    private void drawActiveLife(GraphicsContext gc, double x, double y, double size, Color themeColor) {
         gc.setGlobalBlendMode(BlendMode.ADD);
         RadialGradient glow = new RadialGradient(
                 0, 0, 0.5, 0.5, 1, true,
                 CycleMethod.NO_CYCLE,
-                new Stop(0, Color.CYAN.deriveColor(0, 1, 1, 0.5)),
+                new Stop(0, themeColor.deriveColor(0, 1, 1, 0.5)),
                 new Stop(1, Color.TRANSPARENT)
         );
         gc.setFill(glow);
         gc.fillOval(x + size/2 - size, y + size/2 - size, size * 2, size * 2);
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
 
-        gc.setFill(Color.CYAN);
+        gc.setFill(themeColor);
         gc.fillOval(x, y, size, size);
 
         gc.setFill(Color.WHITE);
@@ -69,5 +68,9 @@ public class LivesPanel {
         gc.setStroke(Color.rgb(50, 50, 80));
         gc.setLineWidth(2);
         gc.strokeOval(x, y, size, size);
+    }
+
+    public void render(GraphicsContext gc, double time, int lives) {
+        render(gc, time, lives, Color.CYAN);
     }
 }

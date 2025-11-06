@@ -3,7 +3,6 @@ package com.arkanoid.view.hud.components;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
 
-
 public class HUDPanel {
     private final double x, y, width, height;
 
@@ -14,7 +13,7 @@ public class HUDPanel {
         this.height = height;
     }
 
-    public void render(GraphicsContext gc, double time) {
+    public void render(GraphicsContext gc, double time, Color themeColor) {
         Stop[] bgStops = new Stop[] {
                 new Stop(0, Color.rgb(10, 20, 40, 0.8)),
                 new Stop(1, Color.rgb(20, 30, 60, 0.9))
@@ -27,15 +26,15 @@ public class HUDPanel {
         gc.fillRoundRect(x, y, width, height, 8, 8);
 
         double pulse = 0.5 + 0.3 * Math.sin(time * 2);
-        gc.setStroke(Color.CYAN.deriveColor(0, 1, 1, pulse));
+        gc.setStroke(themeColor.deriveColor(0, 1, 1, pulse));
         gc.setLineWidth(2);
         gc.strokeRoundRect(x + 1, y + 1, width - 2, height - 2, 8, 8);
 
-        drawCornerAccents(gc, pulse);
+        drawCornerAccents(gc, pulse, themeColor);
     }
 
-    private void drawCornerAccents(GraphicsContext gc, double pulse) {
-        gc.setStroke(Color.CYAN.deriveColor(0, 1, 1.5, pulse));
+    private void drawCornerAccents(GraphicsContext gc, double pulse, Color themeColor) {
+        gc.setStroke(themeColor.deriveColor(0, 1, 1.5, pulse));
         gc.setLineWidth(3);
 
         gc.strokeLine(x + 5, y + 2, x + 20, y + 2);
@@ -49,6 +48,10 @@ public class HUDPanel {
 
         gc.strokeLine(x + width - 20, y + height - 2, x + width - 5, y + height - 2);
         gc.strokeLine(x + width - 2, y + height - 20, x + width - 2, y + height - 5);
+    }
+
+    public void render(GraphicsContext gc, double time) {
+        render(gc, time, Color.CYAN);
     }
 
     public double getX() { return x; }

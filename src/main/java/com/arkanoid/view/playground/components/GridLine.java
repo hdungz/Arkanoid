@@ -22,9 +22,13 @@ public class GridLine {
         currentAlpha = baseAlpha + 0.15 * Math.sin(time * 0.5 + (isVertical ? x1 : y1) * 0.01);
     }
 
-    public void render(GraphicsContext gc) {
-        gc.setStroke(Color.CYAN.deriveColor(0, 1, 1, currentAlpha));
+    public void render(GraphicsContext gc, Color themeColor) {
+        gc.setStroke(themeColor.deriveColor(0, 1, 1, currentAlpha));
         gc.setLineWidth(1);
         gc.strokeLine(x1, y1, x2, y2);
+    }
+
+    public void render(GraphicsContext gc) {
+        render(gc, Color.CYAN);
     }
 }
