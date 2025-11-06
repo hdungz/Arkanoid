@@ -24,7 +24,9 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GameView extends Pane {
     private final GameModel gameModel;
@@ -43,7 +45,10 @@ public class GameView extends Pane {
     private final ExpandablePaddleRenderer expandableRenderer;
     private final LaserPaddleRenderer laserRenderer;
     private final StickyPaddleRenderer stickyRenderer;
+
     private List<Node> currentBrickNodes = new ArrayList<>();
+    private int lastBallCount = 0;
+    private Set<Ball> trackedBalls = new HashSet<>();
 
     public GameView(GameModel gameModel) {
         this.setStyle("-fx-background-color: black;");
@@ -65,7 +70,9 @@ public class GameView extends Pane {
 
         Ball mainBall = gameModel.getBall();
         multiBallRenderer.addBall(mainBall);
-        multiBallRenderer.addBall(mainBall);
+        trackedBalls.add(mainBall);
+
+        lastBallCount = 1;
 
         currentPaddleRenderer = normalRenderer;
 
@@ -86,6 +93,42 @@ public class GameView extends Pane {
 
         int playGroundIndex = getChildren().indexOf(playGroundRenderer.getNode());
         getChildren().addAll(playGroundIndex + 1, currentBrickNodes);
+
+        resetBallTracking();
+    }
+
+    private void resetBallTracking() {
+        trackedBalls.clear();
+        Ball mainBall = gameModel.getBall();
+        trackedBalls.add(mainBall);
+        lastBallCount = 1;
+    }
+
+    private void syncBalls() {
+        ArrayList<Ball> extraBalls = gameModel.getExtraBalls();
+
+        for (Ball ball : extraBalls) {
+            if (!trackedBalls.contains(ball)) {
+                multiBallRenderer.addBall(ball);
+                trackedBalls.add(ball);
+                System.out.println("Added new ball to renderer. Total tracked: " + trackedBalls.size());
+            }
+        }
+
+        List<Ball> ballsToRemove = new ArrayList<>();
+        for (Ball ball : trackedBalls) {
+            if (ball != gameModel.getBall() && !extraBalls.contains(ball)) {
+                ballsToRemove.add(ball);
+            }
+        }
+
+        for (Ball ball : ballsToRemove) {
+            multiBallRenderer.removeBall(ball);
+            trackedBalls.remove(ball);
+            System.out.println("Removed ball from renderer. Total tracked: " + trackedBalls.size());
+        }
+
+        lastBallCount = gameModel.getTotalBallCount();
     }
 
     public void showLevelStart(int level, Runnable onComplete) {
@@ -97,6 +140,11 @@ public class GameView extends Pane {
     }
 
     public void render() {
+        int currentBallCount = gameModel.getTotalBallCount();
+        if (currentBallCount != lastBallCount) {
+            syncBalls();
+        }
+
         multiBallRenderer.render();
         brickRenderer.render();
         effectRenderer.render();
@@ -127,6 +175,10 @@ public class GameView extends Pane {
         }
 
         currentPaddleRenderer.render();
+
+        normalRenderer.refreshPaddleAsset();
+        laserRenderer.refreshPaddleAssetLaser();
+        stickyRenderer.refreshPaddleAssetSticky();
     }
 
     public void cleanup() {
@@ -134,5 +186,6 @@ public class GameView extends Pane {
         powerUpRenderer.cleanup();
         coinRenderer.cleanup();
         transitionRenderer.cleanup();
+        trackedBalls.clear();
     }
 }

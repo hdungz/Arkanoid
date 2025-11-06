@@ -1,10 +1,9 @@
 package com.arkanoid.model.ball;
 
 public enum BallType {
-    Default("DefaultBall", "DefaultBall",10, 2.5, 1, 1),
-    Meteor("MeteorBall", "MeteorBall",15, 1.8, 1.5, 1),
-    Lightning("LightningBall","LightningBall", 10, 3.2, 1, 1),
-    Curved("Curved","Curved", 10, 2.5, 1, 3);
+    Default("EnBallRed", "EnBallRed",10, 2.5, 1, 1),
+    BasketBall("BasketBall", "Basketball",15, 1.8, 1.5, 1);
+
 
     private final String name;
     private final double radius;

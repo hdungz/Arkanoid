@@ -4,6 +4,7 @@ import com.arkanoid.controller.BaseController;
 import com.arkanoid.controller.GameController;
 import com.arkanoid.controller.MenuController;
 import com.arkanoid.controller.LevelSelectionController;
+import com.arkanoid.controller.StoreController;
 import com.arkanoid.utils.GameLoop;
 import com.arkanoid.utils.SceneManager;
 import com.arkanoid.utils.SceneType;
@@ -12,6 +13,7 @@ import com.arkanoid.model.GameModel;
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.view.MenuView;
 import com.arkanoid.view.LevelSelectionView;
+import com.arkanoid.view.StoreView;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -51,6 +53,12 @@ public class main extends Application {
         LevelSelectionController levelSelectionController = new LevelSelectionController(levelSelectionView);
         Scene levelSelectionScene = new Scene(levelSelectionView, WINDOW_WIDTH, WINDOW_HEIGHT);
         sceneManager.addScene(SceneType.LevelSelection, levelSelectionScene, levelSelectionController);
+
+        //Init Store
+        StoreView storeView = new StoreView();
+        StoreController storeController = new StoreController(storeView);
+        Scene storeScene = new Scene(storeView, WINDOW_WIDTH, WINDOW_HEIGHT);
+        sceneManager.addScene(SceneType.Store, storeScene, storeController);
 
         stage.show();
 

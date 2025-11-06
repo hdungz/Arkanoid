@@ -15,27 +15,44 @@ import com.arkanoid.view.Effect.ExplosionEffect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Iterator;
 import static com.arkanoid.CONSTANT.*;
 
 
 public class GameModel {
     public enum WallCollisionSide { NONE, TOP, LEFT, RIGHT }
+
     public int checkpierce = 0;
     private double pierceTimer = 0;
+
+
     private static GameModel instance;
+
+
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
+
+
     ArrayList<Brick> bricks;
     ArrayList<Item> items = new ArrayList<>();
+
+
+    private ArrayList<Ball> extraBalls = new ArrayList<>();
+
+
     private PowerUpManager powerUpManager;
     private final LevelManager levelmanager;
+    private CoinManager coinManager;
+
+
     private int currentLevel = 0;
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
+
+
     Paddle paddle;
-    Ball ball;
+    Ball ball; // Main ball
     int score;
     int lives;
     GameState gameState;
-    private CoinManager coinManager;
 
     public GameModel() {
         instance = this;
@@ -57,11 +74,13 @@ public class GameModel {
     public void loadCurrentLevel() {
         this.currentLevel = levelmanager.getCurrentLevel();
         ThemeManager.getInstance().setThemeForLevel(currentLevel);
+
         this.score = 0;
         this.lives = 3;
         this.bricks.clear();
         this.items.clear();
         this.effects.clear();
+        this.extraBalls.clear();
 
         coinManager.resetSessionCoins();
         this.paddle = new Paddle(PowerUpPaddleType.Normal);
@@ -72,6 +91,7 @@ public class GameModel {
     }
 
     public void update(double deltaTime) {
+
         if (checkpierce == 1) {
             pierceTimer -= deltaTime;
             if (pierceTimer <= 0) {
@@ -95,6 +115,7 @@ public class GameModel {
         coinManager.update(deltaTime);
         paddle.move(deltaTime);
 
+
         if (paddle instanceof StickyPaddle) {
             StickyPaddle sp = (StickyPaddle) paddle;
             sp.updateArrow(deltaTime);
@@ -111,12 +132,19 @@ public class GameModel {
             ball.move(deltaTime);
         }
 
+
+        updateExtraBalls(deltaTime);
+
+
         checkCollisions();
+        checkExtraBallsCollisions();
         checkLaserCollisions();
+
 
         if (paddle instanceof LaserPaddle) {
             ((LaserPaddle) paddle).updateLasers(deltaTime);
         }
+
 
         if (levelmanager.WinLevels(bricks)) {
             gameState = GameState.Win;
@@ -125,12 +153,55 @@ public class GameModel {
         }
     }
 
+    private void updateExtraBalls(double deltaTime) {
+        for (Ball extraBall : extraBalls) {
+            if (extraBall.isVisible()) {
+                extraBall.move(deltaTime);
+            }
+        }
+    }
+
+    private void checkExtraBallsCollisions() {
+        Iterator<Ball> iterator = extraBalls.iterator();
+
+        while (iterator.hasNext()) {
+            Ball extraBall = iterator.next();
+
+            if (!extraBall.isVisible()) {
+                iterator.remove();
+                continue;
+            }
+
+
+            extraBall.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X,
+                    CONSTANT.BORDER_WIDTH, this);
+
+
+            if (extraBall.getBoundary().intersects(paddle.getBoundary())) {
+                paddle.onBallHit();
+                extraBall.handlePaddleCollision(paddle);
+            }
+
+
+            if (extraBall.getY() > WINDOW_HEIGHT) {
+                iterator.remove();
+                System.out.println("Extra ball removed. Remaining: " + extraBalls.size());
+                continue;
+            }
+
+
+            checkBallBrickCollision(extraBall);
+        }
+    }
+
     void checkCollisions() {
         this.lastWallCollision = WallCollisionSide.NONE;
+
 
         if (paddle instanceof StickyPaddle && ((StickyPaddle) paddle).isBallStuck()) {
             return;
         }
+
 
         ball.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X, CONSTANT.BORDER_WIDTH, this);
 
@@ -147,63 +218,93 @@ public class GameModel {
             }
         }
 
+
         if (ball.getY() > WINDOW_HEIGHT) {
-            lives--;
-            stopCurrentPaddleTimer();
-            if (paddle instanceof StickyPaddle || paddle instanceof ExpandablePaddle || paddle instanceof LaserPaddle) {
-                boolean isMovingRight = paddle.isMovingRight();
-                boolean isMovingLeft = paddle.isMovingLeft();
-                double x = paddle.getX();
-                double y = paddle.getY();
-                this.paddle = new Paddle(PowerUpPaddleType.Normal);
-                paddle.setX(x);
-                paddle.setY(y);
-                paddle.setMovingLeft(isMovingLeft);
-                paddle.setMovingRight(isMovingRight);
+
+            if (extraBalls.isEmpty()) {
+                lives--;
+                stopCurrentPaddleTimer();
+
+
+                if (paddle instanceof StickyPaddle || paddle instanceof ExpandablePaddle || paddle instanceof LaserPaddle) {
+                    boolean isMovingRight = paddle.isMovingRight();
+                    boolean isMovingLeft = paddle.isMovingLeft();
+                    double x = paddle.getX();
+                    double y = paddle.getY();
+                    this.paddle = new Paddle(PowerUpPaddleType.Normal);
+                    paddle.setX(x);
+                    paddle.setY(y);
+                    paddle.setMovingLeft(isMovingLeft);
+                    paddle.setMovingRight(isMovingRight);
+                }
+
+                if (lives == 0) {
+                    gameState = GameState.GameOver;
+                } else {
+                    ball.resetPosition(paddle);
+                    gameState = GameState.Ready;
+                }
+            } else {
+
+                ball.setVisible(false);
+                ball.setY(WINDOW_HEIGHT + 100);
             }
-            if (lives == 0) gameState = GameState.GameOver;
-            else {
-                ball.resetPosition(paddle);
-                gameState = GameState.Ready;
-            }
+            return;
         }
 
+
+        checkBallBrickCollision(ball);
+    }
+
+    private void checkBallBrickCollision(Ball currentBall) {
         ListIterator<Brick> iterator = bricks.listIterator();
+
         while (iterator.hasNext()) {
             Brick brick = iterator.next();
 
             if (!brick.isVisible()) continue;
 
-            if (brick.getBoundary().intersects(ball.getBoundary())) {
+            if (brick.getBoundary().intersects(currentBall.getBoundary())) {
                 brick.playHitSound();
+
+
                 if (brick.getHealth() == 1) score += 10;
-                if (brick.getHealth() == 2) score += 20;
-                if (brick.getHealth() == 3) score += 30;
+                else if (brick.getHealth() == 2) score += 20;
+                else if (brick.getHealth() == 3) score += 30;
+
                 brick.takeDamage();
 
+
                 if (!brick.isVisible() && !(brick instanceof DropBrick)) {
-                    if (Math.random() < 0.3) { // 30% xác suất
+                    if (Math.random() < 0.3) {
                         items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
                     }
                 }
 
-                double ballPrevY = ball.getPrevY();
-                double ballRadius = ball.getRadius();
+
+                double ballPrevY = currentBall.getPrevY();
+                double ballRadius = currentBall.getRadius();
                 double brickTop = brick.getY();
                 double brickBottom = brick.getY() + brick.getHeight();
                 boolean isVerticalCollision;
-                if (ballPrevY < brickTop - ballRadius) isVerticalCollision = true;
-                else if (ballPrevY > brickBottom + ballRadius) isVerticalCollision = true;
-                else isVerticalCollision = false;
+
+                if (ballPrevY < brickTop - ballRadius) {
+                    isVerticalCollision = true;
+                } else if (ballPrevY > brickBottom + ballRadius) {
+                    isVerticalCollision = true;
+                } else {
+                    isVerticalCollision = false;
+                }
+
 
                 if (checkpierce == 0) {
-                    ball.handleBrickCollision(isVerticalCollision);
+                    currentBall.handleBrickCollision(isVerticalCollision);
 
                     if (isVerticalCollision) {
-                        ball.setY(ball.getVelocityY() < 0 ? brickTop - ballRadius : brickBottom + ballRadius);
+                        currentBall.setY(currentBall.getVelocityY() < 0 ? brickTop - ballRadius : brickBottom + ballRadius);
                         break;
                     } else {
-                        ball.setX(ball.getVelocityX() < 0 ? brick.getX() - ballRadius : brick.getX() + brick.getWidth() + ballRadius);
+                        currentBall.setX(currentBall.getVelocityX() < 0 ? brick.getX() - ballRadius : brick.getX() + brick.getWidth() + ballRadius);
                         break;
                     }
                 }
@@ -230,9 +331,11 @@ public class GameModel {
                 if (laser.getBoundary().intersects(brick.getBoundary())) {
                     laser.setActive(false);
                     brick.playHitSound();
+
                     if (brick.getHealth() == 1) score += 10;
                     else if (brick.getHealth() == 2) score += 20;
                     else if (brick.getHealth() == 3) score += 30;
+
                     brick.takeDamage();
 
                     if (!brick.isVisible() && !(brick instanceof DropBrick)) {
@@ -249,7 +352,9 @@ public class GameModel {
 
     private void updateBricks(double deltaTime) {
         for (Brick brick : bricks) {
-            if (brick instanceof MoveBrick) ((MoveBrick) brick).update(deltaTime);
+            if (brick instanceof MoveBrick) {
+                ((MoveBrick) brick).update(deltaTime);
+            }
         }
     }
 
@@ -260,12 +365,11 @@ public class GameModel {
         });
     }
 
-    public List<ExplosionEffect> getEffects() { return effects; }
-
     public void launchBall() {
         if (gameState == GameState.Ready) {
             gameState = GameState.Running;
             ball.launch();
+            ball.setVisible(true);
         }
 
         if (paddle instanceof StickyPaddle) {
@@ -275,6 +379,8 @@ public class GameModel {
                 ball.setVelocityX(velocity[0]);
                 ball.setVelocityY(velocity[1]);
                 sp.launchBall();
+
+
                 Paddle normalPaddle = new Paddle(PowerUpPaddleType.Normal);
                 normalPaddle.setX(sp.getX());
                 normalPaddle.setY(sp.getY());
@@ -371,6 +477,31 @@ public class GameModel {
         }
     }
 
+    // Multi-ball management methods
+    public void addBall(Ball newBall) {
+        extraBalls.add(newBall);
+        System.out.println("Ball added. Total extra balls: " + extraBalls.size());
+    }
+
+    public void removeBall(Ball ball) {
+        extraBalls.remove(ball);
+    }
+
+    public ArrayList<Ball> getExtraBalls() {
+        return extraBalls;
+    }
+
+    public int getTotalBallCount() {
+        int count = ball.isVisible() ? 1 : 0;
+        count += extraBalls.size();
+        return count;
+    }
+
+    public void clearExtraBalls() {
+        extraBalls.clear();
+    }
+
+    // Score and power-up management
     public void addScore(int points) {
         this.score += points;
     }
@@ -383,29 +514,81 @@ public class GameModel {
         this.pierceTimer = timer;
     }
 
-    public ArrayList<Brick> getBricks() { return bricks; }
-    public void setBricks(ArrayList<Brick> bricks) { this.bricks = bricks; }
-    public Paddle getPaddle() { return paddle; }
-    public Ball getBall() { return ball; }
-    public int getScore() { return score; }
-    public int getLives() { return lives; }
-    public int getCheckpierce() { return checkpierce; }
-    public GameState getGameState() { return gameState; }
-    public WallCollisionSide getLastWallCollision() { return lastWallCollision; }
-    public void setLastWallCollision(WallCollisionSide side) { this.lastWallCollision = side; }
-    public static GameModel getInstance() { if (instance == null) instance = new GameModel(); return instance; }
-    public ArrayList<Item> getItems() { return items; }
-    public LevelManager getLevelmanager() { return levelmanager; }
-    public CoinManager getCoinManager() { return coinManager; }
-
-    public PowerUpManager getPowerUpManager() { return powerUpManager; }
-
     public void onExplosion(double centerX, double centerY, double size) {
         effects.add(new ExplosionEffect(centerX, centerY, size));
     }
 
-    public void setCurrentLevel(int level) { this.currentLevel = level; }
-    public int getCurrentLevel() { return currentLevel; }
+    // Getters and setters
+    public ArrayList<Brick> getBricks() {
+        return bricks;
+    }
 
+    public void setBricks(ArrayList<Brick> bricks) {
+        this.bricks = bricks;
+    }
 
+    public Paddle getPaddle() {
+        return paddle;
+    }
+
+    public Ball getBall() {
+        return ball;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public int getCheckpierce() {
+        return checkpierce;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public WallCollisionSide getLastWallCollision() {
+        return lastWallCollision;
+    }
+
+    public void setLastWallCollision(WallCollisionSide side) {
+        this.lastWallCollision = side;
+    }
+
+    public static GameModel getInstance() {
+        if (instance == null) instance = new GameModel();
+        return instance;
+    }
+
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
+    public LevelManager getLevelmanager() {
+        return levelmanager;
+    }
+
+    public CoinManager getCoinManager() {
+        return coinManager;
+    }
+
+    public PowerUpManager getPowerUpManager() {
+        return powerUpManager;
+    }
+
+    public List<ExplosionEffect> getEffects() {
+        return effects;
+    }
+
+    public void setCurrentLevel(int level) {
+        this.currentLevel = level;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
 }

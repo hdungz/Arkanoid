@@ -1,9 +1,13 @@
 package com.arkanoid.view.ball;
 
+import com.arkanoid.controller.StoreController;
+import com.arkanoid.model.ball.BallType;
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.model.ball.Ball;
 import com.arkanoid.utils.SpriteAnimator;
+import com.arkanoid.utils.SpriteManager;
+import com.arkanoid.view.StoreView;
 import javafx.scene.Node;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -17,17 +21,23 @@ public class BallRenderer {
     private final GameModel gameModel;
     private final Ball ball;
     private final ImageView ballSprite;
-    private final Image[] images;
-    private final SpriteAnimator animator;
+    private Image[] images;
+    private SpriteAnimator animator;
 
     private final LinkedList<Circle> trailList = new LinkedList<>();
-    private static final int MAX_TRAIL = 45; // tăng số vệt sáng để mượt hơn
+    private static final int MAX_TRAIL = 45;
     private double lastX, lastY;
     private double rotation = 0;
     private int checkPierce;
 
     private final Group group;
 
+
+    private BallType currentBallType;
+    private String currentAssetKey;
+
+
+    private static final String FALLBACK_ASSET_KEY = "EnBallRed";
 
     public BallRenderer(GameModel gameModel) {
         this(gameModel, gameModel.getBall());
@@ -37,14 +47,12 @@ public class BallRenderer {
         this.gameModel = gameModel;
         this.ball = ball;
 
-        checkPierce = ball.getPierceBall();
-        System.out.println(checkPierce);
-        if (checkPierce == 0) {
-            images = AssetsManager.getFrames("EnBallRed");
-        } else {
-            images = AssetsManager.getFrames("PurpleBall");
-        }
 
+        currentBallType = SpriteManager.getSelectedBall();
+        currentAssetKey = getAssetKeyForBallType(currentBallType);
+
+
+        images = loadImagesWithFallback(currentAssetKey);
         animator = new SpriteAnimator(images, images.length);
         ballSprite = new ImageView(animator.getCurrentFrame());
 
@@ -64,16 +72,116 @@ public class BallRenderer {
 
     public void render() {
         animator.update();
-            // cập nhật trạng thái xuyên gạch
+
+
+        BallType selectedBall = SpriteManager.getSelectedBall();
+        if (!selectedBall.equals(currentBallType)) {
+            updateBallSkin(selectedBall);
+        }
+
+
         checkPierce = gameModel.getCheckpierce();
-        // nếu bóng thay đổi loại thì cập nhật ảnh mới
-        if (checkPierce == 0)
-            ballSprite.setImage(AssetsManager.getFrames("EnBallRed")[0]);
-        else
-            ballSprite.setImage(AssetsManager.getFrames("PurpleBall")[0]);
+
+
+        Image[] currentFrames;
+        if (checkPierce == 0) {
+            currentFrames = loadImagesWithFallback(currentAssetKey);
+        } else {
+            currentFrames = loadImagesWithFallback("PurpleBall");
+        }
+
+
+        if (currentFrames != null && currentFrames.length > 0) {
+            ballSprite.setImage(currentFrames[0]);
+        }
+
         updateTrail();
         updateRotation();
         updatePosition();
+    }
+
+    private void updateBallSkin(BallType newBallType) {
+        currentBallType = newBallType;
+        currentAssetKey = getAssetKeyForBallType(newBallType);
+
+
+        images = loadImagesWithFallback(currentAssetKey);
+        animator = new SpriteAnimator(images, images.length);
+
+
+        double diameter = ball.getRadius() * 2;
+        ballSprite.setFitWidth(diameter);
+        ballSprite.setFitHeight(diameter);
+
+        System.out.println("Đã cập nhật skin bóng thành: " + newBallType.getName() + " (" + currentAssetKey + ")");
+    }
+
+    private String getAssetKeyForBallType(BallType ballType) {
+
+        String key = ballType.getAssetKey();
+
+
+        if (key == null || key.isEmpty()) {
+            return FALLBACK_ASSET_KEY;
+        }
+
+        return key;
+    }
+
+
+    private Image[] loadImagesWithFallback(String assetKey) {
+        try {
+            Image[] frames = AssetsManager.getFrames(assetKey);
+
+
+            if (frames == null || frames.length == 0) {
+                System.err.println("WARNING: Asset '" + assetKey + "' không có frames, dùng fallback");
+
+                if (!assetKey.equals(FALLBACK_ASSET_KEY)) {
+                    frames = AssetsManager.getFrames(FALLBACK_ASSET_KEY);
+                }
+
+
+                if (frames == null || frames.length == 0) {
+                    System.err.println("ERROR: Không thể load bất kỳ asset nào, tạo image trắng mặc định");
+                    frames = createDefaultImage();
+                }
+            }
+
+            return frames;
+
+        } catch (Exception e) {
+            System.err.println("ERROR: Lỗi khi load asset '" + assetKey + "': " + e.getMessage());
+
+
+            try {
+                if (!assetKey.equals(FALLBACK_ASSET_KEY)) {
+                    return AssetsManager.getFrames(FALLBACK_ASSET_KEY);
+                }
+            } catch (Exception e2) {
+                System.err.println("ERROR: Không thể load fallback asset");
+            }
+
+
+            return createDefaultImage();
+        }
+    }
+
+
+    private Image[] createDefaultImage() {
+
+        javafx.scene.image.WritableImage defaultImage =
+                new javafx.scene.image.WritableImage((int)(ball.getRadius() * 2), (int)(ball.getRadius() * 2));
+
+
+        javafx.scene.canvas.Canvas canvas = new javafx.scene.canvas.Canvas(ball.getRadius() * 2, ball.getRadius() * 2);
+        javafx.scene.canvas.GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillOval(0, 0, ball.getRadius() * 2, ball.getRadius() * 2);
+
+        canvas.snapshot(null, defaultImage);
+
+        return new Image[]{defaultImage};
     }
 
     private void updateTrail() {
@@ -92,13 +200,12 @@ public class BallRenderer {
         for (int i = 0; i < trailList.size(); i++) {
             Circle c = trailList.get(i);
 
-            // giảm độ mờ mượt dần hơn
             c.setOpacity(Math.max(0, 0.35 - (i * 0.006)));
             c.setRadius(ball.getRadius() * (0.85 - i * 0.008));
 
             double ratio = (double) i / trailList.size();
             if (checkPierce == 0) {
-                // đỏ cam
+
                 c.setFill(Color.rgb(
                         (int) (255 - 100 * ratio),
                         (int) (140 - 80 * ratio),
@@ -106,11 +213,11 @@ public class BallRenderer {
                         1.0
                 ));
             } else {
-                // tím plasma
+
                 c.setFill(Color.rgb(
-                        (int) (160 + 70 * ratio),  // đỏ tím
-                        (int) (60 + 40 * ratio),   // xanh lam
-                        (int) (255 - 30 * ratio),  // xanh tím
+                        (int) (160 + 70 * ratio),
+                        (int) (60 + 40 * ratio),
+                        (int) (255 - 30 * ratio),
                         1.0
                 ));
             }
