@@ -33,7 +33,6 @@ public class GameModel {
 
 
     ArrayList<Brick> bricks;
-    ArrayList<Item> items = new ArrayList<>();
 
 
     private ArrayList<Ball> extraBalls = new ArrayList<>();
@@ -78,7 +77,6 @@ public class GameModel {
         this.score = 0;
         this.lives = 3;
         this.bricks.clear();
-        this.items.clear();
         this.effects.clear();
         this.extraBalls.clear();
 
@@ -275,11 +273,7 @@ public class GameModel {
                 brick.takeDamage();
 
 
-                if (!brick.isVisible() && !(brick instanceof DropBrick)) {
-                    if (Math.random() < 0.3) {
-                        items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
-                    }
-                }
+
 
 
                 double ballPrevY = currentBall.getPrevY();
@@ -338,11 +332,6 @@ public class GameModel {
 
                     brick.takeDamage();
 
-                    if (!brick.isVisible() && !(brick instanceof DropBrick)) {
-                        if (Math.random() < 0.3) {
-                            items.add(new Item(brick.getX() + brick.getWidth() / 2, brick.getY()));
-                        }
-                    }
 
                     break;
                 }
@@ -477,7 +466,6 @@ public class GameModel {
         }
     }
 
-    // Multi-ball management methods
     public void addBall(Ball newBall) {
         extraBalls.add(newBall);
         System.out.println("Ball added. Total extra balls: " + extraBalls.size());
@@ -501,7 +489,6 @@ public class GameModel {
         extraBalls.clear();
     }
 
-    // Score and power-up management
     public void addScore(int points) {
         this.score += points;
     }
@@ -518,7 +505,6 @@ public class GameModel {
         effects.add(new ExplosionEffect(centerX, centerY, size));
     }
 
-    // Getters and setters
     public ArrayList<Brick> getBricks() {
         return bricks;
     }
@@ -564,9 +550,6 @@ public class GameModel {
         return instance;
     }
 
-    public ArrayList<Item> getItems() {
-        return items;
-    }
 
     public LevelManager getLevelmanager() {
         return levelmanager;

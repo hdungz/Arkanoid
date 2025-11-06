@@ -60,7 +60,7 @@ public class ThemeManager {
         ThemeColor color = colors[colorIndex];
 
         currentTheme = createTheme(color);
-        System.out.println("🎨 Theme changed to: " + color + " for level " + level);
+
     }
 
     private LevelTheme createTheme(ThemeColor color) {

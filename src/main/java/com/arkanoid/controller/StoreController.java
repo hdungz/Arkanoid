@@ -1,5 +1,6 @@
 package com.arkanoid.controller;
 
+import com.arkanoid.Coin.CoinStorage;
 import com.arkanoid.model.GameModel;
 import com.arkanoid.utils.SceneManager;
 import com.arkanoid.utils.SceneType;
@@ -16,7 +17,6 @@ public class StoreController implements BaseController {
 
 
     private final StoreView storeView;
-    private int playerCoins;
 
     private boolean[] paddleUnlocked;
     private int selectedPaddleIndex;
@@ -28,7 +28,6 @@ public class StoreController implements BaseController {
 
     private static final int TOTAL_PADDLE_SKINS = 3;
     private static final int TOTAL_BALL_SKINS = 2;
-    private static final int DEFAULT_COINS = 1000;
     private static final int MIN_COINS = 0;
     private static final int MAX_COINS = 999999;
 
@@ -66,7 +65,8 @@ public class StoreController implements BaseController {
         }
 
         this.storeView = storeView;
-        this.playerCoins = DEFAULT_COINS;
+
+        CoinStorage.load();
 
         this.selectedPaddleIndex = 0;
         this.currentPaddleViewIndex = 0;
@@ -157,15 +157,15 @@ public class StoreController implements BaseController {
 
         int price = paddlePrices[skinIndex];
 
-        if (playerCoins >= price) {
-            playerCoins -= price;
+        if (CoinStorage.hasEnoughCoins(price)) {
+            CoinStorage.spendCoins(price);
             paddleUnlocked[skinIndex] = true;
             selectedPaddleIndex = skinIndex;
 
             SpriteManager.setPaddleByIndex(skinIndex);
 
             storeView.playPurchaseSuccessAnimation(() -> {
-                storeView.updateCoins(playerCoins);
+                storeView.updateCoins(CoinStorage.getTotalCoins());
                 updateDisplay();
             });
         } else {
@@ -235,15 +235,15 @@ public class StoreController implements BaseController {
 
         int price = ballPrices[skinIndex];
 
-        if (playerCoins >= price) {
-            playerCoins -= price;
+        if (CoinStorage.hasEnoughCoins(price)) {
+            CoinStorage.spendCoins(price);
             ballUnlocked[skinIndex] = true;
             selectedBallIndex = skinIndex;
 
             SpriteManager.setBallByIndex(skinIndex);
 
             storeView.playPurchaseSuccessAnimation(() -> {
-                storeView.updateCoins(playerCoins);
+                storeView.updateCoins(CoinStorage.getTotalCoins());
                 updateDisplay();
             });
         } else {
@@ -267,7 +267,7 @@ public class StoreController implements BaseController {
     private void updateDisplay() {
         updatePaddleDisplay();
         updateBallDisplay();
-        storeView.updateCoins(playerCoins);
+        storeView.updateCoins(CoinStorage.getTotalCoins());
     }
 
     public void addCoins(int amount) {
@@ -275,18 +275,18 @@ public class StoreController implements BaseController {
             return;
         }
 
-        int newTotal = Math.min(playerCoins + amount, MAX_COINS);
-        playerCoins = newTotal;
-        storeView.updateCoins(playerCoins);
+        CoinStorage.addCoins(amount);
+        storeView.updateCoins(CoinStorage.getTotalCoins());
     }
 
     public void setCoins(int amount) {
-        playerCoins = Math.max(MIN_COINS, Math.min(amount, MAX_COINS));
-        storeView.updateCoins(playerCoins);
+        int clampedAmount = Math.max(MIN_COINS, Math.min(amount, MAX_COINS));
+        CoinStorage.setTotalCoins(clampedAmount);
+        storeView.updateCoins(CoinStorage.getTotalCoins());
     }
 
     public int getPlayerCoins() {
-        return playerCoins;
+        return CoinStorage.getTotalCoins();
     }
 
     public int getSelectedPaddleIndex() {
@@ -401,7 +401,8 @@ public class StoreController implements BaseController {
 
     public void loadPlayerData(int coins, int selectedPaddle, int selectedBall,
                                boolean[] unlockedPaddles, boolean[] unlockedBalls) {
-        this.playerCoins = Math.max(MIN_COINS, Math.min(coins, MAX_COINS));
+        int clampedCoins = Math.max(MIN_COINS, Math.min(coins, MAX_COINS));
+        CoinStorage.setTotalCoins(clampedCoins);
 
         if (isValidPaddleIndex(selectedPaddle)) {
             this.selectedPaddleIndex = selectedPaddle;
@@ -449,7 +450,7 @@ public class StoreController implements BaseController {
     }
 
     public SaveData getSaveData() {
-        return new SaveData(playerCoins, selectedPaddleIndex, selectedBallIndex,
+        return new SaveData(CoinStorage.getTotalCoins(), selectedPaddleIndex, selectedBallIndex,
                 paddleUnlocked.clone(), ballUnlocked.clone());
     }
 

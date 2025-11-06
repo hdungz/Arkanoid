@@ -9,7 +9,8 @@ public class PowerUp {
         MULTI_BALL,
         EXTENDED_PADDLE,
         LASER_PADDLE,
-        STICKY_PADDLE
+        STICKY_PADDLE,
+        PIERCING_BALL
     }
 
     private double x;
