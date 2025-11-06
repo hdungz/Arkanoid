@@ -12,7 +12,7 @@ import java.util.List;
 public class PowerUpManager {
     private List<PowerUp> powerUps;
     private GameModel gameModel;
-    private double spawnChance = 1;
+    private double spawnChance = 0.3;
 
     public PowerUpManager(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -73,34 +73,52 @@ public class PowerUpManager {
     }
 
     private void activateMultiBall() {
-
         Ball mainBall = gameModel.getBall();
+        ArrayList<Ball> extraBalls = gameModel.getExtraBalls();
 
-        if (mainBall.isLaunched()) {
+        List<Ball> activeBalls = new ArrayList<>();
 
+        if (mainBall.isVisible() && mainBall.isLaunched()) {
+            activeBalls.add(mainBall);
+        }
+
+        for (Ball ball : extraBalls) {
+            if (ball.isVisible()) {
+                activeBalls.add(ball);
+            }
+        }
+
+        if (activeBalls.isEmpty()) {
+            System.out.println("No active balls to split!");
+            return;
+        }
+
+        for (Ball sourceBall : activeBalls) {
             Ball ball2 = new Ball(
-                    mainBall.getX(),
-                    mainBall.getY(),
-                    mainBall.getRadius(),
-                    -0.6, // velocityX
-                    -0.8  // velocityY
+                    sourceBall.getX(),
+                    sourceBall.getY(),
+                    sourceBall.getRadius(),
+                    -0.6,
+                    -0.8
             );
-            ball2.setSpeed(mainBall.getSpeed());
-
+            ball2.setSpeed(sourceBall.getSpeed());
+            ball2.setVisible(true);
 
             Ball ball3 = new Ball(
-                    mainBall.getX(),
-                    mainBall.getY(),
-                    mainBall.getRadius(),
-                    0.6,  // velocityX
-                    -0.8  // velocityY
+                    sourceBall.getX(),
+                    sourceBall.getY(),
+                    sourceBall.getRadius(),
+                    0.6,
+                    -0.8
             );
-            ball3.setSpeed(mainBall.getSpeed());
+            ball3.setSpeed(sourceBall.getSpeed());
+            ball3.setVisible(true);
 
             gameModel.addBall(ball2);
             gameModel.addBall(ball3);
-
         }
+
+        System.out.println("Multi-ball activated! Total balls: " + gameModel.getTotalBallCount());
     }
 
     public void clear() {
