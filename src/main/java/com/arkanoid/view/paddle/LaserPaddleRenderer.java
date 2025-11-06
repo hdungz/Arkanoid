@@ -4,8 +4,10 @@ import com.arkanoid.model.GameModel;
 import com.arkanoid.model.paddle.LaserPaddle;
 import com.arkanoid.model.paddle.Laser;
 import com.arkanoid.model.paddle.Paddle;
+import com.arkanoid.model.paddle.PaddleType;
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.utils.SpriteAnimator;
+import com.arkanoid.utils.SpriteManager;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -16,20 +18,29 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
 public class LaserPaddleRenderer extends BasePaddleRenderer {
-    private final SpriteAnimator animator;
+    private  SpriteAnimator animator;
     private final Group renderGroup;
 
     public LaserPaddleRenderer(GameModel gameModel) {
+
         super(gameModel);
-
-        Image[] images;
-        images = AssetsManager.getFrames("VIPPaddle");
-
-        this.animator = new SpriteAnimator(images, 2);
-        this.paddleSprite.setImage(animator.getCurrentFrame());
-
+        updatePaddleAssetLaser();
         this.renderGroup = new Group();
         this.renderGroup.getChildren().add(paddleSprite);
+    }
+
+    private void updatePaddleAssetLaser() {
+
+        PaddleType selectedPaddle = SpriteManager.getSelectedPaddle();
+
+        String assetKey = selectedPaddle.getAssetKey();
+
+        Image[] images = AssetsManager.getFrames(assetKey);
+
+        this.animator = new SpriteAnimator(images, 2);
+
+        paddleSprite.setImage(animator.getCurrentFrame());
+
     }
 
     @Override
@@ -96,5 +107,9 @@ public class LaserPaddleRenderer extends BasePaddleRenderer {
     @Override
     public Node getNode() {
         return renderGroup;
+    }
+    public void refreshPaddleAssetLaser() {
+        updatePaddleAssetLaser();
+
     }
 }

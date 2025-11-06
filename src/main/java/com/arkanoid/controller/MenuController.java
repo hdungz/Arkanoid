@@ -3,6 +3,7 @@ package com.arkanoid.controller;
 import com.arkanoid.utils.SceneManager;
 import com.arkanoid.utils.SceneType;
 import com.arkanoid.view.MenuView;
+import com.arkanoid.view.paddle.NormalPaddleRenderer;
 import javafx.application.Platform;
 
 public class MenuController implements BaseController {
@@ -14,13 +15,16 @@ public class MenuController implements BaseController {
     }
 
     private void initializeButtons() {
+
         menuView.getPlayButton().setOnAction(e -> {
             System.out.println("Play button clicked");
             SceneManager.getInstance().switchTo(SceneType.LevelSelection);
+
         });
 
         menuView.getStoreButton().setOnAction(e -> {
             System.out.println("Store button clicked");
+            SceneManager.getInstance().switchTo(SceneType.Store);
         });
 
         menuView.getHighscoreButton().setOnAction(e -> {

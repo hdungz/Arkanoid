@@ -1,5 +1,6 @@
 package com.arkanoid.model.paddle;
 import com.arkanoid.CONSTANT;
+import com.arkanoid.utils.SpriteManager;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.media.AudioClip;
@@ -18,10 +19,15 @@ public class Paddle {
     private boolean isMovingRight = false;
 
     public Paddle(PowerUpPaddleType paddleType) {
-        this.speed = PADDLE_SPEED;
-        this.width = PADDLE_WIDTH;
+        PaddleType selectedPaddle = SpriteManager.getSelectedPaddle();
+
+        this.width = selectedPaddle.getWidth();
+        this.speed = selectedPaddle.getSpeed();
+
         this.height = PADDLE_HEIGHT;
+
         this.paddleType = paddleType;
+
     }
 
     public void resetPosition() {

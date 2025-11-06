@@ -2,10 +2,9 @@ package com.arkanoid.model.paddle;
 
 public enum PaddleType {
 
-    Default("Default","DefaultPaddle", 90.0, 3.0),
-    Aegis("Aegis","AegisPaddle",117.0, 2.7),
-    Swift("Swift","SwiftPaddle", 72.0, 3.6 ),
-    Titan("Titan", "TitanPaddle",144.0, 2.1);
+    Default("Default","VIPPaddle", 90.0, 3.0),
+    GreenHell("GreenHell","Paddle2",120.0, 2.7),
+    ForestIce("ForestIce","Paddle1", 150.0, 3.6 );
 
     private final String displayName;
     private final double width;

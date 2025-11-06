@@ -7,5 +7,6 @@ public enum SceneType {
     Option,
     Game_Over,
     Shop,
-    HighScore
+    HighScore,
+    Store
 }

@@ -38,13 +38,20 @@ public class AssetsManager {
         loadImages("backgroundchooselevel", "/com/arkanoid/ChooseLevel/backgroundchooselevel.png");
         loadImages("PurpleBall", "/com/arkanoid/Ball/PurpleBall.png");
         loadAnimationFrames("RedBall", "/com/arkanoid/Ball/red/keyframes", 6);
+
         loadAnimationFrames("VIPPaddle", "/com/arkanoid/Paddle/VIPPaddle", 2);
+        loadAnimationFrames("Paddle1", "/com/arkanoid/Paddle/Paddle1", 2);
+        loadAnimationFrames("Paddle2", "/com/arkanoid/Paddle/Paddle2", 2);
+
+
         loadImages("Brick1_4","/com/arkanoid/Brick/Brick1_4.png");
         loadImages("TestingBrick", "/com/arkanoid/Brick/Sprite-0002.png");
         loadImages("LeftBorder", "/com/arkanoid/Border/LeftBorder.png");
         loadImages("RightBorder", "/com/arkanoid/Border/RightBorder.png");
         loadImages("TopBorder", "/com/arkanoid/Border/TopBorder.png");
+
         loadImages("Basketball", "/com/arkanoid/Ball/basket-ball.png");
+
         loadImages("BackGround1","/com/arkanoid/Background/BackGround2.png");
         loadImages("PlayGround","/com/arkanoid/Background/PlayGround.png");
         loadAnimationFrames("Explosion","/com/arkanoid/Effect/explosion",63);
@@ -74,13 +81,41 @@ public class AssetsManager {
 
         loadAnimationFrames("Coin", "/com/arkanoid/coin_frames", 15);
 
+        loadImages("store", "/com/arkanoid/Store/StoreBackground5.png");
+        loadImages("coin", "/com/arkanoid/Store/Coin.png");
+        loadImages("checkmark", "/com/arkanoid/Store/checkmark.png");
+
+        loadImages("BtnBackNormal", "/com/arkanoid/buttons/back_normal.png");
+        loadImages("BtnBackHover", "/com/arkanoid/buttons/back_hover.png");
+
+        loadImages("BtnArrowLeftNormal", "/com/arkanoid/Store/buttons/arrow_left_normal.png");
+        loadImages("BtnArrowLeftHover", "/com/arkanoid/Store/buttons/arrow_left_hover.png");
+        loadImages("BtnArrowRightNormal", "/com/arkanoid/Store/buttons/arrow_right_normal.png");
+        loadImages("BtnArrowRightHover", "/com/arkanoid/Store/buttons/arrow_right_hover.png");
+
+        loadImages("BtnSkin1Normal", "/com/arkanoid/Store/skins/paddle_1.png");
+        loadImages("BtnSkin2Normal", "/com/arkanoid/Store/skins/paddle_2.png");
+        loadImages("BtnSkin3Normal", "/com/arkanoid/Store/skins/paddle_3.png");
+
+        loadImages("BtnBall1Normal", "/com/arkanoid/Store/skins/ball_1.png");
+        loadImages("BtnBall2Normal", "/com/arkanoid/Store/skins/ball_2.png");
+
+        loadImages("BtnPurchaseNormal", "/com/arkanoid/Store/buttons/purchase_normal.png");
+        loadImages("BtnPurchaseHover", "/com/arkanoid/Store/buttons/purchase_hover.png");
+        loadImages("BtnSelectNormal", "/com/arkanoid/Store/buttons/select_normal.png");
+        loadImages("BtnSelectHover", "/com/arkanoid/Store/buttons/select_hover.png");
+
+
+
+
+
         loadImages("GIF1", "/com/arkanoid/Background/GIF_4FPS/Glow Dark Matter GIF by ESAHubble Space Telescope.gif");
     }
 
     private static void loadAnimationFrames(String key, String basePath, int frameCount) {
         Image[] frames = new Image[frameCount];
         String path;
-        
+
         for (int i = 0; i < frameCount; i++) {
             if (basePath.equals("/com/arkanoid/Effect/explosion")){
                 path = String.format("%s/frame_%d.png", basePath, i + 2);

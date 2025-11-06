@@ -1,10 +1,12 @@
 package com.arkanoid.view.paddle;
 
 import com.arkanoid.model.GameModel;
+import com.arkanoid.model.paddle.PaddleType;
 import com.arkanoid.model.paddle.StickyPaddle;
 import com.arkanoid.model.paddle.Paddle;
 import com.arkanoid.utils.AssetsManager;
 import com.arkanoid.utils.SpriteAnimator;
+import com.arkanoid.utils.SpriteManager;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -15,7 +17,7 @@ import javafx.scene.transform.Rotate;
 import static com.arkanoid.CONSTANT.BALL_RADIUS;
 
 public class StickyPaddleRenderer extends BasePaddleRenderer {
-    private final SpriteAnimator animator;
+    private SpriteAnimator animator;
     private final Group renderGroup;
     private final Polygon arrow;
     private final Rotate arrowRotate;
@@ -23,13 +25,7 @@ public class StickyPaddleRenderer extends BasePaddleRenderer {
 
     public StickyPaddleRenderer(GameModel gameModel) {
         super(gameModel);
-
-        Image[] images;
-
-        images = AssetsManager.getFrames("VIPPaddle");
-        this.animator = new SpriteAnimator(images, 2);
-        this.paddleSprite.setImage(animator.getCurrentFrame());
-
+        updatePaddleAssetSticky() ;
         this.arrow = createArrow();
         this.arrowRotate = new Rotate(0, 0, 0);
         this.arrow.getTransforms().add(arrowRotate);
@@ -37,6 +33,20 @@ public class StickyPaddleRenderer extends BasePaddleRenderer {
         this.renderGroup = new Group();
         this.renderGroup.getChildren().add(paddleSprite);
         this.renderGroup.getChildren().add(arrow);
+    }
+
+    private void updatePaddleAssetSticky() {
+
+        PaddleType selectedPaddle = SpriteManager.getSelectedPaddle();
+
+        String assetKey = selectedPaddle.getAssetKey();
+
+        Image[] images = AssetsManager.getFrames(assetKey);
+
+        this.animator = new SpriteAnimator(images, 2);
+
+        paddleSprite.setImage(animator.getCurrentFrame());
+
     }
 
     private Polygon createArrow() {
@@ -111,5 +121,10 @@ public class StickyPaddleRenderer extends BasePaddleRenderer {
     @Override
     public Node getNode() {
         return renderGroup;
+    }
+
+    public void refreshPaddleAssetSticky() {
+        updatePaddleAssetSticky();
+
     }
 }
