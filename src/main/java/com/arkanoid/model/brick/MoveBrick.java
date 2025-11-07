@@ -11,8 +11,8 @@ public class MoveBrick extends Brick {
     private double initialX;
     private int direction;
 
-    public MoveBrick(double x, double y, double width, double height, BrickType type) {
-        super(x, y, width, height, type, 1);
+    public MoveBrick(double x, double y,double finaly, double width, double height, BrickType type) {
+        super(x, y,finaly, width, height, type, 1);
         this.initialX = x;
         this.direction = this.SetDirection(x);
     }

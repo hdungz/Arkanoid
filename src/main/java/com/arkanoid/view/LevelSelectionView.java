@@ -1,3 +1,4 @@
+
 package com.arkanoid.view;
 
 import com.arkanoid.utils.LevelManager;
@@ -413,9 +414,7 @@ public class LevelSelectionView extends StackPane {
         Label time = (Label) levelInfoPanel.getChildren().get(3);
 
         title.setText(selectedLevel.getName());
-        goal.setText(selectedLevel.getGoal());
-        current.setText("Best: " + selectedLevel.getBestTime());
-        time.setText("Time Limit: " + selectedLevel.getTimeLimit());
+
     }
 
     private Button createImageButton(String normalKey, String hoverKey) {

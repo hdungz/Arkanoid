@@ -11,7 +11,8 @@ import com.arkanoid.model.paddle.Paddle;
 import com.arkanoid.utils.*;
 import com.arkanoid.model.paddle.PowerUpPaddleType;
 import com.arkanoid.view.Effect.ExplosionEffect;
-
+import com.arkanoid.utils.LoadLevelManager;
+import com.arkanoid.utils.LevelManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -41,7 +42,10 @@ public class GameModel {
     private PowerUpManager powerUpManager;
     private final LevelManager levelmanager;
     private CoinManager coinManager;
-
+    protected final LoadLevelManager loadLevelManager;
+    protected double levelCompleteDelay = 0;
+    protected boolean isBrickFalling = false;
+    protected boolean needsViewSync = false;
 
     private int currentLevel = 0;
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
@@ -60,7 +64,7 @@ public class GameModel {
         this.levelmanager = LevelManager.getInstance();
         this.powerUpManager = new PowerUpManager(this);
         this.coinManager = new CoinManager(this);
-
+        this.loadLevelManager=LoadLevelManager.getInstance();
         ball = new Ball();
         lives = 3;
         bricks = new ArrayList<>();
@@ -71,21 +75,10 @@ public class GameModel {
     }
 
     public void loadCurrentLevel() {
-        this.currentLevel = levelmanager.getCurrentLevel();
+
+        loadLevelManager.loadCurrentLevel(this);
         ThemeManager.getInstance().setThemeForLevel(currentLevel);
 
-        this.score = 0;
-        this.lives = 3;
-        this.bricks.clear();
-        this.effects.clear();
-        this.extraBalls.clear();
-
-        coinManager.resetSessionCoins();
-        this.paddle = new Paddle(PowerUpPaddleType.Normal);
-        paddle.resetPosition();
-        ball.resetPosition(paddle);
-        gameState = GameState.Ready;
-        levelmanager.loadLevel(this.currentLevel, bricks);
     }
 
     public void update(double deltaTime) {
@@ -97,11 +90,21 @@ public class GameModel {
                 pierceTimer = 0;
             }
         }
-
+        if (isBrickFalling && loadLevelManager != null) {
+            isBrickFalling=loadLevelManager.updateBrickFallAnimation(bricks, deltaTime);
+        }
         if (gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
                 paddle.move(deltaTime);
                 ball.resetPosition(paddle);
+            }
+            if (gameState == GameState.Win) {
+                levelCompleteDelay -= deltaTime; // Đếm ngược thời gian chờ
+                loadLevelManager.brickfalldown(bricks, deltaTime);
+                // Khi hết giờ, tải màn tiếp theo
+                if (levelCompleteDelay <= 0) {
+                    loadLevelManager.loadNextLevel(this);
+                }
             }
             return;
         }
@@ -146,11 +149,20 @@ public class GameModel {
 
         if (levelmanager.WinLevels(bricks)) {
             gameState = GameState.Win;
+            levelCompleteDelay = 1;
+            this.ball.resetPosition(paddle);
+            this.extraBalls.clear();
+            this.effects.clear();
             LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
-            SceneManager.getInstance().switchTo(SceneType.LevelSelection);
         }
     }
-
+    public boolean checkAndConsumeViewSync() {
+        if (needsViewSync) {
+            needsViewSync = false;
+            return true;
+        }
+        return false;
+    }
     private void updateExtraBalls(double deltaTime) {
         for (Ball extraBall : extraBalls) {
             if (extraBall.isVisible()) {
@@ -466,6 +478,18 @@ public class GameModel {
         }
     }
 
+    public void setCheckpierce(int checkpierce) {
+        this.checkpierce = checkpierce;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
     public void addBall(Ball newBall) {
         extraBalls.add(newBall);
         System.out.println("Ball added. Total extra balls: " + extraBalls.size());
@@ -573,5 +597,36 @@ public class GameModel {
 
     public int getCurrentLevel() {
         return currentLevel;
+    }
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    public void setPaddle(Paddle paddle) {
+        this.paddle = paddle;
+    }
+
+    public double getLevelCompleteDelay() {
+        return levelCompleteDelay;
+    }
+
+    public void setLevelCompleteDelay(double levelCompleteDelay) {
+        this.levelCompleteDelay = levelCompleteDelay;
+    }
+
+    public boolean isBrickFalling() {
+        return isBrickFalling;
+    }
+
+    public void setBrickFalling(boolean brickFalling) {
+        isBrickFalling = brickFalling;
+    }
+
+    public boolean getNeedsViewSync() {
+        return needsViewSync;
+    }
+
+    public void setNeedsViewSync(boolean needsViewSync) {
+        this.needsViewSync = needsViewSync;
     }
 }

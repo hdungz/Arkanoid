@@ -10,8 +10,8 @@ public class ExplodingBrick extends Brick {
     private boolean exploding = false;
     private boolean firstHit = true; // Chỉ kêu va chạm lần đầu
 
-    public ExplodingBrick(double x, double y, double width, double height, BrickType type) {
-        super(x, y, width, height, type, 2);
+    public ExplodingBrick(double x, double y,double finaly, double width, double height, BrickType type) {
+        super(x, y,finaly, width, height, type, 2);
         this.gameModel = GameModel.getInstance();
     }
 

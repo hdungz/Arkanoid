@@ -9,14 +9,15 @@ public class Brick {
     private double y;
     private double width;
     private double height;
-
+    private double finaly;
     protected boolean visible = true;
     private int health;
     private final BrickType type;
 
-    public Brick(double x, double y, double width, double height, BrickType type,int health) {
+    public Brick(double x, double y,double finaly, double width, double height, BrickType type,int health) {
         this.x = x;
         this.y = y;
+        this.finaly = finaly;
         this.width = width;
         this.height = height;
         this.type = type;
@@ -75,6 +76,14 @@ public class Brick {
 
     public BrickType getType() {
         return type;
+    }
+
+    public double getFinalY() {
+        return finaly;
+    }
+
+    public void setFinalY(double finaly) {
+        this.finaly = finaly;
     }
 
     public int getHealth() {

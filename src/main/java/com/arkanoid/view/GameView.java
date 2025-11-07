@@ -140,6 +140,9 @@ public class GameView extends Pane {
     }
 
     public void render() {
+        if (gameModel.checkAndConsumeViewSync()) {
+            synchronizeView();
+        }
         int currentBallCount = gameModel.getTotalBallCount();
         if (currentBallCount != lastBallCount) {
             syncBalls();

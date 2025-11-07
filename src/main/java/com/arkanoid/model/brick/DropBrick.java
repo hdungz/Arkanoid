@@ -2,9 +2,9 @@ package com.arkanoid.model.brick;
 import com.arkanoid.model.GameModel;
 public class DropBrick extends Brick {
 
-    public DropBrick(double x, double y, double width, double height, BrickType type) {
+    public DropBrick(double x, double y,double finaly, double width, double height, BrickType type) {
 
-        super(x, y, width, height, type, 2);
+        super(x, y,finaly, width, height, type, 2);
     }
     @Override
     public boolean takeDamage() {
