@@ -52,7 +52,7 @@ public class AssetsManager {
 
         loadImages("backtomenu1", "/com/arkanoid/ChooseLevel/backtomenu1.png");
         loadImages("backtomenu2", "/com/arkanoid/ChooseLevel/backtomenu2.png");
-        loadImages("backgroundchooselevel", "/com/arkanoid/ChooseLevel/backgroundchooselevel.png");
+        loadImages("backgroundchooselevel", "/com/arkanoid/ChooseLevel/chooselevelbackground.png");
         loadImages("PurpleBall", "/com/arkanoid/Ball/PurpleBall.png");
         loadAnimationFrames("RedBall", "/com/arkanoid/Ball/red/keyframes", 6);
 
