@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ExplodingBrick extends Brick {
     protected final GameModel gameModel;
-    private double explosionRadius = 50.0;
+    private double explosionRadius = 100.0;
     private boolean exploding = false;
     private boolean firstHit = true; // Chỉ kêu va chạm lần đầu
 

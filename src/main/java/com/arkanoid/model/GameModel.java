@@ -149,7 +149,7 @@ public class GameModel {
 
         if (levelmanager.WinLevels(bricks)) {
             gameState = GameState.Win;
-            levelCompleteDelay = 1;
+            levelCompleteDelay = 0.75;
             this.ball.resetPosition(paddle);
             this.extraBalls.clear();
             this.effects.clear();

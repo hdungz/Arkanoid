@@ -63,7 +63,7 @@ public class LoadLevelManager {
         }
     }
     public boolean updateBrickFallAnimation(ArrayList<Brick> bricks, double deltaTime) {
-        double fallSpeed = 1500.0;
+        double fallSpeed = 2000.0;
         boolean stillFalling = false;
 
         for (Brick brick : bricks) {
@@ -77,7 +77,7 @@ public class LoadLevelManager {
         return stillFalling;
     }
     public void brickfalldown(ArrayList<Brick> bricks, double deltaTime) {
-        final double FALL_AWAY_SPEED = 800.0;
+        final double FALL_AWAY_SPEED = 900.0;
         for (Brick brick : bricks) {
             if (brick.isVisible()) {
                 // Tự di chuyển gạch xuống
