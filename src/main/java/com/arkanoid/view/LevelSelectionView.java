@@ -125,7 +125,7 @@ public class LevelSelectionView extends StackPane {
         invisiblePlayButton.setPrefSize(imageSize, imageSize);
         invisiblePlayButton.setLayoutX(x - imageSize / 2);
         invisiblePlayButton.setLayoutY(y - imageSize / 2);
-        invisiblePlayButton.setBackground(Background.EMPTY); // Trong suốt
+        invisiblePlayButton.setBackground(Background.EMPTY);
         invisiblePlayButton.setStyle("-fx-cursor: hand;");
 
         if (level.isUnlocked()) {
