@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 public class StoreController implements BaseController {
 
     private final StoreView storeView;
+    private final Object saveLock = new Object();
 
     private boolean[] paddleUnlocked;
     private int selectedPaddleIndex;
@@ -22,24 +23,55 @@ public class StoreController implements BaseController {
     private int selectedBallIndex;
     private int currentBallViewIndex;
 
+    private boolean isDirty = false;
+
     private static final int TOTAL_PADDLE_SKINS = 3;
     private static final int TOTAL_BALL_SKINS = 2;
-    private static final int MIN_COINS = 0;
-    private static final int MAX_COINS = 999999;
 
-    private final int[] paddlePrices = {0, 100, 150};
-    private final int[] ballPrices = {0, 80};
+    public enum PaddleSkin {
+        CLASSIC(0, "Classic", 0),
+        GREEN_HELL(1, "GreenHell", 100),
+        FOREST_ICE(2, "Forest Ice", 150);
 
-    private final String[] paddleNames = {
-            "Classic",
-            "GreenHell",
-            "Forest Ice"
-    };
+        public final int index;
+        public final String name;
+        public final int price;
 
-    private final String[] ballNames = {
-            "Classic",
-            "BasketBall"
-    };
+        PaddleSkin(int index, String name, int price) {
+            this.index = index;
+            this.name = name;
+            this.price = price;
+        }
+
+        public static PaddleSkin fromIndex(int index) {
+            for (PaddleSkin skin : values()) {
+                if (skin.index == index) return skin;
+            }
+            return CLASSIC;
+        }
+    }
+
+    public enum BallSkin {
+        CLASSIC(0, "Classic", 0),
+        BASKETBALL(1, "BasketBall", 80);
+
+        public final int index;
+        public final String name;
+        public final int price;
+
+        BallSkin(int index, String name, int price) {
+            this.index = index;
+            this.name = name;
+            this.price = price;
+        }
+
+        public static BallSkin fromIndex(int index) {
+            for (BallSkin skin : values()) {
+                if (skin.index == index) return skin;
+            }
+            return CLASSIC;
+        }
+    }
 
     private GameController gameController;
 
@@ -49,48 +81,53 @@ public class StoreController implements BaseController {
         }
 
         this.storeView = storeView;
-
-
         loadSavedData();
-
         initializeButtons();
         updateDisplay();
     }
 
-
     private void loadSavedData() {
         StoreSaveSystem.StoreData data = StoreSaveSystem.loadStoreData();
-
-
         CoinStorage.load();
 
+        if (data.unlockedPaddles.length != TOTAL_PADDLE_SKINS) {
+            System.err.println("Invalid paddle data, reinitializing");
+            data = StoreSaveSystem.getDefaultData();
+        }
+        if (data.unlockedBalls.length != TOTAL_BALL_SKINS) {
+            System.err.println("Invalid ball data, reinitializing");
+            data = StoreSaveSystem.getDefaultData();
+        }
 
         this.selectedPaddleIndex = data.selectedPaddle;
         this.currentPaddleViewIndex = data.selectedPaddle;
         this.paddleUnlocked = data.unlockedPaddles.clone();
 
-
         this.selectedBallIndex = data.selectedBall;
         this.currentBallViewIndex = data.selectedBall;
         this.ballUnlocked = data.unlockedBalls.clone();
-
 
         SpriteManager.initialize(selectedPaddleIndex, selectedBallIndex);
 
         System.out.println("Loaded store data: " + data);
     }
 
-
     private void saveData() {
-        StoreSaveSystem.saveStoreData(
-                selectedPaddleIndex,
-                selectedBallIndex,
-                paddleUnlocked,
-                ballUnlocked
-        );
+        synchronized(saveLock) {
+            try {
+                StoreSaveSystem.saveStoreData(
+                        selectedPaddleIndex,
+                        selectedBallIndex,
+                        paddleUnlocked,
+                        ballUnlocked
+                );
+                CoinStorage.save();
+                isDirty = false;
+            } catch (Exception e) {
+                System.err.println("Failed to save data: " + e.getMessage());
 
-
-        CoinStorage.save();
+            }
+        }
     }
 
     public void setGameController(GameController gameController) {
@@ -99,8 +136,9 @@ public class StoreController implements BaseController {
 
     private void initializeButtons() {
         storeView.setOnBackButtonClicked(() -> {
-            // Save data when leaving store
-            saveData();
+            if (isDirty) {
+                saveData();
+            }
             SceneManager.getInstance().switchTo(SceneType.Menu);
         });
 
@@ -114,18 +152,18 @@ public class StoreController implements BaseController {
     }
 
     private void navigateToPreviousPaddle() {
-        int newIndex = (currentPaddleViewIndex - 1 + TOTAL_PADDLE_SKINS) % TOTAL_PADDLE_SKINS;
-        currentPaddleViewIndex = newIndex;
+        currentPaddleViewIndex = (currentPaddleViewIndex - 1 + TOTAL_PADDLE_SKINS) % TOTAL_PADDLE_SKINS;
         updatePaddleDisplay();
     }
 
     private void navigateToNextPaddle() {
-        int newIndex = (currentPaddleViewIndex + 1) % TOTAL_PADDLE_SKINS;
-        currentPaddleViewIndex = newIndex;
+        currentPaddleViewIndex = (currentPaddleViewIndex + 1) % TOTAL_PADDLE_SKINS;
         updatePaddleDisplay();
     }
 
-    private void handlePaddlePurchaseOrSelect(int skinIndex) {
+    private void handlePaddlePurchaseOrSelect(int ignored) {
+        int skinIndex = currentPaddleViewIndex;
+
         if (!isValidPaddleIndex(skinIndex)) {
             return;
         }
@@ -149,38 +187,45 @@ public class StoreController implements BaseController {
         selectedPaddleIndex = skinIndex;
         SpriteManager.setPaddleByIndex(skinIndex);
         updatePaddleDisplay();
-
-        // Auto-save after selection
-        saveData();
+        isDirty = true;
     }
 
     private void purchasePaddle(int skinIndex) {
-        if (!isValidPaddleIndex(skinIndex)) {
+        if (!isValidPaddleIndex(skinIndex) || paddleUnlocked[skinIndex]) {
             return;
         }
 
-        if (paddleUnlocked[skinIndex]) {
+        PaddleSkin skin = PaddleSkin.fromIndex(skinIndex);
+        int price = skin.price;
+
+        if (!CoinStorage.hasEnoughCoins(price)) {
+            storeView.playNotEnoughCoinsAnimation();
             return;
         }
 
-        int price = paddlePrices[skinIndex];
+        boolean[] oldUnlocked = paddleUnlocked.clone();
+        int oldSelected = selectedPaddleIndex;
 
-        if (CoinStorage.hasEnoughCoins(price)) {
+        try {
             CoinStorage.spendCoins(price);
             paddleUnlocked[skinIndex] = true;
             selectedPaddleIndex = skinIndex;
+
+            isDirty = true;
+            saveData();
 
             SpriteManager.setPaddleByIndex(skinIndex);
 
             storeView.playPurchaseSuccessAnimation(() -> {
                 storeView.updateCoins(CoinStorage.getTotalCoins());
                 updateDisplay();
-
-                // Auto-save after purchase
-                saveData();
             });
-        } else {
-            storeView.playNotEnoughCoinsAnimation();
+        } catch (Exception e) {
+            paddleUnlocked = oldUnlocked;
+            selectedPaddleIndex = oldSelected;
+            CoinStorage.addCoins(price);
+
+            System.err.println("Purchase failed: " + e.getMessage());
         }
     }
 
@@ -189,27 +234,26 @@ public class StoreController implements BaseController {
             return;
         }
 
-        String name = paddleNames[currentPaddleViewIndex];
-        int price = paddlePrices[currentPaddleViewIndex];
+        PaddleSkin skin = PaddleSkin.fromIndex(currentPaddleViewIndex);
         boolean isUnlocked = paddleUnlocked[currentPaddleViewIndex];
         boolean isSelected = (currentPaddleViewIndex == selectedPaddleIndex);
 
-        storeView.displayPaddle(currentPaddleViewIndex, name, price, isUnlocked, isSelected);
+        storeView.displayPaddle(currentPaddleViewIndex, skin.name, skin.price, isUnlocked, isSelected);
     }
 
     private void navigateToPreviousBall() {
-        int newIndex = (currentBallViewIndex - 1 + TOTAL_BALL_SKINS) % TOTAL_BALL_SKINS;
-        currentBallViewIndex = newIndex;
+        currentBallViewIndex = (currentBallViewIndex - 1 + TOTAL_BALL_SKINS) % TOTAL_BALL_SKINS;
         updateBallDisplay();
     }
 
     private void navigateToNextBall() {
-        int newIndex = (currentBallViewIndex + 1) % TOTAL_BALL_SKINS;
-        currentBallViewIndex = newIndex;
+        currentBallViewIndex = (currentBallViewIndex + 1) % TOTAL_BALL_SKINS;
         updateBallDisplay();
     }
 
-    private void handleBallPurchaseOrSelect(int skinIndex) {
+    private void handleBallPurchaseOrSelect(int ignored) {
+        int skinIndex = currentBallViewIndex;
+
         if (!isValidBallIndex(skinIndex)) {
             return;
         }
@@ -233,38 +277,44 @@ public class StoreController implements BaseController {
         selectedBallIndex = skinIndex;
         SpriteManager.setBallByIndex(skinIndex);
         updateBallDisplay();
-
-        // Auto-save after selection
-        saveData();
+        isDirty = true;
     }
 
     private void purchaseBall(int skinIndex) {
-        if (!isValidBallIndex(skinIndex)) {
+        if (!isValidBallIndex(skinIndex) || ballUnlocked[skinIndex]) {
             return;
         }
 
-        if (ballUnlocked[skinIndex]) {
+        BallSkin skin = BallSkin.fromIndex(skinIndex);
+        int price = skin.price;
+
+        if (!CoinStorage.hasEnoughCoins(price)) {
+            storeView.playNotEnoughCoinsAnimation();
             return;
         }
 
-        int price = ballPrices[skinIndex];
+        boolean[] oldUnlocked = ballUnlocked.clone();
+        int oldSelected = selectedBallIndex;
 
-        if (CoinStorage.hasEnoughCoins(price)) {
+        try {
             CoinStorage.spendCoins(price);
             ballUnlocked[skinIndex] = true;
             selectedBallIndex = skinIndex;
+
+            isDirty = true;
+            saveData();
 
             SpriteManager.setBallByIndex(skinIndex);
 
             storeView.playPurchaseSuccessAnimation(() -> {
                 storeView.updateCoins(CoinStorage.getTotalCoins());
                 updateDisplay();
-
-                // Auto-save after purchase
-                saveData();
             });
-        } else {
-            storeView.playNotEnoughCoinsAnimation();
+        } catch (Exception e) {
+            ballUnlocked = oldUnlocked;
+            selectedBallIndex = oldSelected;
+            CoinStorage.addCoins(price);
+            System.err.println("Purchase failed: " + e.getMessage());
         }
     }
 
@@ -273,12 +323,11 @@ public class StoreController implements BaseController {
             return;
         }
 
-        String name = ballNames[currentBallViewIndex];
-        int price = ballPrices[currentBallViewIndex];
+        BallSkin skin = BallSkin.fromIndex(currentBallViewIndex);
         boolean isUnlocked = ballUnlocked[currentBallViewIndex];
         boolean isSelected = (currentBallViewIndex == selectedBallIndex);
 
-        storeView.displayBall(currentBallViewIndex, name, price, isUnlocked, isSelected);
+        storeView.displayBall(currentBallViewIndex, skin.name, skin.price, isUnlocked, isSelected);
     }
 
     private void updateDisplay() {
@@ -294,9 +343,7 @@ public class StoreController implements BaseController {
 
         CoinStorage.addCoins(amount);
         storeView.updateCoins(CoinStorage.getTotalCoins());
-
-
-        saveData();
+        isDirty = true;
     }
 
     private boolean isValidPaddleIndex(int index) {
@@ -311,16 +358,15 @@ public class StoreController implements BaseController {
     public void onEnterScene() {
         currentPaddleViewIndex = selectedPaddleIndex;
         currentBallViewIndex = selectedBallIndex;
-
         SpriteManager.initialize(selectedPaddleIndex, selectedBallIndex);
-
         updateDisplay();
     }
 
     @Override
     public void onExitScene() {
-
-        saveData();
+        if (isDirty) {
+            saveData();
+        }
     }
 
     public int getSelectedPaddle() {
@@ -331,12 +377,10 @@ public class StoreController implements BaseController {
         return selectedBallIndex;
     }
 
-
     public void forceSave() {
         saveData();
         System.out.println("Force saved store data");
     }
-
 
     public void resetToDefaults() {
         StoreSaveSystem.deleteSaveData();
