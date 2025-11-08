@@ -77,7 +77,7 @@ public class PowerUpManager {
 
     private void activatePiercingBall() {
         gameModel.setCheckPierce(1);
-        gameModel.setPierceTimer(2.5); // Active for 10 seconds
+        gameModel.setPierceTimer(5); // Active for 10 seconds
         System.out.println("Piercing Ball activated! Duration: 10 seconds");
     }
 
