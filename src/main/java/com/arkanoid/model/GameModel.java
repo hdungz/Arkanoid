@@ -99,7 +99,7 @@ public class GameModel {
                 ball.resetPosition(paddle);
             }
             if (gameState == GameState.Win) {
-                levelCompleteDelay -= deltaTime; // Đếm ngược thời gian chờ
+                levelCompleteDelay -= deltaTime;
                 loadLevelManager.brickfalldown(bricks, deltaTime);
                 // Khi hết giờ, tải màn tiếp theo
                 if (levelCompleteDelay <= 0) {

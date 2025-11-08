@@ -17,7 +17,6 @@ public class ExplodingBrick extends Brick {
 
     @Override
     public boolean takeDamage() {
-        // ✅ Phát tiếng va chạm lần đầu tiên
         if (firstHit) {
             playHitSound();
             firstHit = false;
@@ -51,15 +50,8 @@ public class ExplodingBrick extends Brick {
 
     private void damageNearbyBricks() {
         ArrayList<Brick> bricks = GameModel.getInstance().getBricks();
-        System.out.println("EXPLOSION DEBUG:");
-        System.out.println("  - Total bricks: " + bricks.size());
-        System.out.println("  - Explosion center: (" + (getX() + getWidth()/2) + "," + (getY() + getHeight()/2) + ")");
-        System.out.println("  - Explosion radius: " + explosionRadius);
-
         for (Brick brick : bricks) {
             if (brick != this && brick.isVisible() && isInExplosionRange(brick)) {
-                System.out.println(" Nổ trúng gạch: " + brick.getType() +
-                        " tại (" + brick.getX() + "," + brick.getY() + ")");
                 if (brick instanceof SuperDurableBrick) continue;
                 else brick.setHealth(brick.getHealth() - 2);
                 if (brick.getHealth() <= 0) {

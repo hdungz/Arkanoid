@@ -14,7 +14,7 @@ public class LevelManager {
         levels = new ArrayList<>();
         initializeLevels();
         currentLevel = 1;
-        unlockedLevels = 1; // Level đầu tiên luôn mở khóa
+        unlockedLevels = 1;
     }
 
     public static LevelManager getInstance() {
@@ -24,15 +24,13 @@ public class LevelManager {
         return instance;
     }
 
-    // Khởi tạo danh sách level
     private void initializeLevels() {
         for (int i = 1; i <= 20; i++) {
             LevelInfo level = new LevelInfo();
             level.setId(i);
             level.setName("Level " + i);
-            level.setUnlocked(i == 1); // chỉ mở level 1 ban đầu
+            level.setUnlocked(i == 1);
 
-            // Thêm thưởng khác nhau
             levels.add(level);
         }
     }
@@ -47,7 +45,7 @@ public class LevelManager {
         return true;
     }
 
-    // Chọn level
+
     public void selectLevel(int levelId) {
         if (levelId >= 1 && levelId <= levels.size()) {
             LevelInfo level = levels.get(levelId - 1);
@@ -60,7 +58,6 @@ public class LevelManager {
         }
     }
 
-    // Mở khoá 1 level cụ thể
     public void unlockLevel(int levelId) {
         if (levelId >= 1 && levelId <= levels.size()) {
             LevelInfo level = levels.get(levelId - 1);
@@ -74,12 +71,11 @@ public class LevelManager {
         }
     }
 
-    // Gọi khi người chơi thắng 1 màn
+
     public void completeLevel(int levelId) {
         if (levelId >= 1 && levelId <= levels.size()) {
             LevelInfo level = levels.get(levelId - 1);
 
-            // Mở khoá level kế tiếp nếu có
             if (levelId < levels.size()) {
                 unlockLevel(levelId + 1);
             }

@@ -14,12 +14,12 @@ public class ExplosionEffect {
     public ExplosionEffect(double centerX, double centerY, double size) {
         this.centerX = centerX;
         this.centerY = centerY;
-        this.effectSize = size; // Kích thước hiển thị
+        this.effectSize = size;
         Image[] frames = AssetsManager.getFrames("Explosion");
         if (frames.length == 0) {
             System.err.println("Không tìm thấy sprite explosion!");
         }
-        this.animator = new SpriteAnimator(frames, 60, false); // không loop
+        this.animator = new SpriteAnimator(frames, 60, false);
 
     }
 
@@ -36,10 +36,10 @@ public class ExplosionEffect {
 
         gc.drawImage(
                 frame,
-                centerX - effectSize / 2, // X mới
-                centerY - effectSize / 2, // Y mới
-                effectSize,               // Chiều rộng
-                effectSize                // Chiều cao
+                centerX - effectSize / 2,
+                centerY - effectSize / 2,
+                effectSize,
+                effectSize
         );
     }
 

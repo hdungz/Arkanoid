@@ -67,7 +67,6 @@ public class LoadLevelManager {
         boolean stillFalling = false;
 
         for (Brick brick : bricks) {
-            // Nếu gạch chưa đạt vị trí cuối cùng, rơi xuống
             if (brick.getY() < brick.getFinalY()) {
                 double newY = brick.getY() + fallSpeed * deltaTime;
                 brick.setY(Math.min(newY, brick.getFinalY()));
@@ -77,11 +76,10 @@ public class LoadLevelManager {
         return stillFalling;
     }
     public void brickfalldown(ArrayList<Brick> bricks, double deltaTime) {
-        final double FALL_AWAY_SPEED = 900.0;
+        final double SPEED = 900.0;
         for (Brick brick : bricks) {
             if (brick.isVisible()) {
-                // Tự di chuyển gạch xuống
-                brick.setY(brick.getY() + FALL_AWAY_SPEED * deltaTime);
+                brick.setY(brick.getY() + SPEED * deltaTime);
             }
         }
     }

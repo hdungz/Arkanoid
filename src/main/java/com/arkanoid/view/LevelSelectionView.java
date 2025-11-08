@@ -32,9 +32,9 @@ public class LevelSelectionView extends StackPane {
         setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         this.levelImageNodes = new HashMap<>();
-        this.playButton = new Button(); // Khởi tạo nút "ảo"
+        this.playButton = new Button();
 
-        // 1. Thêm nền
+
         Image[] backgroundFrames = AssetsManager.getFrames("backgroundchooselevel");
         if (backgroundFrames != null && backgroundFrames.length > 0) {
             ImageView backgroundView = new ImageView(backgroundFrames[0]);
@@ -80,7 +80,6 @@ public class LevelSelectionView extends StackPane {
         double[][] nodePositions = new double[numLevels][2];
         Random jitter = new Random();
 
-        // Tính toán vị trí các node
         for (int i = 0; i < numLevels; i++) {
             int r = i / cols;
             int c = i % cols;
@@ -92,10 +91,10 @@ public class LevelSelectionView extends StackPane {
             nodePositions[i][1] = y;
         }
 
-        // Vẽ đường nối
+
         createConnections(levelMap, nodePositions);
 
-        // Tạo các node ảnh
+
         for (int i = 0; i < numLevels; i++) {
             LevelInfo level = levelManager.getLevel(i + 1);
             if (level != null) {
@@ -106,9 +105,8 @@ public class LevelSelectionView extends StackPane {
     }
 
     private void createLevelNode(Pane container, LevelInfo level, double x, double y) {
-        double imageSize = 100.0; // Kích thước ảnh
+        double imageSize = 100.0;
 
-        // 1. Lấy ảnh
         String imageKey = "level" + level.getId();
         Image levelImg = null;
         Image[] frames = AssetsManager.getFrames(imageKey);
@@ -122,7 +120,7 @@ public class LevelSelectionView extends StackPane {
         imageView.setLayoutX(x - imageSize / 2);
         imageView.setLayoutY(y - imageSize / 2);
 
-        // 2. Tạo Button vô hình
+
         Button invisiblePlayButton = new Button();
         invisiblePlayButton.setPrefSize(imageSize, imageSize);
         invisiblePlayButton.setLayoutX(x - imageSize / 2);
@@ -131,13 +129,13 @@ public class LevelSelectionView extends StackPane {
         invisiblePlayButton.setStyle("-fx-cursor: hand;");
 
         if (level.isUnlocked()) {
-            // Khi nhấn nút
+
             invisiblePlayButton.setOnAction(e -> {
-                selectLevel(level.getId()); // Cập nhật level đã chọn
-                playButton.fire(); // Bắn sự kiện "Play"
+                selectLevel(level.getId());
+                playButton.fire();
             });
         } else {
-            // Nếu bị khóa, làm mờ ảnh và vô hiệu hóa nút
+
             imageView.setOpacity(0.4);
             invisiblePlayButton.setMouseTransparent(true);
             invisiblePlayButton.setStyle("-fx-cursor: default;");
@@ -182,7 +180,6 @@ public class LevelSelectionView extends StackPane {
 
     }
 
-    // Helper tạo nút ảnh (đã xóa hiệu ứng scale)
     private Button createImageButton(String normalKey, String hoverKey) {
         Image normalImg = AssetsManager.getFrames(normalKey)[0];
         Image hoverImg = AssetsManager.getFrames(hoverKey)[0];
@@ -203,7 +200,7 @@ public class LevelSelectionView extends StackPane {
         return button;
     }
 
-    // Làm mới View (khi mở khóa level mới)
+
     public void refreshView() {
         if (levelMap != null) {
             getChildren().remove(levelMap);
@@ -227,7 +224,7 @@ public class LevelSelectionView extends StackPane {
         }
     }
 
-    // Getters cho Controller
+
     public Button getPlayButton() {
         return playButton;
     }
