@@ -69,7 +69,16 @@ public class PowerUpManager {
             case STICKY_PADDLE:
                 gameModel.activateSpecialPaddle(PowerUpPaddleType.StickyPaddle);
                 break;
+            case PIERCING_BALL:
+                activatePiercingBall();
+                break;
         }
+    }
+
+    private void activatePiercingBall() {
+        gameModel.setCheckPierce(1);
+        gameModel.setPierceTimer(2.5); // Active for 10 seconds
+        System.out.println("Piercing Ball activated! Duration: 10 seconds");
     }
 
     private void activateMultiBall() {

@@ -182,6 +182,7 @@ public class GameView extends Pane {
         normalRenderer.refreshPaddleAsset();
         laserRenderer.refreshPaddleAssetLaser();
         stickyRenderer.refreshPaddleAssetSticky();
+        expandableRenderer.refreshPaddleAsset();
     }
 
     public void cleanup() {

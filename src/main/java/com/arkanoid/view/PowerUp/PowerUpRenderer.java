@@ -27,14 +27,19 @@ public class PowerUpRenderer {
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         List<PowerUp> powerUps = gameModel.getPowerUpManager().getPowerUps();
+
+
         animators.keySet().removeIf(powerUp -> !powerUps.contains(powerUp));
 
         for (PowerUp powerUp : powerUps) {
             if (!powerUp.isActive()) continue;
 
+
             if (!animators.containsKey(powerUp)) {
                 SpriteAnimator animator = createAnimator(powerUp.getType());
-                animators.put(powerUp, animator);
+                if (animator != null) {
+                    animators.put(powerUp, animator);
+                }
             }
 
             SpriteAnimator animator = animators.get(powerUp);
@@ -55,7 +60,6 @@ public class PowerUpRenderer {
         }
     }
 
-
     private SpriteAnimator createAnimator(PowerUp.PowerUpType type) {
         javafx.scene.image.Image[] frames = null;
 
@@ -72,20 +76,22 @@ public class PowerUpRenderer {
             case STICKY_PADDLE:
                 frames = AssetsManager.getFrames("StickyPaddle");
                 break;
+            case PIERCING_BALL:
+                frames = AssetsManager.getFrames("PiercingBall");
+                break;
         }
 
         if (frames != null && frames.length > 0) {
             return new SpriteAnimator(frames, 10);
         }
 
+        System.err.println("Warning: No frames found for PowerUp type: " + type);
         return null;
     }
-
 
     public Canvas getCanvas() {
         return canvas;
     }
-
 
     public void cleanup() {
         animators.clear();

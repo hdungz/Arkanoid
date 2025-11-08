@@ -60,6 +60,11 @@ public class AssetsManager {
         loadAnimationFrames("Paddle1", "/com/arkanoid/Paddle/Paddle1", 2);
         loadAnimationFrames("Paddle2", "/com/arkanoid/Paddle/Paddle2", 2);
 
+        loadAnimationFrames("VIPPaddleExtendable", "/com/arkanoid/Paddle/VIPPaddle", 2);
+        loadAnimationFrames("Paddle1Extendable", "/com/arkanoid/Paddle/Paddle1", 2);
+        loadAnimationFrames("Paddle2Extendable", "/com/arkanoid/Paddle/Paddle2", 2);
+
+
 
         loadImages("Brick1_4","/com/arkanoid/Brick/Brick1_4.png");
         loadImages("TestingBrick", "/com/arkanoid/Brick/Sprite-0002.png");
@@ -95,6 +100,7 @@ public class AssetsManager {
         loadAnimationFrames("ExtendedPaddle", "/com/arkanoid/Power_Up/2", 6);
         loadAnimationFrames("LaserPaddle", "/com/arkanoid/Power_Up/1", 6);
         loadAnimationFrames("StickyPaddle", "/com/arkanoid/Power_Up/6", 6);
+        loadAnimationFrames("PiercingBall", "/com/arkanoid/Power_Up/4", 6);
 
         loadAnimationFrames("Coin", "/com/arkanoid/coin_frames", 15);
 
