@@ -26,18 +26,13 @@ public class GameModel {
     public int checkpierce = 0;
     private double pierceTimer = 0;
 
-
     private static GameModel instance;
-
 
     private WallCollisionSide lastWallCollision = WallCollisionSide.NONE;
 
-
     ArrayList<Brick> bricks;
 
-
     private ArrayList<Ball> extraBalls = new ArrayList<>();
-
 
     private PowerUpManager powerUpManager;
     private final LevelManager levelmanager;
@@ -50,12 +45,12 @@ public class GameModel {
     private int currentLevel = 0;
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
 
-
     Paddle paddle;
-    Ball ball; // Main ball
+    Ball ball;
     int score;
     int lives;
     GameState gameState;
+    private boolean isPaused = false;
 
     public GameModel() {
         instance = this;
@@ -64,7 +59,7 @@ public class GameModel {
         this.levelmanager = LevelManager.getInstance();
         this.powerUpManager = new PowerUpManager(this);
         this.coinManager = new CoinManager(this);
-        this.loadLevelManager=LoadLevelManager.getInstance();
+        this.loadLevelManager = LoadLevelManager.getInstance();
         ball = new Ball();
         lives = 3;
         bricks = new ArrayList<>();
@@ -75,13 +70,14 @@ public class GameModel {
     }
 
     public void loadCurrentLevel() {
-
         loadLevelManager.loadCurrentLevel(this);
         ThemeManager.getInstance().setThemeForLevel(currentLevel);
-
     }
 
     public void update(double deltaTime) {
+        if (isPaused) {
+            return;
+        }
 
         if (checkpierce == 1) {
             pierceTimer -= deltaTime;
@@ -91,7 +87,7 @@ public class GameModel {
             }
         }
         if (isBrickFalling && loadLevelManager != null) {
-            isBrickFalling=loadLevelManager.updateBrickFallAnimation(bricks, deltaTime);
+            isBrickFalling = loadLevelManager.updateBrickFallAnimation(bricks, deltaTime);
         }
         if (gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
@@ -99,9 +95,8 @@ public class GameModel {
                 ball.resetPosition(paddle);
             }
             if (gameState == GameState.Win) {
-                levelCompleteDelay -= deltaTime; // Đếm ngược thời gian chờ
+                levelCompleteDelay -= deltaTime;
                 loadLevelManager.brickfalldown(bricks, deltaTime);
-                // Khi hết giờ, tải màn tiếp theo
                 if (levelCompleteDelay <= 0) {
                     loadLevelManager.loadNextLevel(this);
                 }
@@ -115,7 +110,6 @@ public class GameModel {
         powerUpManager.update(deltaTime);
         coinManager.update(deltaTime);
         paddle.move(deltaTime);
-
 
         if (paddle instanceof StickyPaddle) {
             StickyPaddle sp = (StickyPaddle) paddle;
@@ -133,19 +127,15 @@ public class GameModel {
             ball.move(deltaTime);
         }
 
-
         updateExtraBalls(deltaTime);
-
 
         checkCollisions();
         checkExtraBallsCollisions();
         checkLaserCollisions();
 
-
         if (paddle instanceof LaserPaddle) {
             ((LaserPaddle) paddle).updateLasers(deltaTime);
         }
-
 
         if (levelmanager.WinLevels(bricks)) {
             gameState = GameState.Win;
@@ -156,6 +146,7 @@ public class GameModel {
             LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
         }
     }
+
     public boolean checkAndConsumeViewSync() {
         if (needsViewSync) {
             needsViewSync = false;
@@ -163,6 +154,7 @@ public class GameModel {
         }
         return false;
     }
+
     private void updateExtraBalls(double deltaTime) {
         for (Ball extraBall : extraBalls) {
             if (extraBall.isVisible()) {
@@ -182,23 +174,19 @@ public class GameModel {
                 continue;
             }
 
-
             extraBall.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X,
                     CONSTANT.BORDER_WIDTH, this);
-
 
             if (extraBall.getBoundary().intersects(paddle.getBoundary())) {
                 paddle.onBallHit();
                 extraBall.handlePaddleCollision(paddle);
             }
 
-
             if (extraBall.getY() > WINDOW_HEIGHT) {
                 iterator.remove();
                 System.out.println("Extra ball removed. Remaining: " + extraBalls.size());
                 continue;
             }
-
 
             checkBallBrickCollision(extraBall);
         }
@@ -207,11 +195,9 @@ public class GameModel {
     void checkCollisions() {
         this.lastWallCollision = WallCollisionSide.NONE;
 
-
         if (paddle instanceof StickyPaddle && ((StickyPaddle) paddle).isBallStuck()) {
             return;
         }
-
 
         ball.checkWallCollision(CONSTANT.GAME_AREA_X, CONSTANT.GAME_AREA_END_X, CONSTANT.BORDER_WIDTH, this);
 
@@ -228,13 +214,10 @@ public class GameModel {
             }
         }
 
-
         if (ball.getY() > WINDOW_HEIGHT) {
-
             if (extraBalls.isEmpty()) {
                 lives--;
                 stopCurrentPaddleTimer();
-
 
                 if (paddle instanceof StickyPaddle || paddle instanceof ExpandablePaddle || paddle instanceof LaserPaddle) {
                     boolean isMovingRight = paddle.isMovingRight();
@@ -255,13 +238,11 @@ public class GameModel {
                     gameState = GameState.Ready;
                 }
             } else {
-
                 ball.setVisible(false);
                 ball.setY(WINDOW_HEIGHT + 100);
             }
             return;
         }
-
 
         checkBallBrickCollision(ball);
     }
@@ -277,16 +258,11 @@ public class GameModel {
             if (brick.getBoundary().intersects(currentBall.getBoundary())) {
                 brick.playHitSound();
 
-
                 if (brick.getHealth() == 1) score += 10;
                 else if (brick.getHealth() == 2) score += 20;
                 else if (brick.getHealth() == 3) score += 30;
 
                 brick.takeDamage();
-
-
-
-
 
                 double ballPrevY = currentBall.getPrevY();
                 double ballRadius = currentBall.getRadius();
@@ -301,7 +277,6 @@ public class GameModel {
                 } else {
                     isVerticalCollision = false;
                 }
-
 
                 if (checkpierce == 0) {
                     currentBall.handleBrickCollision(isVerticalCollision);
@@ -344,7 +319,6 @@ public class GameModel {
 
                     brick.takeDamage();
 
-
                     break;
                 }
             }
@@ -381,7 +355,6 @@ public class GameModel {
                 ball.setVelocityY(velocity[1]);
                 sp.launchBall();
 
-
                 Paddle normalPaddle = new Paddle(PowerUpPaddleType.Normal);
                 normalPaddle.setX(sp.getX());
                 normalPaddle.setY(sp.getY());
@@ -396,12 +369,10 @@ public class GameModel {
         if (paddle instanceof ExpandablePaddle) {
             ((ExpandablePaddle) paddle).stopTimer();
             ((ExpandablePaddle) paddle).stopBlinking();
-        }
-        else if (paddle instanceof LaserPaddle) {
+        } else if (paddle instanceof LaserPaddle) {
             ((LaserPaddle) paddle).stopTimer();
             ((LaserPaddle) paddle).stopBlinking();
-        }
-        else if (paddle instanceof StickyPaddle) {
+        } else if (paddle instanceof StickyPaddle) {
             StickyPaddle sp = (StickyPaddle) paddle;
 
             if (sp.isBallStuck()) {
@@ -574,7 +545,6 @@ public class GameModel {
         return instance;
     }
 
-
     public LevelManager getLevelmanager() {
         return levelmanager;
     }
@@ -598,6 +568,7 @@ public class GameModel {
     public int getCurrentLevel() {
         return currentLevel;
     }
+
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
@@ -628,5 +599,13 @@ public class GameModel {
 
     public void setNeedsViewSync(boolean needsViewSync) {
         this.needsViewSync = needsViewSync;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
     }
 }

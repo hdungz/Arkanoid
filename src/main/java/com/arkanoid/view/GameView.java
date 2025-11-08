@@ -39,6 +39,7 @@ public class GameView extends Pane {
     private final PowerUpRenderer powerUpRenderer;
     private final CoinRenderer coinRenderer;
     private final LevelTransitionRenderer transitionRenderer;
+    private final PauseView pauseView;
 
     private BasePaddleRenderer currentPaddleRenderer;
     private final NormalPaddleRenderer normalRenderer;
@@ -67,6 +68,7 @@ public class GameView extends Pane {
         powerUpRenderer = new PowerUpRenderer(gameModel);
         coinRenderer = new CoinRenderer(gameModel);
         transitionRenderer = new LevelTransitionRenderer();
+        pauseView = new PauseView();
 
         Ball mainBall = gameModel.getBall();
         multiBallRenderer.addBall(mainBall);
@@ -85,6 +87,7 @@ public class GameView extends Pane {
         getChildren().add(powerUpRenderer.getCanvas());
         getChildren().add(coinRenderer.getNode());
         getChildren().add(transitionRenderer.getNode());
+        getChildren().add(pauseView);
     }
 
     public void synchronizeView() {
@@ -137,6 +140,18 @@ public class GameView extends Pane {
 
     public void showLevelClear(Runnable onComplete) {
         transitionRenderer.showLevelClear(onComplete);
+    }
+
+    public void showPause() {
+        pauseView.show();
+    }
+
+    public void hidePause() {
+        pauseView.hide();
+    }
+
+    public PauseView getPauseView() {
+        return pauseView;
     }
 
     public void render() {
