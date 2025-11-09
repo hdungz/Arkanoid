@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Iterator;
 import static com.arkanoid.CONSTANT.*;
-
+import com.arkanoid.utils.LevelTransitionManager;
 
 public class GameModel {
     public enum WallCollisionSide { NONE, TOP, LEFT, RIGHT }
@@ -44,6 +44,7 @@ public class GameModel {
 
     private int currentLevel = 0;
     private final ArrayList<ExplosionEffect> effects = new ArrayList<>();
+    private LevelTransitionManager transitionManager ;
 
     Paddle paddle;
     Ball ball;
@@ -66,19 +67,19 @@ public class GameModel {
         paddle.resetPosition();
         ball.resetPosition(paddle);
         gameState = GameState.Ready;
+        transitionManager = new LevelTransitionManager(this);
         loadCurrentLevel();
     }
 
     public void loadCurrentLevel() {
         loadLevelManager.loadCurrentLevel(this);
-        ThemeManager.getInstance().setThemeForLevel(currentLevel);
     }
 
     public void update(double deltaTime) {
         if (isPaused) {
             return;
         }
-
+        transitionManager.update(deltaTime);
         if (checkpierce == 1) {
             pierceTimer -= deltaTime;
             if (pierceTimer <= 0) {
@@ -86,8 +87,17 @@ public class GameModel {
                 pierceTimer = 0;
             }
         }
+
         if (isBrickFalling && loadLevelManager != null) {
             isBrickFalling = loadLevelManager.updateBrickFallAnimation(bricks, deltaTime);
+        }
+
+        if (transitionManager.isInTransition()) {
+            if (transitionManager.canPlayerControl() && gameState == GameState.Ready) {
+                paddle.move(deltaTime);
+                ball.resetPosition(paddle);
+            }
+            return;
         }
         if (gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
@@ -98,7 +108,15 @@ public class GameModel {
                 levelCompleteDelay -= deltaTime;
                 loadLevelManager.brickfalldown(bricks, deltaTime);
                 if (levelCompleteDelay <= 0) {
-                    loadLevelManager.loadNextLevel(this);
+                    if (!transitionManager.isClearActive() && !transitionManager.isReadyForNextLevel()) {
+                        transitionManager.startLevelClear();
+                    }
+                    if (transitionManager.isReadyForNextLevel()) {
+                        loadLevelManager.loadNextLevel(this);
+                        transitionManager.reset();
+                        transitionManager.startLevelTransition(currentLevel);
+
+                    }
                 }
             }
             return;
@@ -139,7 +157,7 @@ public class GameModel {
 
         if (levelmanager.WinLevels(bricks)) {
             gameState = GameState.Win;
-            levelCompleteDelay = 0.75;
+            levelCompleteDelay = 0.1;
             this.ball.resetPosition(paddle);
             this.extraBalls.clear();
             this.effects.clear();
@@ -342,6 +360,9 @@ public class GameModel {
     }
 
     public void launchBall() {
+        if (transitionManager.isInTransition() && !transitionManager.canPlayerControl()) {
+            return;
+        }
         if (isBrickFalling) {
             return;
         }
@@ -547,6 +568,9 @@ public class GameModel {
     public static GameModel getInstance() {
         if (instance == null) instance = new GameModel();
         return instance;
+    }
+    public LevelTransitionManager getTransitionManager() {
+        return transitionManager;
     }
 
     public LevelManager getLevelmanager() {

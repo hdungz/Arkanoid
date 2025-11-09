@@ -73,9 +73,9 @@ public class HUDRenderer {
 
         GameState currentState = gameModel.getGameState();
 
-        if (currentState == GameState.Ready) {
-            messagePanel.render(gc, "PRESS SPACE TO START", themeColor, messagePulse);
-        }
+//        if (currentState == GameState.Ready) {
+//            messagePanel.render(gc, "PRESS SPACE TO START", themeColor, messagePulse);
+//        }
     }
 
     public List<Node> getNodes() {

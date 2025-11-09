@@ -7,6 +7,8 @@ import com.arkanoid.model.paddle.ExpandablePaddle;
 import com.arkanoid.model.paddle.LaserPaddle;
 import com.arkanoid.model.paddle.StickyPaddle;
 import com.arkanoid.model.paddle.Paddle;
+import com.arkanoid.utils.LevelManager;
+import com.arkanoid.utils.ThemeManager;
 import com.arkanoid.view.PowerUp.PowerUpRenderer;
 import com.arkanoid.view.background.BackgroundRenderer;
 import com.arkanoid.view.ball.MultiBallRenderer;
@@ -20,7 +22,6 @@ import com.arkanoid.view.paddle.StickyPaddleRenderer;
 import com.arkanoid.view.paddle.NormalPaddleRenderer;
 import com.arkanoid.view.effects.EffectRenderer;
 import com.arkanoid.view.playground.PlayGroundRenderer;
-import com.arkanoid.view.transition.LevelTransitionRenderer;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.arkanoid.view.LevelTransition.LevelTransitionRenderer;
 
 public class GameView extends Pane {
     private final GameModel gameModel;
@@ -39,8 +42,8 @@ public class GameView extends Pane {
     private final EffectRenderer effectRenderer;
     private final PowerUpRenderer powerUpRenderer;
     private final CoinRenderer coinRenderer;
-    private final LevelTransitionRenderer transitionRenderer;
     private final PauseView pauseView;
+    private final LevelTransitionRenderer transitionRenderer;
     private final GameOverView gameOverView;
 
     private BasePaddleRenderer currentPaddleRenderer;
@@ -69,9 +72,9 @@ public class GameView extends Pane {
         stickyRenderer = new StickyPaddleRenderer(gameModel);
         powerUpRenderer = new PowerUpRenderer(gameModel);
         coinRenderer = new CoinRenderer(gameModel);
-        transitionRenderer = new LevelTransitionRenderer();
         pauseView = new PauseView();
         gameOverView = new GameOverView();
+        transitionRenderer = new LevelTransitionRenderer(gameModel.getTransitionManager()); 
 
         Ball mainBall = gameModel.getBall();
         multiBallRenderer.addBall(mainBall);
@@ -83,13 +86,13 @@ public class GameView extends Pane {
 
         getChildren().add(backgroundRenderer.getNode());
         getChildren().add(playGroundRenderer.getNode());
-        getChildren().add(multiBallRenderer.getNode());
-        getChildren().addAll(hudRenderer.getNodes());
         getChildren().add(effectRenderer.getCanvas());
-        getChildren().add(currentPaddleRenderer.getNode());
         getChildren().add(powerUpRenderer.getCanvas());
         getChildren().add(coinRenderer.getNode());
-        getChildren().add(transitionRenderer.getNode());
+        getChildren().add(multiBallRenderer.getNode());
+        getChildren().addAll(hudRenderer.getNodes());
+        getChildren().add(currentPaddleRenderer.getNode());
+        getChildren().add(transitionRenderer.getNode()); 
         getChildren().add(pauseView);
         getChildren().add(gameOverView);
     }
@@ -97,7 +100,7 @@ public class GameView extends Pane {
     public void synchronizeView() {
         getChildren().removeAll(currentBrickNodes);
         currentBrickNodes = brickRenderer.createAndGetNodes();
-
+        ThemeManager.getInstance().setThemeForLevel(LevelManager.getInstance().getCurrentLevel());
         int playGroundIndex = getChildren().indexOf(playGroundRenderer.getNode());
         getChildren().addAll(playGroundIndex + 1, currentBrickNodes);
 
@@ -136,14 +139,6 @@ public class GameView extends Pane {
         }
 
         lastBallCount = gameModel.getTotalBallCount();
-    }
-
-    public void showLevelStart(int level, Runnable onComplete) {
-        transitionRenderer.showLevelStart(level, onComplete);
-    }
-
-    public void showLevelClear(Runnable onComplete) {
-        transitionRenderer.showLevelClear(onComplete);
     }
 
     public void showPause() {
@@ -221,8 +216,8 @@ public class GameView extends Pane {
         if (newRenderer != currentPaddleRenderer) {
             getChildren().remove(currentPaddleRenderer.getNode());
 
-            int powerUpIndex = getChildren().indexOf(powerUpRenderer.getCanvas());
-            getChildren().add(powerUpIndex, newRenderer.getNode());
+            int effectIndex = getChildren().indexOf(effectRenderer.getCanvas());
+            getChildren().add(effectIndex, newRenderer.getNode());
 
             currentPaddleRenderer = newRenderer;
         }
@@ -233,13 +228,16 @@ public class GameView extends Pane {
         laserRenderer.refreshPaddleAssetLaser();
         stickyRenderer.refreshPaddleAssetSticky();
         expandableRenderer.refreshPaddleAsset();
+
+        // Render transition effects
+        transitionRenderer.render();
     }
 
     public void cleanup() {
         backgroundRenderer.cleanup();
         powerUpRenderer.cleanup();
         coinRenderer.cleanup();
-        transitionRenderer.cleanup();
+//        transitionRenderer.cleanup();
         trackedBalls.clear();
     }
 }
