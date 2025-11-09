@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.arkanoid.CONSTANT.GAME_AREA_X;
+
 public class PowerUpRenderer {
     private final GameModel gameModel;
     private final Canvas canvas;
@@ -21,6 +23,7 @@ public class PowerUpRenderer {
         this.gameModel = gameModel;
         this.canvas = new Canvas(800, 800);
         this.gc = canvas.getGraphicsContext2D();
+        this.canvas.setLayoutX(GAME_AREA_X);
         this.animators = new HashMap<>();
     }
 
@@ -33,8 +36,6 @@ public class PowerUpRenderer {
 
         for (PowerUp powerUp : powerUps) {
             if (!powerUp.isActive()) continue;
-
-
             if (!animators.containsKey(powerUp)) {
                 SpriteAnimator animator = createAnimator(powerUp.getType());
                 if (animator != null) {
@@ -50,7 +51,7 @@ public class PowerUpRenderer {
                 if (currentFrame != null) {
                     gc.drawImage(
                             currentFrame,
-                            powerUp.getX(),
+                            powerUp.getX() - GAME_AREA_X,
                             powerUp.getY(),
                             powerUp.getWidth(),
                             powerUp.getHeight()
