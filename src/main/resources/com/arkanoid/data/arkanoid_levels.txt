@@ -1,1 +1,1 @@
-unlockedLevels=6
+unlockedLevels=20
