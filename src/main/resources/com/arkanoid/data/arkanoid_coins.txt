@@ -1,1 +1,1 @@
-coins=682
+coins=686

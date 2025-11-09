@@ -99,6 +99,10 @@ public class GameModel {
             }
             return;
         }
+
+        powerUpManager.update(deltaTime);
+        coinManager.update(deltaTime);
+
         if (gameState != GameState.Running) {
             if (gameState == GameState.Ready) {
                 paddle.move(deltaTime);
@@ -125,8 +129,6 @@ public class GameModel {
         updateBricks(deltaTime);
         updateEffects();
 
-        powerUpManager.update(deltaTime);
-        coinManager.update(deltaTime);
         paddle.move(deltaTime);
 
         if (paddle instanceof StickyPaddle) {
