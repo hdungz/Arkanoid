@@ -163,9 +163,8 @@ public class LevelSelectionView extends StackPane {
     }
 
     private void createBackButton() {
-        backButton = createImageButton("backtomenu2", "backtomenu1");
+        backButton = createImageButton("BtnExitNormal", "BtnExitHover");
         backButton.setOnAction(e -> System.out.println("Return to main menu!"));
-
         getChildren().add(backButton);
         StackPane.setAlignment(backButton, Pos.BOTTOM_LEFT);
         StackPane.setMargin(backButton, new Insets(0, 0, 20, 20));

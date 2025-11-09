@@ -4,6 +4,7 @@ import com.arkanoid.CONSTANT;
 import com.arkanoid.model.brick.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.arkanoid.utils.LevelStorage;
 
 public class LevelManager {
     private static LevelManager instance;
@@ -12,9 +13,9 @@ public class LevelManager {
     private int unlockedLevels;
     public LevelManager() {
         levels = new ArrayList<>();
-        initializeLevels();
         currentLevel = 1;
-        unlockedLevels = 1;
+        unlockedLevels = LevelStorage.loadUnlockedLevels();
+        initializeLevels();
     }
 
     public static LevelManager getInstance() {
@@ -29,7 +30,7 @@ public class LevelManager {
             LevelInfo level = new LevelInfo();
             level.setId(i);
             level.setName("Level " + i);
-            level.setUnlocked(i == 1);
+            level.setUnlocked(i <= unlockedLevels);
 
             levels.add(level);
         }
@@ -67,6 +68,7 @@ public class LevelManager {
             }
             if (levelId > unlockedLevels) {
                 unlockedLevels = levelId;
+                LevelStorage.saveUnlockedLevels(this.unlockedLevels);
             }
         }
     }

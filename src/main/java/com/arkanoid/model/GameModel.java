@@ -143,6 +143,7 @@ public class GameModel {
             this.ball.resetPosition(paddle);
             this.extraBalls.clear();
             this.effects.clear();
+            this.getPowerUpManager().getPowerUps().clear();
             LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
         }
     }

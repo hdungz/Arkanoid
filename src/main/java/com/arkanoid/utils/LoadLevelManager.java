@@ -91,9 +91,10 @@ public class LoadLevelManager {
         gameModel.setLives(3);
         gameModel.getBricks().clear();
         gameModel.getExtraBalls().clear();
+        gameModel.getPowerUpManager().clear();
         gameModel.setLevelCompleteDelay(0);
         gameModel.getEffects().clear();
-
+        gameModel.getCoinManager().clear();
         Paddle newPaddle = new Paddle(PowerUpPaddleType.Normal);
         newPaddle.resetPosition();
         gameModel.setPaddle(newPaddle);
@@ -118,7 +119,7 @@ public class LoadLevelManager {
             gameModel.setScore(currentScore);
             gameModel.setLives(currentLives);
         } else {
-            gameModel.setGameState(GameState.GameOver);
+            gameModel.setGameState(GameState.Win);
             System.out.println("Game Completed! All levels finished!");
         }
     }
