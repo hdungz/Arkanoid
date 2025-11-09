@@ -341,6 +341,9 @@ public class GameModel {
     }
 
     public void launchBall() {
+        if (isBrickFalling) {
+            return;
+        }
         if (gameState == GameState.Ready) {
             gameState = GameState.Running;
             ball.launch();
