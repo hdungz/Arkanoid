@@ -129,9 +129,15 @@ public class AssetsManager {
         loadImages("BtnSelectHover", "/com/arkanoid/Store/buttons/select_hover.png");
 
         loadImages("BtnResumeNormal", "/com/arkanoid/buttons/resume_normal.png");
-        loadImages("BtnResumeHover", "/com/arkanoid/buttons/resume_normal.png");
+        loadImages("BtnResumeHover", "/com/arkanoid/buttons/resume_hover.png");
         loadImages("BtnMenuNormal", "/com/arkanoid/buttons/menu_normal.png");
-        loadImages("BtnMenuHover", "/com/arkanoid/buttons/menu_normal.png");
+        loadImages("BtnMenuHover", "/com/arkanoid/buttons/menu_hover.png");
+        loadImages("BtnLevelNormal", "/com/arkanoid/buttons/level_normal.png");
+        loadImages("BtnLevelHover", "/com/arkanoid/buttons/level_hover.png");
+
+        loadImages("PauseTitle", "/com/arkanoid/buttons/pause.png");
+
+
 
 
         loadImages("BtnSelectNormal", "/com/arkanoid/Store/buttons/select_normal.png");

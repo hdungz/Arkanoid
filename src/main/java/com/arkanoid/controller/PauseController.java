@@ -18,6 +18,7 @@ public class PauseController {
 
     private void initializeButtons() {
         pauseView.getResumeButton().setOnAction(e -> resumeGame());
+        pauseView.getLevelButton().setOnAction(e -> returnToLevelSelection());
         pauseView.getMenuButton().setOnAction(e -> returnToMenu());
     }
 
@@ -36,6 +37,13 @@ public class PauseController {
         isPaused = false;
         gameModel.setPaused(false);
         pauseView.hide();
+    }
+
+    public void returnToLevelSelection() {
+        isPaused = false;
+        gameModel.setPaused(false);
+        pauseView.hide();
+        SceneManager.getInstance().switchTo(SceneType.LevelSelection);
     }
 
     public void returnToMenu() {
