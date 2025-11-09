@@ -62,12 +62,15 @@ public class Ball {
     }
 
     public void checkWallCollision(double leftWall, double rightWall, double topWall, GameModel gameModel) {
+        boolean collisionDetected = false;
+
         if (x - radius < leftWall) {
             x = leftWall + radius;
             velocityX = -velocityX;
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(WallCollisionSide.LEFT);
             Paddle.onBallHit();
+            collisionDetected = true;
         }
         if (x + radius > rightWall) {
             x = rightWall - radius;
@@ -75,6 +78,7 @@ public class Ball {
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(WallCollisionSide.RIGHT);
             Paddle.onBallHit();
+            collisionDetected = true;
         }
         if (y - radius < topWall) {
             y = topWall + radius;
@@ -82,6 +86,11 @@ public class Ball {
             reflectionAngleAdjustment();
             gameModel.setLastWallCollision(WallCollisionSide.TOP);
             Paddle.onBallHit();
+            collisionDetected = true;
+        }
+
+        if (!collisionDetected) {
+            gameModel.setLastWallCollision(WallCollisionSide.NONE);
         }
     }
 
