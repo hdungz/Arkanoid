@@ -100,11 +100,19 @@ public class GameView extends Pane {
     public void synchronizeView() {
         getChildren().removeAll(currentBrickNodes);
         currentBrickNodes = brickRenderer.createAndGetNodes();
+
         ThemeManager.getInstance().setThemeForLevel(LevelManager.getInstance().getCurrentLevel());
+
         int playGroundIndex = getChildren().indexOf(playGroundRenderer.getNode());
         getChildren().addAll(playGroundIndex + 1, currentBrickNodes);
 
-        resetBallTracking();
+        multiBallRenderer.cleanup();
+        trackedBalls.clear();
+
+        Ball mainBall = gameModel.getBall();
+        multiBallRenderer.addBall(mainBall);
+        trackedBalls.add(mainBall);
+        lastBallCount = 1;
     }
 
     private void resetBallTracking() {

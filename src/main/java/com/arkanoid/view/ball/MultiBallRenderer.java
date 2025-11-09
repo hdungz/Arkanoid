@@ -42,6 +42,15 @@ public class MultiBallRenderer {
 
     }
 
+    public void cleanup() {
+        for (BallRenderer renderer : renderers) {
+
+        }
+        group.getChildren().clear();
+        balls.clear();
+        renderers.clear();
+    }
+
     public Node getNode() {
         return group;
     }
