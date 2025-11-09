@@ -24,15 +24,7 @@ import static com.arkanoid.CONSTANT.WINDOW_WIDTH;
 
 public class StoreView extends StackPane {
 
-   /* private final GameModel gamemodel = new GameModel();
-    private final NormalPaddleRenderer normal = new NormalPaddleRenderer(gamemodel);
-    private final StickyPaddleRenderer sticky = new StickyPaddleRenderer(gamemodel);
-    private final LaserPaddleRenderer laser = new LaserPaddleRenderer(gamemodel);*/
-
-
-
     private final Button backButton;
-
 
     private Button leftArrowPaddleButton;
     private Button rightArrowPaddleButton;
@@ -42,7 +34,6 @@ public class StoreView extends StackPane {
     private Label paddlePriceLabel;
     private Label paddleStatusLabel;
     private ImageView paddleLockIcon;
-
 
     private Button leftArrowBallButton;
     private Button rightArrowBallButton;
@@ -68,21 +59,21 @@ public class StoreView extends StackPane {
     private Runnable onRightArrowBallClicked;
     private Consumer<Integer> onPurchaseBallClicked;
 
+    private Timeline paddleGlowAnimation;
+    private Timeline ballGlowAnimation;
+
     public StoreView() {
         setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         setupBackground();
 
-
         HBox mainContainer = createMainContainer();
         getChildren().add(mainContainer);
-
 
         backButton = createBackButton();
         StackPane.setAlignment(backButton, Pos.BOTTOM_LEFT);
         StackPane.setMargin(backButton, new javafx.geometry.Insets(0, 0, 20, 20));
         getChildren().add(backButton);
-
 
         HBox coinDisplay = createCoinDisplay();
         StackPane.setAlignment(coinDisplay, Pos.TOP_RIGHT);
@@ -90,7 +81,6 @@ public class StoreView extends StackPane {
         getChildren().add(coinDisplay);
 
         setupButtonHandlers();
-
     }
 
     private void setupBackground() {
@@ -112,10 +102,7 @@ public class StoreView extends StackPane {
         container.setPadding(new javafx.geometry.Insets(60, 40, 100, 40));
         container.setPickOnBounds(false);
 
-
         VBox paddleSection = createPaddleSection();
-
-
         VBox ballSection = createBallSection();
 
         container.getChildren().addAll(paddleSection, ballSection);
@@ -126,12 +113,38 @@ public class StoreView extends StackPane {
         VBox section = new VBox(12);
         section.setAlignment(Pos.CENTER);
         section.setMaxWidth(450);
+
+        // Nền trong suốt với viền xanh phát sáng
         section.setStyle(
-                "-fx-background-color: rgba(0, 0, 0, 0.4); " +
-                        "-fx-background-radius: 20; " +
+                "-fx-background-color: rgba(0, 0, 0, 0.3); " +
+                        "-fx-border-color: rgba(96, 165, 250, 1); " +
+                        "-fx-border-width: 3; " +
+                        "-fx-background-radius: 0; " +
+                        "-fx-border-radius: 0; " +
                         "-fx-padding: 20;"
         );
 
+        // Tạo hiệu ứng glow cho viền paddle
+        DropShadow paddleGlow = new DropShadow();
+        paddleGlow.setColor(Color.rgb(96, 165, 250, 0.8));
+        paddleGlow.setRadius(20);
+        paddleGlow.setSpread(0.3);
+
+        paddleGlowAnimation = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(paddleGlow.radiusProperty(), 15),
+                        new KeyValue(paddleGlow.spreadProperty(), 0.2)),
+                new KeyFrame(Duration.seconds(1.5),
+                        new KeyValue(paddleGlow.radiusProperty(), 25),
+                        new KeyValue(paddleGlow.spreadProperty(), 0.4)),
+                new KeyFrame(Duration.seconds(3),
+                        new KeyValue(paddleGlow.radiusProperty(), 15),
+                        new KeyValue(paddleGlow.spreadProperty(), 0.2))
+        );
+        paddleGlowAnimation.setCycleCount(Timeline.INDEFINITE);
+        paddleGlowAnimation.play();
+
+        section.setEffect(paddleGlow);
 
         Label titleLabel = new Label("PADDLE");
         titleLabel.setStyle(
@@ -141,17 +154,11 @@ public class StoreView extends StackPane {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 8, 0, 0, 3);"
         );
 
-
         HBox contentBox = new HBox(13);
         contentBox.setAlignment(Pos.CENTER);
 
-
         leftArrowPaddleButton = createArrowButton(true);
-
-
         VBox centerDisplay = createPaddleDisplay();
-
-
         rightArrowPaddleButton = createArrowButton(false);
 
         contentBox.getChildren().addAll(leftArrowPaddleButton, centerDisplay, rightArrowPaddleButton);
@@ -165,7 +172,6 @@ public class StoreView extends StackPane {
         display.setAlignment(Pos.CENTER);
         display.setMaxWidth(300);
 
-
         paddleNameLabel = new Label("Classic Blue");
         paddleNameLabel.setStyle(
                 "-fx-font-size: 20px; " +
@@ -173,7 +179,6 @@ public class StoreView extends StackPane {
                         "-fx-text-fill: white; " +
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 5, 0, 0, 2);"
         );
-
 
         StackPane displayArea = new StackPane();
         displayArea.setPrefSize(200, 200);
@@ -192,7 +197,6 @@ public class StoreView extends StackPane {
         paddleLockIcon.setVisible(false);
 
         displayArea.getChildren().addAll(currentPaddleDisplay, paddleLockIcon);
-
 
         VBox infoPanel = new VBox(5);
         infoPanel.setAlignment(Pos.CENTER);
@@ -217,7 +221,6 @@ public class StoreView extends StackPane {
                         "-fx-text-fill: gold;"
         );
 
-
         purchasePaddleButton = createPurchaseButton("select");
 
         infoPanel.getChildren().addAll(paddleStatusLabel, paddlePriceLabel, purchasePaddleButton);
@@ -230,12 +233,38 @@ public class StoreView extends StackPane {
         VBox section = new VBox(12);
         section.setAlignment(Pos.CENTER);
         section.setMaxWidth(450);
+
+        // Nền trong suốt với viền vàng phát sáng
         section.setStyle(
-                "-fx-background-color: rgba(0, 0, 0, 0.4); " +
-                        "-fx-background-radius: 20; " +
+                "-fx-background-color: rgba(0, 0, 0, 0.3); " +
+                        "-fx-border-color: rgba(245, 158, 11, 1); " +
+                        "-fx-border-width: 3; " +
+                        "-fx-background-radius: 0; " +
+                        "-fx-border-radius: 0; " +
                         "-fx-padding: 20;"
         );
 
+        // Tạo hiệu ứng glow cho viền ball
+        DropShadow ballGlow = new DropShadow();
+        ballGlow.setColor(Color.rgb(245, 158, 11, 0.8));
+        ballGlow.setRadius(20);
+        ballGlow.setSpread(0.3);
+
+        ballGlowAnimation = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(ballGlow.radiusProperty(), 15),
+                        new KeyValue(ballGlow.spreadProperty(), 0.2)),
+                new KeyFrame(Duration.seconds(1.5),
+                        new KeyValue(ballGlow.radiusProperty(), 25),
+                        new KeyValue(ballGlow.spreadProperty(), 0.4)),
+                new KeyFrame(Duration.seconds(3),
+                        new KeyValue(ballGlow.radiusProperty(), 15),
+                        new KeyValue(ballGlow.spreadProperty(), 0.2))
+        );
+        ballGlowAnimation.setCycleCount(Timeline.INDEFINITE);
+        ballGlowAnimation.play();
+
+        section.setEffect(ballGlow);
 
         Label titleLabel = new Label("BALL");
         titleLabel.setStyle(
@@ -245,17 +274,11 @@ public class StoreView extends StackPane {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 8, 0, 0, 3);"
         );
 
-
         HBox contentBox = new HBox(20);
         contentBox.setAlignment(Pos.CENTER);
 
-
         leftArrowBallButton = createArrowButton(true);
-
-
         VBox centerDisplay = createBallDisplay();
-
-
         rightArrowBallButton = createArrowButton(false);
 
         contentBox.getChildren().addAll(leftArrowBallButton, centerDisplay, rightArrowBallButton);
@@ -269,7 +292,6 @@ public class StoreView extends StackPane {
         display.setAlignment(Pos.CENTER);
         display.setMaxWidth(300);
 
-
         ballNameLabel = new Label("Classic White");
         ballNameLabel.setStyle(
                 "-fx-font-size: 20px; " +
@@ -277,7 +299,6 @@ public class StoreView extends StackPane {
                         "-fx-text-fill: white; " +
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 5, 0, 0, 2);"
         );
-
 
         StackPane displayArea = new StackPane();
         displayArea.setPrefSize(200, 200);
@@ -298,7 +319,6 @@ public class StoreView extends StackPane {
 
         displayArea.getChildren().addAll(currentBallDisplay, ballLockIcon);
 
-        // Info panel
         VBox infoPanel = new VBox(5);
         infoPanel.setAlignment(Pos.CENTER);
         infoPanel.setPadding(new javafx.geometry.Insets(8));
@@ -322,7 +342,6 @@ public class StoreView extends StackPane {
                         "-fx-text-fill: gold;"
         );
 
-
         purchaseBallButton = createPurchaseButton("select");
 
         infoPanel.getChildren().addAll(ballStatusLabel, ballPriceLabel, purchaseBallButton);
@@ -331,9 +350,7 @@ public class StoreView extends StackPane {
         return display;
     }
 
-
     private Button createPurchaseButton(String buttonType) {
-
         String normalKey = "Btn" + capitalize(buttonType) + "Normal";
         String hoverKey = "Btn" + capitalize(buttonType) + "Hover";
 
@@ -347,7 +364,6 @@ public class StoreView extends StackPane {
                     150, 45
             );
         }
-
 
         Button button = new Button(buttonType.toUpperCase());
         button.setStyle(
@@ -382,7 +398,6 @@ public class StoreView extends StackPane {
         return button;
     }
 
-
     private Button createArrowButton(boolean isLeft) {
         String direction = isLeft ? "Left" : "Right";
         String normalKey = "BtnArrow" + direction + "Normal";
@@ -398,7 +413,6 @@ public class StoreView extends StackPane {
                     60, 60
             );
         }
-
 
         Button button = new Button();
         button.setBackground(Background.EMPTY);
@@ -550,33 +564,12 @@ public class StoreView extends StackPane {
         return lockView;
     }
 
-    private ImageView createFallbackCoinIcon() {
-        javafx.scene.canvas.Canvas canvas = new javafx.scene.canvas.Canvas(35, 35);
-        javafx.scene.canvas.GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Color.GOLD);
-        gc.fillOval(3, 3, 29, 29);
-        gc.setStroke(Color.ORANGE);
-        gc.setLineWidth(2);
-        gc.strokeOval(3, 3, 29, 29);
-
-        gc.setFill(Color.DARKGOLDENROD);
-        gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, 18));
-        gc.fillText("$", 12, 24);
-
-        javafx.scene.image.WritableImage img = new javafx.scene.image.WritableImage(35, 35);
-        canvas.snapshot(null, img);
-
-        return new ImageView(img);
-    }
-
     private void setupButtonHandlers() {
         backButton.setOnAction(e -> {
             if (onBackButtonClicked != null) {
                 onBackButtonClicked.run();
             }
         });
-
 
         leftArrowPaddleButton.setOnAction(e -> {
             if (!isAnimating && onLeftArrowPaddleClicked != null) {
@@ -615,7 +608,6 @@ public class StoreView extends StackPane {
         });
     }
 
-
     public void setOnLeftArrowPaddleClicked(Runnable callback) {
         this.onLeftArrowPaddleClicked = callback;
     }
@@ -643,7 +635,6 @@ public class StoreView extends StackPane {
         updateButtonStyle(purchasePaddleButton, paddleStatusLabel, paddlePriceLabel,
                 price, isUnlocked, isSelected);
     }
-
 
     public void setOnLeftArrowBallClicked(Runnable callback) {
         this.onLeftArrowBallClicked = callback;
@@ -673,7 +664,6 @@ public class StoreView extends StackPane {
                 price, isUnlocked, isSelected);
     }
 
-
     private void updateButtonStyle(Button button, Label statusLabel, Label priceLabel,
                                    int price, boolean isUnlocked, boolean isSelected) {
         String buttonType;
@@ -702,7 +692,6 @@ public class StoreView extends StackPane {
             disableButton = false;
         }
 
-
         String normalKey = "Btn" + capitalize(buttonType) + "Normal";
         String hoverKey = "Btn" + capitalize(buttonType) + "Hover";
 
@@ -712,7 +701,6 @@ public class StoreView extends StackPane {
         if (normalFrames != null && normalFrames.length > 0 && button.getGraphic() instanceof ImageView) {
             ImageView imageView = (ImageView) button.getGraphic();
             imageView.setImage(normalFrames[0]);
-
 
             final Image normalImg = normalFrames[0];
             final Image hoverImg = (hoverFrames != null && hoverFrames.length > 0)
@@ -737,7 +725,6 @@ public class StoreView extends StackPane {
             });
         }
 
-
         statusLabel.setText(statusText);
         statusLabel.setStyle(
                 "-fx-font-size: 11px; " +
@@ -750,7 +737,6 @@ public class StoreView extends StackPane {
             priceLabel.setText("Price: " + price + " coins");
         }
 
-
         button.setDisable(disableButton);
         if (disableButton) {
             button.setOpacity(0.7);
@@ -758,7 +744,6 @@ public class StoreView extends StackPane {
             button.setOpacity(1.0);
         }
     }
-
 
     public void setOnBackButtonClicked(Runnable callback) {
         this.onBackButtonClicked = callback;
@@ -808,14 +793,12 @@ public class StoreView extends StackPane {
         scale.play();
     }
 
-
     private String capitalize(String str) {
         if (str == null || str.isEmpty()) {
             return str;
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
-
 
     public Label getCoinLabel() {
         return coinLabel;
