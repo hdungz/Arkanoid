@@ -44,9 +44,7 @@ public class LoadLevelManager {
                 if (line == null) break;
                 for (int j = 0; j < cols; j++) {
                     double x = CONSTANT.GAME_AREA_X + j * (brickWidth + 5) + 5;
-                    // Y bắt đầu từ ngoài màn hình (âm) để rơi xuống
                     double y = CONSTANT.BORDER_WIDTH + i * (brickHeight + 5) + 5 - 2500;
-                    // finalY là vị trí cuối cùng của brick
                     double finaly = (CONSTANT.BORDER_WIDTH + 30) + i * (brickHeight + 5) + 5;
                     char c = line.charAt(j);
                     if (c == '1') bricks.add(new DropBrick(x, y, finaly, brickWidth, brickHeight, BrickType.DROPPER));
@@ -65,10 +63,7 @@ public class LoadLevelManager {
         }
     }
 
-    /**
-     * Update animation gạch rơi xuống
-     * @return true nếu vẫn còn gạch đang rơi, false nếu đã rơi xong
-     */
+
     public boolean updateBrickFallAnimation(ArrayList<Brick> bricks, double deltaTime) {
         double fallSpeed = 2000.0;
         boolean stillFalling = false;
@@ -83,26 +78,11 @@ public class LoadLevelManager {
         return stillFalling;
     }
 
-    /**
-     * Gạch rơi xuống khi win level (effect)
-     */
-    public void brickfalldown(ArrayList<Brick> bricks, double deltaTime) {
-        final double SPEED = 900.0;
-        for (Brick brick : bricks) {
-            if (brick.isVisible()) {
-                brick.setY(brick.getY() + SPEED * deltaTime);
-            }
-        }
-    }
-
-    /**
-     * Load level hiện tại
-     */
     public void loadCurrentLevel(GameModel gameModel) {
         int levelToLoad = gameModel.getLevelmanager().getCurrentLevel();
         gameModel.setCurrentLevel(levelToLoad);
 
-        // Reset game state
+
         gameModel.setScore(0);
         gameModel.setLives(3);
         gameModel.getBricks().clear();
@@ -112,34 +92,32 @@ public class LoadLevelManager {
         gameModel.getEffects().clear();
         gameModel.getCoinManager().clear();
 
-        // Reset paddle
+
         Paddle newPaddle = new Paddle(PowerUpPaddleType.Normal);
         newPaddle.resetPosition();
         gameModel.setPaddle(newPaddle);
 
-        // Reset ball
+
         gameModel.getBall().resetPosition(gameModel.getPaddle());
 
-        // Set game state
+
         gameModel.setGameState(GameState.Ready);
 
-        // Load bricks từ file
+
         loadLevelfromfile(levelToLoad, gameModel.getBricks());
 
-        // Set flags
+
         gameModel.setBrickFalling(true);
         gameModel.setNeedsViewSync(true);
         this.loaded = true;
 
-        // BẮT ĐẦU TRANSITION SAU KHI LOAD XONG
+
         gameModel.getTransitionManager().startLevelTransition(levelToLoad);
 
         System.out.println("Loaded level " + levelToLoad + " with " + gameModel.getBricks().size() + " bricks");
     }
 
-    /**
-     * Load level tiếp theo
-     */
+
     public void loadNextLevel(GameModel gameModel) {
         int nextLevel = gameModel.getCurrentLevel() + 1;
         int currentScore = gameModel.getScore();
@@ -149,7 +127,7 @@ public class LoadLevelManager {
             gameModel.getLevelmanager().selectLevel(nextLevel);
             loadCurrentLevel(gameModel);
 
-            // Giữ lại score và lives
+
             gameModel.setScore(currentScore);
             gameModel.setLives(currentLives);
 

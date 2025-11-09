@@ -110,7 +110,6 @@ public class GameModel {
             }
             if (gameState == GameState.Win) {
                 levelCompleteDelay -= deltaTime;
-                loadLevelManager.brickfalldown(bricks, deltaTime);
                 if (levelCompleteDelay <= 0) {
                     if (!transitionManager.isClearActive() && !transitionManager.isReadyForNextLevel()) {
                         transitionManager.startLevelClear();
