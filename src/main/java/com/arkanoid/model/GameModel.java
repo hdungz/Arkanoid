@@ -143,6 +143,7 @@ public class GameModel {
             this.ball.resetPosition(paddle);
             this.extraBalls.clear();
             this.effects.clear();
+            this.getPowerUpManager().getPowerUps().clear();
             LevelManager.getInstance().completeLevel(LevelManager.getInstance().getCurrentLevel());
         }
     }
@@ -341,6 +342,9 @@ public class GameModel {
     }
 
     public void launchBall() {
+        if (isBrickFalling) {
+            return;
+        }
         if (gameState == GameState.Ready) {
             gameState = GameState.Running;
             ball.launch();

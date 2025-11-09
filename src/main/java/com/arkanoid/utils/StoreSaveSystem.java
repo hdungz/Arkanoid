@@ -113,11 +113,11 @@ public class StoreSaveSystem {
                 }
             }
 
-            System.out.println("✓ Store data loaded from: " + saveFile);
+            System.out.println(" Store data loaded from: " + saveFile);
             return new StoreData(selectedPaddle, selectedBall, unlockedPaddles, unlockedBalls);
 
         } catch (IOException e) {
-            System.err.println("✗ Failed to load store data: " + e.getMessage());
+            System.err.println(" Failed to load store data: " + e.getMessage());
             return getDefaultData();
         }
     }
@@ -158,9 +158,9 @@ public class StoreSaveSystem {
         Path saveFile = getSaveFilePath();
         try {
             Files.deleteIfExists(saveFile);
-            System.out.println("✓ Store data deleted from: " + saveFile);
+            System.out.println(" Store data deleted from: " + saveFile);
         } catch (IOException e) {
-            System.err.println("✗ Failed to delete store data: " + e.getMessage());
+            System.err.println(" Failed to delete store data: " + e.getMessage());
         }
     }
 

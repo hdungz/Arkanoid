@@ -12,7 +12,7 @@ import java.util.List;
 public class PowerUpManager {
     private List<PowerUp> powerUps;
     private GameModel gameModel;
-    private double spawnChance = 0.3;
+    private double spawnChance = 1;
 
     public PowerUpManager(GameModel gameModel) {
         this.gameModel = gameModel;

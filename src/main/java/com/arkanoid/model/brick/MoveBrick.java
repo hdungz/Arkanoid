@@ -2,6 +2,7 @@ package com.arkanoid.model.brick;
 
 import com.arkanoid.CONSTANT;
 import com.arkanoid.model.GameModel;
+import com.arkanoid.utils.LevelManager;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,10 @@ public class MoveBrick extends Brick {
     }
     public void update(double deltaTime) {
         if (!isVisible()) return;
-
+        GameModel gm = GameModel.getInstance();
+        if(gm.isBrickFalling()){
+            return;
+        }
         double deltaX = moveSpeed * direction * deltaTime;
         double nextX = getX() + deltaX;
         boolean atRightLimit = nextX >= initialX + moveRange;
