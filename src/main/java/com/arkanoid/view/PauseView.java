@@ -2,9 +2,14 @@ package com.arkanoid.view;
 
 import com.arkanoid.utils.AssetsManager;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -22,6 +27,7 @@ public class PauseView extends StackPane {
     private final Button levelButton;
     private final Button menuButton;
     private final VBox pauseBox;
+    private Timeline glowAnimation;
 
     public PauseView() {
         setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -32,13 +38,13 @@ public class PauseView extends StackPane {
         overlay.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         getChildren().add(overlay);
 
-        pauseBox = new VBox(20);
+        pauseBox = new VBox(15);
         pauseBox.setAlignment(Pos.CENTER);
-        pauseBox.setStyle("-fx-background-color: rgba(20, 20, 40, 0.95); " +
-                "-fx-background-radius: 20; " +
-                "-fx-padding: 50;");
-        pauseBox.setMaxWidth(400);
+        pauseBox.setMaxWidth(300);
         pauseBox.setMaxHeight(300);
+
+        // Tạo viền gradient với hiệu ứng
+        createAnimatedBorder();
 
         ImageView pauseTitle = createPauseTitleImage();
         VBox.setMargin(pauseTitle, new javafx.geometry.Insets(-30, 0, 0, 0));
@@ -49,6 +55,38 @@ public class PauseView extends StackPane {
 
         pauseBox.getChildren().addAll(pauseTitle, resumeButton, levelButton, menuButton);
         getChildren().add(pauseBox);
+    }
+
+    private void createAnimatedBorder() {
+        // Nền trong suốt với viền xanh phát sáng
+        pauseBox.setStyle("-fx-background-color: rgba(20, 20, 40, 0.3); " +
+                "-fx-border-color: rgba(0, 150, 255, 1); " +
+                "-fx-border-width: 3; " +
+                "-fx-background-radius: 0; " +
+                "-fx-border-radius: 0; " +
+                "-fx-padding: 50;");
+
+        // Hiệu ứng glow cho viền
+        DropShadow borderGlow = new DropShadow();
+        borderGlow.setColor(Color.rgb(0, 150, 255, 0.8));
+        borderGlow.setRadius(20);
+        borderGlow.setSpread(0.3);
+
+        // Animation cho viền phát sáng
+        glowAnimation = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(borderGlow.radiusProperty(), 15),
+                        new KeyValue(borderGlow.spreadProperty(), 0.2)),
+                new KeyFrame(Duration.seconds(1.5),
+                        new KeyValue(borderGlow.radiusProperty(), 25),
+                        new KeyValue(borderGlow.spreadProperty(), 0.4)),
+                new KeyFrame(Duration.seconds(3),
+                        new KeyValue(borderGlow.radiusProperty(), 15),
+                        new KeyValue(borderGlow.spreadProperty(), 0.2))
+        );
+        glowAnimation.setCycleCount(Timeline.INDEFINITE);
+
+        pauseBox.setEffect(borderGlow);
     }
 
     private ImageView createPauseTitleImage() {
@@ -158,10 +196,16 @@ public class PauseView extends StackPane {
     public void show() {
         setVisible(true);
         toFront();
+        if (glowAnimation != null) {
+            glowAnimation.play();
+        }
     }
 
     public void hide() {
         setVisible(false);
+        if (glowAnimation != null) {
+            glowAnimation.pause();
+        }
     }
 
     public Button getResumeButton() {
