@@ -19,6 +19,7 @@ import static com.arkanoid.CONSTANT.WINDOW_WIDTH;
 public class PauseView extends StackPane {
 
     private final Button resumeButton;
+    private final Button levelButton;
     private final Button menuButton;
     private final VBox pauseBox;
 
@@ -31,7 +32,7 @@ public class PauseView extends StackPane {
         overlay.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         getChildren().add(overlay);
 
-        pauseBox = new VBox(30);
+        pauseBox = new VBox(20);
         pauseBox.setAlignment(Pos.CENTER);
         pauseBox.setStyle("-fx-background-color: rgba(20, 20, 40, 0.95); " +
                 "-fx-background-radius: 20; " +
@@ -39,21 +40,49 @@ public class PauseView extends StackPane {
         pauseBox.setMaxWidth(400);
         pauseBox.setMaxHeight(300);
 
-        Text pauseTitle = new Text("PAUSED");
-        pauseTitle.setFont(Font.font("Arial", 48));
-        pauseTitle.setFill(Color.WHITE);
-        pauseTitle.setStyle("-fx-font-weight: bold;");
-
-        DropShadow textShadow = new DropShadow();
-        textShadow.setColor(Color.rgb(0, 200, 255, 0.8));
-        textShadow.setRadius(15);
-        pauseTitle.setEffect(textShadow);
+        ImageView pauseTitle = createPauseTitleImage();
+        VBox.setMargin(pauseTitle, new javafx.geometry.Insets(-30, 0, 0, 0));
 
         resumeButton = createButton("BtnResumeNormal", "BtnResumeHover", "RESUME");
+        levelButton = createButton("BtnLevelNormal", "BtnLevelHover", "LEVELS");
         menuButton = createButton("BtnMenuNormal", "BtnMenuHover", "MENU");
 
-        pauseBox.getChildren().addAll(pauseTitle, resumeButton, menuButton);
+        pauseBox.getChildren().addAll(pauseTitle, resumeButton, levelButton, menuButton);
         getChildren().add(pauseBox);
+    }
+
+    private ImageView createPauseTitleImage() {
+        ImageView pauseImageView = new ImageView();
+
+        try {
+            Image pauseImage = AssetsManager.getFrames("PauseTitle")[0];
+            pauseImageView.setImage(pauseImage);
+            pauseImageView.setFitWidth(200);
+            pauseImageView.setPreserveRatio(true);
+
+            DropShadow textShadow = new DropShadow();
+            textShadow.setColor(Color.rgb(0, 200, 255, 0.8));
+            textShadow.setRadius(15);
+            pauseImageView.setEffect(textShadow);
+
+        } catch (Exception e) {
+            System.out.println("Could not load pause title image, using text fallback");
+
+            Text pauseText = new Text("PAUSED");
+            pauseText.setFont(Font.font("Arial", 48));
+            pauseText.setFill(Color.WHITE);
+            pauseText.setStyle("-fx-font-weight: bold;");
+
+            DropShadow textShadow = new DropShadow();
+            textShadow.setColor(Color.rgb(0, 200, 255, 0.8));
+            textShadow.setRadius(15);
+            pauseText.setEffect(textShadow);
+
+            ImageView fallbackView = new ImageView();
+            fallbackView.setUserData(pauseText);
+        }
+
+        return pauseImageView;
     }
 
     private Button createButton(String normalKey, String hoverKey, String fallbackText) {
@@ -137,6 +166,10 @@ public class PauseView extends StackPane {
 
     public Button getResumeButton() {
         return resumeButton;
+    }
+
+    public Button getLevelButton() {
+        return levelButton;
     }
 
     public Button getMenuButton() {
