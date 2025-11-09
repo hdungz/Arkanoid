@@ -72,9 +72,8 @@ public class HUDRenderer {
         livesPanel.render(gc, time, gameModel.getLives(), themeColor);
 
         GameState currentState = gameModel.getGameState();
-        if (currentState == GameState.GameOver) {
-            messagePanel.render(gc, "GAME OVER", Color.rgb(255, 50, 50), messagePulse);
-        } else if (currentState == GameState.Ready) {
+
+        if (currentState == GameState.Ready) {
             messagePanel.render(gc, "PRESS SPACE TO START", themeColor, messagePulse);
         }
     }

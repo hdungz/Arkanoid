@@ -1,6 +1,7 @@
 package com.arkanoid.view;
 
 import com.arkanoid.model.GameModel;
+import com.arkanoid.model.GameState;
 import com.arkanoid.model.ball.Ball;
 import com.arkanoid.model.paddle.ExpandablePaddle;
 import com.arkanoid.model.paddle.LaserPaddle;
@@ -40,6 +41,7 @@ public class GameView extends Pane {
     private final CoinRenderer coinRenderer;
     private final LevelTransitionRenderer transitionRenderer;
     private final PauseView pauseView;
+    private final GameOverView gameOverView;
 
     private BasePaddleRenderer currentPaddleRenderer;
     private final NormalPaddleRenderer normalRenderer;
@@ -69,6 +71,7 @@ public class GameView extends Pane {
         coinRenderer = new CoinRenderer(gameModel);
         transitionRenderer = new LevelTransitionRenderer();
         pauseView = new PauseView();
+        gameOverView = new GameOverView();
 
         Ball mainBall = gameModel.getBall();
         multiBallRenderer.addBall(mainBall);
@@ -88,6 +91,7 @@ public class GameView extends Pane {
         getChildren().add(coinRenderer.getNode());
         getChildren().add(transitionRenderer.getNode());
         getChildren().add(pauseView);
+        getChildren().add(gameOverView);
     }
 
     public void synchronizeView() {
@@ -150,14 +154,45 @@ public class GameView extends Pane {
         pauseView.hide();
     }
 
+    public void showGameOver() {
+        gameOverView.setScore(gameModel.getScore());
+        gameOverView.setGameComplete(false);
+        gameOverView.show();
+    }
+
+    public void showGameComplete() {
+        gameOverView.setScore(gameModel.getScore());
+        gameOverView.setGameComplete(true);
+        gameOverView.show();
+    }
+
+    public void hideGameOver() {
+        gameOverView.hide();
+    }
+
     public PauseView getPauseView() {
         return pauseView;
+    }
+
+    public GameOverView getGameOverView() {
+        return gameOverView;
     }
 
     public void render() {
         if (gameModel.checkAndConsumeViewSync()) {
             synchronizeView();
         }
+
+        // Tự động kiểm tra và hiển thị Game Over
+        if (gameModel.getGameState() == GameState.GameOver && !gameOverView.isVisible()) {
+            int currentLevel = gameModel.getCurrentLevel();
+            if (currentLevel > 20) {
+                showGameComplete();
+            } else {
+                showGameOver();
+            }
+        }
+
         int currentBallCount = gameModel.getTotalBallCount();
         if (currentBallCount != lastBallCount) {
             syncBalls();

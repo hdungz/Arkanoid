@@ -134,6 +134,10 @@ public class AssetsManager {
         loadImages("BtnMenuHover", "/com/arkanoid/buttons/menu_hover.png");
         loadImages("BtnLevelNormal", "/com/arkanoid/buttons/level_normal.png");
         loadImages("BtnLevelHover", "/com/arkanoid/buttons/level_hover.png");
+        loadImages("BtnRetryNormal", "/com/arkanoid/buttons/retry_normal.png");
+        loadImages("BtnRetryHover", "/com/arkanoid/buttons/retry_hover.png");
+
+
 
         loadImages("PauseTitle", "/com/arkanoid/buttons/pause.png");
 
