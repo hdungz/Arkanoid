@@ -88,17 +88,17 @@ public class BallRenderer {
             currentFrames = loadImagesWithFallback(PIERCE_ASSET_KEY);
         }
 
-        // Update ball sprite
+
         if (currentFrames != null && currentFrames.length > 0) {
             ballSprite.setImage(currentFrames[0]);
         }
 
-        // Update glow effect for pierce mode
+
         Glow glow = (Glow) ballSprite.getEffect();
         if (checkPierce == 1) {
-            glow.setLevel(0.8); // Strong glow when piercing
+            glow.setLevel(0.8);
         } else {
-            glow.setLevel(0.0); // No glow normally
+            glow.setLevel(0.0);
         }
 
         updateTrail();

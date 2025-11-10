@@ -72,7 +72,7 @@ public class GameOverView extends StackPane {
         borderGlow.setRadius(20);
         borderGlow.setSpread(0.3);
 
-        // Animation cho viền phát sáng
+
         glowAnimation = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(borderGlow.radiusProperty(), 15),
@@ -156,7 +156,7 @@ public class GameOverView extends StackPane {
 
     public void setGameComplete(boolean isComplete) {
         if (isComplete) {
-            // Đổi màu viền sang vàng khi hoàn thành game
+
             gameOverBox.setStyle("-fx-background-color: rgba(20, 20, 40, 0.3); " +
                     "-fx-border-color: rgba(245, 158, 11, 1); " +
                     "-fx-border-width: 3; " +
@@ -170,7 +170,7 @@ public class GameOverView extends StackPane {
             goldGlow.setSpread(0.3);
             gameOverBox.setEffect(goldGlow);
         } else {
-            // Viền đỏ mặc định khi game over
+
             gameOverBox.setStyle("-fx-background-color: rgba(20, 20, 40, 0.3); " +
                     "-fx-border-color: rgba(239, 68, 68, 1); " +
                     "-fx-border-width: 3; " +
