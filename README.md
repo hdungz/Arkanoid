@@ -1,4 +1,4 @@
-# Arkanoid Game - Object-Oriented Programming Project
+<img width="983" height="459" alt="image" src="https://github.com/user-attachments/assets/d37e5a4b-7809-4d29-8250-0a8ff531559b" /># Arkanoid Game - Object-Oriented Programming Project
 
 > A modern take on the classic Arkanoid game, developed using Java 17+ and JavaFX.
 > This is the final project for the INT2204 (Object-Oriented Programming) course.
@@ -84,7 +84,7 @@ This is a classic Arkanoid game developed in Java as a final project for an Obje
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/hdungz/Arkanoid](https://github.com/hdungz/Arkanoid)
+    git clone https://github.com/hdungz/Arkanoid
     ```
 2.  **Open the project:** Open the cloned project folder in your preferred IDE (e.g., IntelliJ IDEA).
 3.  **Build the project:** Allow Maven to download dependencies and build the project.
@@ -115,11 +115,10 @@ The game fully implements the four pillars of OOP:
 
 The game utilizes multiple concurrent threads to ensure a smooth, lag-free experience:
 
-* **Game Loop Thread:** The "heart" of the game, updating logic (physics, collisions) 60 times per second (60 FPS).
+* **Game Loop Thread:** The "heart" of the game, updating logic (physics, collisions) by animation timer.
 * **Rendering Thread:** The "artist" of the game, dedicated to drawing graphics on the screen (The main JavaFX UI Thread).
 * **Audio Thread Pool:** Handles sound effects and music asynchronously, preventing audio loading from freezing the game.
 * **I/O Thread:** Manages slow tasks like Saving/Loading game data without blocking the UI.
-* **Asset Loading Thread:** Pre-loads resources (images, level maps) for the next level in the background, allowing for seamless level transitions.
 
 ## Technologies Used
 
@@ -151,5 +150,6 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **License:** This project is developed for educational purposes only.
 * **Academic Integrity:** This code is provided as a reference. Please follow your institution's academic integrity policies.
 * **Assets:** Some assets (images, sounds) may be used for educational purposes under fair use.
+
 
 
