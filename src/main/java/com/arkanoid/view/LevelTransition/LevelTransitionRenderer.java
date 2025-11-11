@@ -133,7 +133,7 @@ public class LevelTransitionRenderer {
         gc.fillText(clearText, centerX, centerY);
 
         gc.setFont(subtitleFont);
-        String subtitle = "THEM DIEM CHO NHOM EM NHA THAY";
+        String subtitle = "GOOD JOB!";
         gc.setFill(clearColor.deriveColor(0, 1, 0.8, alpha * 0.8));
         gc.fillText(subtitle, centerX, centerY + 60);
 

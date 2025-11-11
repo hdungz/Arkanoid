@@ -17,7 +17,7 @@ public class PaddleUpdater {
 
     public static void updatePaddleFromStore(Paddle paddle) {
         if (paddle == null) {
-            System.err.println("✗ Paddle is null, cannot update");
+            System.err.println("Paddle is null, cannot update");
             return;
         }
 

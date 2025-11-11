@@ -280,7 +280,6 @@ public class GameModel {
 
                 if (brick.getHealth() == 1) score += 10;
                 else if (brick.getHealth() == 2) score += 20;
-                else if (brick.getHealth() == 3) score += 30;
 
                 brick.takeDamage();
 
@@ -335,7 +334,6 @@ public class GameModel {
 
                     if (brick.getHealth() == 1) score += 10;
                     else if (brick.getHealth() == 2) score += 20;
-                    else if (brick.getHealth() == 3) score += 30;
 
                     brick.takeDamage();
 

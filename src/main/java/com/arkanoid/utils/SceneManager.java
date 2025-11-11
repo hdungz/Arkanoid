@@ -92,7 +92,6 @@ public class SceneManager {
             return;
         }
 
-        // Exit current scene
         if (currentSceneType != null && controllerMap.containsKey(currentSceneType)) {
             controllerMap.get(currentSceneType).onExitScene();
         }
@@ -102,7 +101,6 @@ public class SceneManager {
             stage.setScene(newScene);
             currentSceneType = type;
 
-            // Enter new scene
             if (controllerMap.containsKey(type)) {
                 controllerMap.get(type).onEnterScene();
             }
