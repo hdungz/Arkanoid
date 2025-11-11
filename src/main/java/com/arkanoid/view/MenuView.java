@@ -44,18 +44,18 @@ public class MenuView extends StackPane {
             getChildren().add(backgroundVideo);
         }
 
-        // Lớp phủ sáng
+
         Pane overlay = new Pane();
         overlay.setStyle("-fx-background-color: rgba(255, 255, 255, -0.1);");
         overlay.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         getChildren().add(overlay);
 
-        // Menu box
+
         VBox menuBox = new VBox(0);
         menuBox.setAlignment(Pos.CENTER);
         menuBox.setTranslateY(100);
 
-        // Tạo buttons
+
         playButton = createImageButton("BtnStartNormal", "BtnStartHover");
         storeButton = createImageButton("BtnStoreNormal", "BtnStoreHover");
         highscoreButton = createImageButton("BtnHighNormal", "BtnHighHover");
@@ -98,13 +98,13 @@ public class MenuView extends StackPane {
         button.setBorder(Border.EMPTY);
         button.setStyle("-fx-cursor: hand;");
 
-        // Drop shadow
+
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.rgb(0, 0, 0, 0.5));
         shadow.setRadius(10);
         button.setEffect(shadow);
 
-        // Hover: đổi hình + phóng to
+
         button.setOnMouseEntered(e -> {
             imageView.setImage(hoverImg);
             ScaleTransition scale = new ScaleTransition(Duration.millis(200), button);
@@ -113,7 +113,7 @@ public class MenuView extends StackPane {
             scale.play();
         });
 
-        // Mouse out: trở lại bình thường
+
         button.setOnMouseExited(e -> {
             imageView.setImage(normalImg);
             ScaleTransition scale = new ScaleTransition(Duration.millis(200), button);

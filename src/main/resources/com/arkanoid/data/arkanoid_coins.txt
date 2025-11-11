@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 coins=706
+=======
+coins=505
+>>>>>>> hdungz/main

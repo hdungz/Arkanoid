@@ -46,11 +46,11 @@ public class GameOverController {
         System.out.println("Menu button clicked from Game Over");
         gameOverView.hide();
 
-        // Sử dụng SceneManager với transition
+
         SceneManager.getInstance().switchTo(SceneType.Menu, () -> {
             System.out.println("Returned to menu from Game Over");
 
-            // Callback sau khi chuyển scene (nếu có)
+
             if (onMenu != null) {
                 onMenu.run();
             }

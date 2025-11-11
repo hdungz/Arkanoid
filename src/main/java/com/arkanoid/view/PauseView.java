@@ -43,7 +43,7 @@ public class PauseView extends StackPane {
         pauseBox.setMaxWidth(300);
         pauseBox.setMaxHeight(300);
 
-        // Tạo viền gradient với hiệu ứng
+
         createAnimatedBorder();
 
         ImageView pauseTitle = createPauseTitleImage();
@@ -58,7 +58,7 @@ public class PauseView extends StackPane {
     }
 
     private void createAnimatedBorder() {
-        // Nền trong suốt với viền xanh phát sáng
+
         pauseBox.setStyle("-fx-background-color: rgba(20, 20, 40, 0.3); " +
                 "-fx-border-color: rgba(0, 150, 255, 1); " +
                 "-fx-border-width: 3; " +
@@ -66,13 +66,13 @@ public class PauseView extends StackPane {
                 "-fx-border-radius: 0; " +
                 "-fx-padding: 50;");
 
-        // Hiệu ứng glow cho viền
+
         DropShadow borderGlow = new DropShadow();
         borderGlow.setColor(Color.rgb(0, 150, 255, 0.8));
         borderGlow.setRadius(20);
         borderGlow.setSpread(0.3);
 
-        // Animation cho viền phát sáng
+
         glowAnimation = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(borderGlow.radiusProperty(), 15),

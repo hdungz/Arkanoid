@@ -114,7 +114,7 @@ public class StoreView extends StackPane {
         section.setAlignment(Pos.CENTER);
         section.setMaxWidth(450);
 
-        // Nền trong suốt với viền xanh phát sáng
+
         section.setStyle(
                 "-fx-background-color: rgba(0, 0, 0, 0.3); " +
                         "-fx-border-color: rgba(96, 165, 250, 1); " +
@@ -124,7 +124,7 @@ public class StoreView extends StackPane {
                         "-fx-padding: 20;"
         );
 
-        // Tạo hiệu ứng glow cho viền paddle
+
         DropShadow paddleGlow = new DropShadow();
         paddleGlow.setColor(Color.rgb(96, 165, 250, 0.8));
         paddleGlow.setRadius(20);
@@ -244,7 +244,7 @@ public class StoreView extends StackPane {
                         "-fx-padding: 20;"
         );
 
-        // Tạo hiệu ứng glow cho viền ball
+
         DropShadow ballGlow = new DropShadow();
         ballGlow.setColor(Color.rgb(245, 158, 11, 0.8));
         ballGlow.setRadius(20);

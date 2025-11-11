@@ -186,7 +186,7 @@ public class GameView extends Pane {
             synchronizeView();
         }
 
-        // Tự động kiểm tra và hiển thị Game Over
+
         if (gameModel.getGameState() == GameState.GameOver && !gameOverView.isVisible()) {
             int currentLevel = gameModel.getCurrentLevel();
             if (currentLevel > 20) {

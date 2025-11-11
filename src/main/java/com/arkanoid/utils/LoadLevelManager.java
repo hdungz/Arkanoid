@@ -133,7 +133,7 @@ public class LoadLevelManager {
 
             System.out.println("Loading next level: " + nextLevel);
         } else {
-            gameModel.setGameState(GameState.Win);
+            gameModel.setGameState(GameState.Ready);
             System.out.println("Game Completed! All levels finished!");
         }
     }
