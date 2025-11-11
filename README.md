@@ -56,11 +56,11 @@ This is a classic Arkanoid game developed in Java as a final project for an Obje
 ### Power-ups
 
 | Name | Effect |
-| :--- | :--- | :--- |
+| :--- | :--- |
 | **Expand Paddle** | Increases paddle width for 10 seconds |
 | **Multi Ball** | Spawns 2 additional balls |
 | **Laser Gun** | Shoot lasers to destroy bricks for 15 seconds |
-| **StickyPaddle** | Ball sticks to paddle; launch with `SPACE` ||
+| **StickyPaddle** | Ball sticks to paddle; launch with `SPACE` |
 | **Pierce Ball** | Ball passes through bricks for 12 seconds |
 
 ### Scoring System
@@ -151,4 +151,5 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **License:** This project is developed for educational purposes only.
 * **Academic Integrity:** This code is provided as a reference. Please follow your institution's academic integrity policies.
 * **Assets:** Some assets (images, sounds) may be used for educational purposes under fair use.
+
 
