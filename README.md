@@ -1,60 +1,5 @@
 # Arkanoid Game - Object-Oriented Programming Project
 
-## Author
-
-Group [Điền số nhóm của bạn] - Class INT2204
-
-1. Nguyễn Hữu Dũng - 24020091
-2. Bùi Huy Hoàng - 24020136
-3. Nguyễn Hữu Hiếu - 24020127
-4. Phạm Đức Trọng - 24020334
-
-**Instructor:** Kiều Văn Tuyền
-**Semester:** HK1 - 2025-2026
-
-## Description
-
-This is a classic Arkanoid game developed in Java as a final project for Object-Oriented Programming course. The project demonstrates the implementation of OOP principles and design patterns.
-
-### Key features:
-
-* The game is developed using `Java 17+` with `JavaFX` for GUI.
-* Implements core OOP principles: Encapsulation, Inheritance, Polymorphism, and Abstraction.
-* Applies multiple design patterns: Singleton, Factory Method, Strategy, Observer, and State.
-* Features multithreading for smooth gameplay and responsive UI.
-* Includes sound effects, animations, and power-up systems.
-* Supports save/load game functionality.
-
-### Game mechanics:
-
-* **Core Gameplay:** Control a paddle to bounce a ball and destroy bricks.
-* **Lives System:** Players start with a limited number of lives and lose one when the ball falls off the bottom of the screen.
-* **Advanced Physics:** The ball's reflection angle changes dynamically based on where it hits the paddle.
-* **Power-ups:** Collect falling power-ups to gain special abilities.
-* **Level Progression:** Advance through multiple levels with increasing difficulty and challenges.
-* **In-Game Economy:**
-    * Earn points (score) and collect **Coins**.
-    * Use Coins in the **Shop** to purchase new **skins** for the paddle and ball.
-## UML Diagram
-### Class Diagram
-## Multithreading Implementation
-The game uses multiple threads to ensure smooth performance:
-* **Game Loop Thread:** Updates game logic at 60 FPS.
-* **Rendering Thread:** Handles graphics rendering (EDT for JavaFX Application Thread).
-* **Audio Thread Pool:** Plays sound effects asynchronously.
-* **I/O Thread:** Handles save/load operations without blocking UI.
-* **Asset Loading Thread:** Asset Loading Thread: Pre-loads game resources (e.g., images, sound files, level maps) for the next level in the background.
-## Installation
-
-1.  Clone the project from the repository.
-    ```bash
-    git clone https://github.com/hdungz/Arkanoid
-    ```
-2.  Open the project in your preferred IDE (e.g., IntelliJ IDEA, Eclipse).
-3.  Build and run the main application file.
-
-# Arkanoid Game - Object-Oriented Programming Project
-
 > A modern take on the classic Arkanoid game, developed using Java 17+ and JavaFX.
 > This is the final project for the INT2204 (Object-Oriented Programming) course.
 
@@ -64,14 +9,20 @@ The game uses multiple threads to ensure smooth performance:
 
 ### Screenshots
 
-* 
-* 
-* 
+* <img width="1593" height="897" alt="image" src="https://github.com/user-attachments/assets/640b3793-e4bc-4d5a-9e10-c31eefddc48d" />
+
+* <img width="1601" height="942" alt="image" src="https://github.com/user-attachments/assets/97486254-c7ad-4af8-a9aa-cf2a631758a9" />
+
+* <img width="675" height="894" alt="image" src="https://github.com/user-attachments/assets/c6abd3bf-af02-4d52-a483-a24dbe7fadde" />
+
 * 
 
-### Video Demo
+### 
 
-Full gameplay video is available in `docs/demo/gameplay.mp4`
+
+https://github.com/user-attachments/assets/e7726b80-29b7-453f-881e-b798af1c39b3
+
+Video DemoFull gameplay video is available in `docs/demo/gameplay.mp4`
 
 ---
 
@@ -90,14 +41,12 @@ This is a classic Arkanoid game developed in Java as a final project for an Obje
 | `←`| Move paddle left |
 | `→`| Move paddle right |
 | `SPACE` | Launch ball / Shoot laser |
-| `P` or `ESC` | Pause game |
-| `R` | Restart game |
-| `Q` | Quit to menu |
+| `ESC` | Pause game |
 
 ### Gameplay Guide
 
-1.  **Start the game:** Click "New Game" from the main menu.
-2.  **Control the paddle:** Use arrow keys or A/D to move left and right.
+1.  **Start the game:** Click "Start" from the main menu.
+2.  **Control the paddle:** Use arrow keys to move left and right.
 3.  **Launch the ball:** Press `SPACE` to launch the ball from the paddle.
 4.  **Destroy bricks:** Bounce the ball to hit and destroy bricks.
 5.  **Collect power-ups:** Catch falling power-ups for special abilities.
@@ -106,25 +55,19 @@ This is a classic Arkanoid game developed in Java as a final project for an Obje
 
 ### Power-ups
 
-| Icon | Name | Effect |
+| Name | Effect |
 | :--- | :--- | :--- |
-| 🟦 | **Expand Paddle** | Increases paddle width for 10 seconds |
-| 🟥 | **Shrink Paddle** | Decreases paddle width for 10 seconds |
-| ⚡ | **Fast Ball** | Increases ball speed by 30% |
-| 🐌 | **Slow Ball** | Decreases ball speed by 30% |
-| 🎯 | **Multi Ball** | Spawns 2 additional balls |
-| 🔫 | **Laser Gun** | Shoot lasers to destroy bricks for 15 seconds |
-| 🧲 | **Magnet** | Ball sticks to paddle; launch with `SPACE` |
-| 🛡️ | **Shield** | Protects from losing one life |
-| 🔥 | **Fire Ball** | Ball passes through bricks for 12 seconds |
+| **Expand Paddle** | Increases paddle width for 10 seconds |
+| **Multi Ball** | Spawns 2 additional balls |
+| **Laser Gun** | Shoot lasers to destroy bricks for 15 seconds |
+| **StickyPaddle** | Ball sticks to paddle; launch with `SPACE` ||
+| **Pierce Ball** | Ball passes through bricks for 12 seconds |
 
 ### Scoring System
 
-* **Normal Brick:** 100 points
-* **Strong Brick:** 300 points
-* **Explosive Brick:** 500 points + nearby bricks
-* **Power-up Collection:** 50 points
-* **Combo Multiplier:** x2, x3, x4... for consecutive hits
+* **Normal Brick:** 10 points
+* **Strong Brick:** 20 points
+* **Explosive Brick:** 20 points + nearby bricks
 
 ---
 
@@ -163,11 +106,10 @@ The game fully implements the four pillars of OOP:
 
 ### Design Patterns Implemented
 
-* **Singleton Pattern:** Used for `GameManager`, `AudioManager`, etc. to ensure a single instance.
-* **Factory Method Pattern:** Used to create different types of bricks and power-ups.
-* **Strategy Pattern:** Used to define different ball movement or AI behaviors.
-* **Observer Pattern:** Used to notify the UI (e.g., score, lives) of changes in the game state.
-* **State Pattern:** Used to manage different game states (e.g., Main Menu, Playing, Paused, Game Over).
+* **Singleton Pattern:** Used for `GameModel`,`LevelManager`,`LoadLevelManager`,. to ensure a single instance.
+* **Factory Method Pattern:**  Used in package Paddle ,  to create different types of power-ups.
+* **Strategy Pattern:** Used to define different damage-taking behaviors (takeDamage) for each Brick subclass.
+* **State Pattern:** Used to manage different game states (e.g., GameState, ScenceType...).
 
 ### Multithreading Model
 
@@ -178,12 +120,6 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **Audio Thread Pool:** Handles sound effects and music asynchronously, preventing audio loading from freezing the game.
 * **I/O Thread:** Manages slow tasks like Saving/Loading game data without blocking the UI.
 * **Asset Loading Thread:** Pre-loads resources (images, level maps) for the next level in the background, allowing for seamless level transitions.
-
-### UML Diagrams
-
-* **Class Diagram:** Detailed class diagrams are available in the `/docs/uml/` directory.
-
----
 
 ## Technologies Used
 
@@ -215,3 +151,4 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **License:** This project is developed for educational purposes only.
 * **Academic Integrity:** This code is provided as a reference. Please follow your institution's academic integrity policies.
 * **Assets:** Some assets (images, sounds) may be used for educational purposes under fair use.
+
