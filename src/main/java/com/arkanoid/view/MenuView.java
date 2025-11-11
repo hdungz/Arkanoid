@@ -61,7 +61,7 @@ public class MenuView extends StackPane {
         highscoreButton = createImageButton("BtnHighNormal", "BtnHighHover");
         exitButton = createImageButton("BtnExitNormal", "BtnExitHover");
 
-        menuBox.getChildren().addAll(playButton, storeButton, highscoreButton, exitButton);
+        menuBox.getChildren().addAll(playButton, storeButton, exitButton);
         getChildren().add(menuBox);
     }
 
@@ -89,8 +89,8 @@ public class MenuView extends StackPane {
         Image hoverImg = AssetsManager.getFrames(hoverKey)[0];
 
         ImageView imageView = new ImageView(normalImg);
-        imageView.setFitWidth(250);
-        imageView.setFitHeight(50);
+        imageView.setFitWidth(350);
+        imageView.setFitHeight(70);
 
         Button button = new Button();
         button.setGraphic(imageView);
