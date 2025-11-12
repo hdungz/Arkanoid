@@ -1,8 +1,18 @@
-<img width="983" height="459" alt="image" src="https://github.com/user-attachments/assets/d37e5a4b-7809-4d29-8250-0a8ff531559b" /># Arkanoid Game - Object-Oriented Programming Project
+# Arkanoid Game - Object-Oriented Programming Project
 
 > A modern take on the classic Arkanoid game, developed using Java 17+ and JavaFX.
 > This is the final project for the INT2204 (Object-Oriented Programming) course.
+## Authors
 
+This project was developed by *Group 10* - Class *INT2204 1*:
+
+1.  *Nguyen Huu Dung* - 24020091
+2.  *Bui Huy Hoang* - 24020136
+3.  *Nguyen Huu Hieu* - 24020127
+4.  *Pham Duc Trong* - 24020334
+
+*Instructor:* Kieu Van Tuyen
+*Semester:* HK1 - 2025-2026\
 ---
 
 ##  Demo & Screenshots
@@ -22,7 +32,6 @@
 
 https://github.com/user-attachments/assets/e7726b80-29b7-453f-881e-b798af1c39b3
 
-Video DemoFull gameplay video is available in `docs/demo/gameplay.mp4`
 
 ---
 
@@ -31,6 +40,16 @@ Video DemoFull gameplay video is available in `docs/demo/gameplay.mp4`
 This is a classic Arkanoid game developed in Java as a final project for an Object-Oriented Programming course. The project demonstrates the implementation of OOP principles and design patterns through a feature-rich, playable game.
 
 ---
+## Key Features
+
+* *Classic Gameplay:* Control a paddle, destroy bricks, and collect items.
+* *Power-ups:* A variety of power-ups including Expand Paddle, Laser Gun,StickyPaddle and Pierce Ball.
+* *Score & Currency System:* Accumulate scores and collect Coins during gameplay.
+* *In-Game Shop:* Use Coins to purchase new skins for the paddle and ball.
+* *Multiple Levels:* Progress through various levels with increasing difficulty and challenges.
+* *Multithreading:* Utilizes a multithreaded model to ensure smooth, lag-free game performance.
+* *OOP Techniques:* Fully applies core OOP principles and common Design Patterns.
+
 
 ##  How to Play
 
@@ -42,6 +61,7 @@ This is a classic Arkanoid game developed in Java as a final project for an Obje
 | `→`| Move paddle right |
 | `SPACE` | Launch ball / Shoot laser |
 | `ESC` | Pause game |
+| `Click`| Choose |
 
 ### Gameplay Guide
 
@@ -99,10 +119,10 @@ This project is built on a solid foundation of OOP principles and advanced techn
 ### OOP Principles
 
 The game fully implements the four pillars of OOP:
-* **Encapsulation**
-* **Inheritance**
-* **Polymorphism**
-* **Abstraction**
+* **Encapsulation:** 
+* **Inheritance:** 
+* **Polymorphism:**
+* **Abstraction:** 
 
 ### Design Patterns Implemented
 
@@ -150,6 +170,7 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **License:** This project is developed for educational purposes only.
 * **Academic Integrity:** This code is provided as a reference. Please follow your institution's academic integrity policies.
 * **Assets:** Some assets (images, sounds) may be used for educational purposes under fair use.
+
 
 
 
