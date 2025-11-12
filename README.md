@@ -12,7 +12,7 @@ This project was developed by *Group 10* - Class *INT2204 1*:
 4.  *Pham Duc Trong* - 24020334
 
 *Instructor:* Kieu Van Tuyen
-*Semester:* HK1 - 2025-2026\
+*Semester:* HK1 - 2025-2026
 ---
 
 ##  Demo & Screenshots
@@ -170,6 +170,7 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **License:** This project is developed for educational purposes only.
 * **Academic Integrity:** This code is provided as a reference. Please follow your institution's academic integrity policies.
 * **Assets:** Some assets (images, sounds) may be used for educational purposes under fair use.
+
 
 
 
