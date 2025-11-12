@@ -119,10 +119,10 @@ This project is built on a solid foundation of OOP principles and advanced techn
 ### OOP Principles
 
 The game fully implements the four pillars of OOP:
-* **Encapsulation:** 
-* **Inheritance:** 
-* **Polymorphism:**
-* **Abstraction:** 
+* **Encapsulation** 
+* **Inheritance** 
+* **Polymorphism**
+* **Abstraction** 
 
 ### Design Patterns Implemented
 
@@ -170,6 +170,7 @@ The game utilizes multiple concurrent threads to ensure a smooth, lag-free exper
 * **License:** This project is developed for educational purposes only.
 * **Academic Integrity:** This code is provided as a reference. Please follow your institution's academic integrity policies.
 * **Assets:** Some assets (images, sounds) may be used for educational purposes under fair use.
+
 
 
 
